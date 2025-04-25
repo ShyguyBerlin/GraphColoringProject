@@ -22,7 +22,7 @@ async def greedy_asc_deg( G : nx.graph):
     sorting=[]
     for i in range(len(G)):
         deg=max([G_sorting.degree(n) for n in G_sorting.nodes()])
-        nodes = G_sorting.nodes()
+        nodes = list(G_sorting.nodes())
         shuffle(nodes)
         for node in nodes:
             if G_sorting.degree(node)==deg:
@@ -50,7 +50,7 @@ async def greedy_desc_deg( G : nx.graph):
     sorting=[]
     for i in range(len(G)):
         deg=min([G_sorting.degree(n) for n in G_sorting.nodes()])
-        nodes = G_sorting.nodes()
+        nodes = list(G_sorting.nodes())
         shuffle(nodes)
         for node in nodes:
             if G_sorting.degree(node)==deg:

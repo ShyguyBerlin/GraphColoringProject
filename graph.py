@@ -41,8 +41,24 @@ async def solve_graph(G : nx.graph, solver):
         
         await asyncio.sleep(0.1)
 
+def start_solver(event):
+    stop_solver(event)
+    global current_draw_task
+    print(event)
+    selected_value = document.getElementById("solver_select").value
 
-solvers={"greedy": greedy_no_sort, "greedy_min":greedy_asc_deg, "greedy_max":greedy_desc_deg}
-G = nx.cycle_graph(61)#nx.complete_graph(60)
+    solvers={"greedy": greedy_no_sort, "greedy_min":greedy_asc_deg, "greedy_max":greedy_desc_deg}
+    G = nx.cycle_graph(61)#nx.complete_graph(60)
 
-asyncio.ensure_future(solve_graph(G,solvers["greedy_min"]))
+    current_draw_task = asyncio.create_task(solve_graph(G,solvers[selected_value]))
+
+def stop_solver(event):
+    global current_draw_task
+    try:
+        if current_draw_task:
+            current_draw_task.cancel()
+            current_draw_task = None
+    except:
+        print("There was nothing to stop")
+
+
