@@ -6,7 +6,7 @@ import base64
 from js import document
 from random import shuffle,randint
 import asyncio
-from solvers.greedy import solve_graph as greedy_solver
+from solvers.greedy import *
 
 rseed=randint(0,10000)
 
@@ -23,13 +23,13 @@ def draw_graph(graph, colors, labels):
     plt.close()
     return buf
 
-async def solve_graph(G : nx.graph):
+async def solve_graph(G : nx.graph, solver):
     # Sample graph coloring logic
     
     available_colors = list(mcolors.CSS4_COLORS.keys())
     shuffle(available_colors)
 
-    async for labels in greedy_solver(G):
+    async for labels in solver(G):
         colors = {node: available_colors[labels[node]] if node in labels else 'grey' for node in G.nodes()}
         buf=draw_graph(G,colors,labels)
 
@@ -42,6 +42,7 @@ async def solve_graph(G : nx.graph):
         await asyncio.sleep(0.1)
 
 
+solvers={"greedy": greedy_no_sort, "greedy_min":greedy_asc_deg, "greedy_max":greedy_desc_deg}
 G = nx.cycle_graph(61)#nx.complete_graph(60)
 
-asyncio.ensure_future(solve_graph(G))
+asyncio.ensure_future(solve_graph(G,solvers["greedy_min"]))
