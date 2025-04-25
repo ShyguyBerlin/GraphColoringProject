@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Graph Coloring with PyScript</title>
+	<link rel="stylesheet" href="https://pyscript.net/releases/2024.4.1/core.css">
+	<script type="module" src="https://pyscript.net/releases/2024.4.1/core.js"></script>
+	<!--script defer src="https://pyscript.net/latest/pyscript.js"></script-->
+	<py-config>
+	packages = [
+		"matplotlib",
+		"networkx"
+	]
+	[[fetch]]
+	files = ['solvers/greedy.py']
+	</py-config>
+	<!-- for splashscreen -->
+	<style>
+	#loading { outline: none; border: none; background: transparent }
+</style>
+</head>
+<body>
+	<dialog id="loading">
+		<h1>Loading...</h1>
+	</dialog>
+	<h1>Graph Coloring Demo</h1>
+
+	<div id="graph-container"></div>
+
+	<script type="py" src="./graph.py"></script>
+</body>
+</html>
