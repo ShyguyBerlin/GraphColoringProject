@@ -42,6 +42,6 @@ async def solve_graph(G : nx.graph):
         await asyncio.sleep(0.1)
 
 
-G = nx.cycle_graph(60)#nx.complete_graph(60)
+G = nx.cycle_graph(61)#nx.complete_graph(60)
 
 asyncio.ensure_future(solve_graph(G))
