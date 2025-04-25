@@ -1,9 +1,10 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<title>Graph Coloring with PyScript</title>
+	<title>Graph Coloring Algorithms - Visualized</title>
 	<link rel="stylesheet" href="https://pyscript.net/releases/2024.4.1/core.css">
 	<script type="module" src="https://pyscript.net/releases/2024.4.1/core.js"></script>
+	<link rel="stylesheet" href="./assets/css/style.css" />
 	<!--script defer src="https://pyscript.net/latest/pyscript.js"></script-->
 	<py-config>
 	packages = [
@@ -23,17 +24,41 @@
 		<h1>Loading...</h1>
 	</dialog>
 	<h1>Graph Coloring Demo</h1>
-
-	<button py-click="start_solver">Start</button>
-	<button py-click="stop_solver">Stop</button>
-	<select id="solver_select">
-		<option value="greedy">Greedy</option>
-		<option value="greedy_min">Greedy, picking Nodes with ascending degree</option>
-		<option value="greedy_max">Greedy, picking Nodes with descending degree</option>
-	  </select>
+	<table>
+		<tr>
+			<td>
+				Solver
+			</td>
+			<td>
+				<select id="solver_select">
+					<option value="greedy">Greedy, picking Nodes by order of definition</option>
+					<option value="greedy_min">Greedy, picking Nodes with ascending degree</option>
+					<option value="greedy_max">Greedy, picking Nodes with descending degree</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td>
+				Graph
+			</td>
+			<td>
+				<select id="graph_select">
+					<option value="auto">Generate a Graph for me</option>
+					<option value="greedy_min">Graph as edge list</option>
+					<option value="greedy_max">Graph as adjacency matrix</option>
+				</select>
+			</td>
+		</tr>
+		<tr>
+			<td colspan="2" class="centered-td">
+				<button py-click="start_solver">Start</button>
+				<button py-click="stop_solver">Stop</button>
+			</td>
+		</tr>
+	</table>
 
 	  <div id="graph-container"></div>
-	  <script type="py" src="./graph.py"></script>
+	  <script type="py" src="./main.py"></script>
 
 
 	
