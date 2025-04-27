@@ -15,11 +15,11 @@ def draw_graph(graph, colors, labels):
     node_colors = [colors[n] if n in colors.keys() else 'grey' for n in graph.nodes()]
 
     # Draw the graph to a buffer
-    plt.figure(figsize=(8, 8))
+    plt.figure(figsize=(8, 8),clear=True)
     nx.draw(graph,pos = nx.drawing.layout.spring_layout(graph,seed=rseed), with_labels=True, node_color=node_colors, labels=labels)
     plt.figtext(0.5,0.05,f"Used {max(list(labels.values()))} colors to color the graph",fontsize=22,horizontalalignment='center',verticalalignment='top')
     buf = io.BytesIO()
-    plt.savefig(buf, format='png')
+    plt.savefig(buf, format='png',transparent=True)
     plt.close()
     return buf
 
@@ -36,13 +36,44 @@ async def solve_graph(G : nx.graph, solver):
         # Convert to base64 and display in HTML
         buf.seek(0)
         img_str = base64.b64encode(buf.read()).decode("utf-8")
-        img_element = f"<img src='data:image/png;base64,{img_str}'/>"
-        document.getElementById("graph-container").innerHTML = img_element
-        
+        img_element = document.getElementById("graph-img")
+        if img_element is None:
+            # Create img only once
+            img_element = document.createElement("img")
+            img_element.id = "graph-img"
+            document.getElementById("graph-container").appendChild(img_element)
+
+        # Update only the image source
+        img_element.src = f"data:image/png;base64,{img_str}"
         await asyncio.sleep(0.1)
+
+def get_graph_input() -> str:
+    graph_input = document.getElementById("graph-input")
+    if graph_input:
+        return graph_input.value
+    return None
 
 def generate_graph(method):
     match(method):
+        case "edge-list":
+            raw=get_graph_input()
+            raw_lines = raw.split("\n")
+            graph :nx.graph = nx.empty_graph(int(raw_lines[0]))
+            print("Graph ",graph,graph.nodes())
+            for i in raw_lines[1:]:
+                nodes = i.split(" ")
+                graph.add_edge(int(nodes[0]),int(nodes[1]))
+            print("Graph ",graph,graph.nodes())
+            return graph
+        case "adjacency-matrix":
+            raw=get_graph_input()
+            raw_lines = raw.split("\n")
+            graph :nx.graph = nx.empty_graph(len(raw_lines))
+            for u in range(len(raw_lines)):
+                for v in range(len(raw_lines)):
+                    if int(raw_lines[u].split(" ")[v])!=0:
+                        graph.add_edge(u,v)
+            return graph
         case _:
             return nx.cycle_graph(31)
 
