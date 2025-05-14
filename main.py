@@ -8,6 +8,7 @@ from web_elements import *
 
 async def solve_graph(G : nx.graph, solver,do_print=False,delay=0):
     print("I am using the delay",delay)
+
     async for labels in solver(G):
         if do_print and delay>0:
             print_graph(G,labels)
@@ -16,8 +17,33 @@ async def solve_graph(G : nx.graph, solver,do_print=False,delay=0):
     if do_print and delay==0:
         print_graph(G,labels)
 
+def get_graph_input() -> str:
+    graph_input = document.getElementById("graph-input")
+    if graph_input:
+        return graph_input.value
+    return None
+
 def generate_graph(method):
     match(method):
+        case "edge-list":
+            raw=get_graph_input()
+            raw_lines = raw.split("\n")
+            graph :nx.graph = nx.empty_graph(int(raw_lines[0]))
+            print("Graph ",graph,graph.nodes())
+            for i in raw_lines[1:]:
+                nodes = i.split(" ")
+                graph.add_edge(int(nodes[0]),int(nodes[1]))
+            print("Graph ",graph,graph.nodes())
+            return graph
+        case "adjacency-matrix":
+            raw=get_graph_input()
+            raw_lines = raw.split("\n")
+            graph :nx.graph = nx.empty_graph(len(raw_lines))
+            for u in range(len(raw_lines)):
+                for v in range(len(raw_lines)):
+                    if int(raw_lines[u].split(" ")[v])!=0:
+                        graph.add_edge(u,v)
+            return graph
         case _:
             return nx.cycle_graph(31)
 

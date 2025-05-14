@@ -31,6 +31,7 @@ async def greedy_asc_deg( G : nx.graph):
                 break
     sorting.reverse()
 
+    print("Using asc sorting: ",sorting)
 
     for node in sorting:
         used = {labels.get(neigh) for neigh in G.neighbors(node)}
@@ -59,6 +60,7 @@ async def greedy_desc_deg( G : nx.graph):
                 break
     sorting.reverse()
 
+    print("Using desc sorting: ",sorting)
 
     for node in sorting:
         used = {labels.get(neigh) for neigh in G.neighbors(node)}

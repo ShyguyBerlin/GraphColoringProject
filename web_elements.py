@@ -16,10 +16,10 @@ def draw_graph(graph, colors, labels):
     node_colors = [colors[n] if n in colors.keys() else 'grey' for n in graph.nodes()]
 
     # Draw the graph to a buffer
-    plt.figure(figsize=(8, 8))
+    plt.figure(figsize=(8, 8),clear=True)
     nx.draw(graph,pos = nx.drawing.layout.spring_layout(graph,seed=rseed), with_labels=True, node_color=node_colors, labels=labels)
     buf = io.BytesIO()
-    plt.savefig(buf, format='png')
+    plt.savefig(buf, format='png',transparent=True)
     plt.close()
     return buf
 
@@ -29,8 +29,15 @@ def print_graph(graph,labels):
     # Convert to base64 and display in HTML
     buf.seek(0)
     img_str = base64.b64encode(buf.read()).decode("utf-8")
-    img_element = f"<img src='data:image/png;base64,{img_str}'/>"
-    document.getElementById("graph-container").innerHTML = img_element
+    img_element = document.getElementById("graph-img")
+    if img_element is None:
+        # Create img only once
+        img_element = document.createElement("img")
+        img_element.id = "graph-img"
+        document.getElementById("graph-container").appendChild(img_element)
+
+    # Update only the image source
+    img_element.src = f"data:image/png;base64,{img_str}"
 
 def get_delay_selection():
     return float(document.getElementById("delay-range").value)/100.0

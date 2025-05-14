@@ -44,8 +44,8 @@
 			<td>
 				<select id="graph_select">
 					<option value="auto">Generate a Graph for me</option>
-					<option value="greedy_min">Graph as edge list</option>
-					<option value="greedy_max">Graph as adjacency matrix</option>
+					<option value="edge-list">Graph as edge list</option>
+					<option value="adjacency-matrix">Graph as adjacency matrix</option>
 				</select>
 			</td>
 		</tr>
@@ -64,11 +64,12 @@
 			<td colspan="2" class="centered-td">
 				<button py-click="start_solver">Start</button>
 				<button py-click="stop_solver">Stop</button>
+				<textarea id="graph-input" placeholder="Paste a graph defining script here"></textarea>
 			</td>
 		</tr>
 	</table>
 
-	  <div id="graph-container"></div>
+	  <div id="graph-container" style="min-width: 800px;min-height: 800px;"></div>
 	  <script type="py" src="./main.py"></script>
 
 
