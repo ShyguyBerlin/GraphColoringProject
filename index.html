@@ -12,7 +12,7 @@
 		"networkx"
 	]
 	[[fetch]]
-	files = ['solvers/greedy.py']
+	files = ['solvers/greedy.py','web_elements.py']
 	</py-config>
 	<!-- for splashscreen -->
 	<style>
@@ -50,6 +50,17 @@
 			</td>
 		</tr>
 		<tr>
+			<td>
+				Delay
+			</td>
+			<td style="display: flex; justify-content: space-between;">
+				<div class="slide-container">
+					<input type="range" min="0" max="100" value="50" class="slider" id="delay-range" oninput="updateSliderValue(value)">
+				</div>
+				<span style="min-width: 20px; float:right; margin-left: 1em;" id="delay-value-display">0.5s</span>
+			</td>
+		</tr>
+		<tr>
 			<td colspan="2" class="centered-td">
 				<button py-click="start_solver">Start</button>
 				<button py-click="stop_solver">Stop</button>
@@ -66,3 +77,10 @@
 
 </body>
 </html>
+
+<script>
+  function updateSliderValue(val) {
+    document.getElementById("delay-value-display").textContent = val/100+"s";
+	console.log("changed display")
+  }
+</script>
