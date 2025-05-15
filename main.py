@@ -4,12 +4,13 @@ import matplotlib.colors as mcolors
 from random import shuffle,randint
 import asyncio
 from solvers.greedy import *
+from solvers.wigderson import so_called_easy_algorithm,wigdersons_first
 from web_elements import *
 
 async def solve_graph(G : nx.graph, solver,do_print=False,delay=0):
     print("I am using the delay",delay)
 
-    async for labels in solver(G):
+    for labels in solver(G):
         if do_print and delay>0:
             print_graph(G,labels)
 
@@ -56,7 +57,7 @@ def start_solver(event):
     selected_solver = get_solver_selection()
     selected_graph = get_graph_selection()
 
-    solvers={"greedy": greedy_no_sort, "greedy_min":greedy_asc_deg, "greedy_max":greedy_desc_deg}
+    solvers={"greedy": greedy_no_sort, "greedy_min":greedy_asc_deg, "greedy_max":greedy_desc_deg, "so_called_easy":so_called_easy_algorithm, "wigdersons_first":wigdersons_first}
     G = generate_graph(selected_graph)
 
     current_draw_task = asyncio.create_task(solve_graph(G,solvers[selected_solver],True,delay=delay))

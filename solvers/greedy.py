@@ -1,7 +1,7 @@
 import networkx as nx
 from random import shuffle
 
-async def greedy_no_sort( G : nx.graph):
+def greedy_no_sort( G : nx.graph):
     labels={}
 
     for node in G.nodes():
@@ -15,7 +15,7 @@ async def greedy_no_sort( G : nx.graph):
         
         yield labels
 
-async def greedy_asc_deg( G : nx.graph):
+def greedy_asc_deg( G : nx.graph):
     labels={}
 
     G_sorting =G.copy()
@@ -44,7 +44,7 @@ async def greedy_asc_deg( G : nx.graph):
         
         yield labels
 
-async def greedy_desc_deg( G : nx.graph):
+def greedy_desc_deg( G : nx.graph):
     labels={}
 
     G_sorting =G.copy()
