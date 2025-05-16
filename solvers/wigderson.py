@@ -1,6 +1,7 @@
 import networkx as nx
 from random import shuffle
 import math
+from solvers.greedy import greedy_desc_deg
 
 # These algorithms should only be used with 3-colorable graphs I guess
 
@@ -59,11 +60,14 @@ def so_called_easy_algorithm(G : nx.Graph):
         offset+=max(lab.values())+1
         yield labels
 
-def wigdersons_first( G : nx.graph):
+def wigdersons_first( G : nx.Graph):
     labels={}
 
-    for node in G.nodes():
-        used = {labels.get(neigh) for neigh in G.neighbors(node)}
+
+    i = 1
+
+    while max([G.degree(n) for n in G.nodes()])>=math.sqrt(G.order()):
+        n = max(G.nodes(),key=lambda x: G.degree(x))
         c=1
         while True:
             if c not in used:
@@ -72,3 +76,7 @@ def wigdersons_first( G : nx.graph):
             c+=1
         
         yield labels
+    
+    # I do not want to implement a minimum color for greedy, theoretically we should continue with i from here, but I do not think it makes a difference
+    for l in greedy_desc_deg(G):
+        yield l
