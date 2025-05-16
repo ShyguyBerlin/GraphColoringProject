@@ -87,3 +87,8 @@
 	console.log("changed display")
   }
 </script>
+<script type="module">
+	const loading = document.getElementById('loading');
+	addEventListener('py:ready', () => loading.close());
+	loading.showModal();
+</script>
