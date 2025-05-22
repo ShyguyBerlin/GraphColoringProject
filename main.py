@@ -46,7 +46,7 @@ def generate_graph(method):
                         graph.add_edge(u,v)
             return graph
         case _:
-            return nx.cycle_graph(31)
+            return nx.erdos_renyi_graph(20,0.2)
 
 def start_solver(event):
     stop_solver(event)

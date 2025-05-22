@@ -35,10 +35,7 @@ def brute_force(G : nx.graph, min_col: int = 1):
                     break
                 continue
             break
-        print("I am yielding",labels)
     yield labels
-
-
 
 
 def so_called_easy_algorithm(G : nx.Graph):
