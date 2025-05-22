@@ -1,2 +1,2 @@
 # GraphColoringProject
-A project where I try to visualize some graph coloring algorithms
+A project where we try to visualize/ work on some graph coloring algorithms

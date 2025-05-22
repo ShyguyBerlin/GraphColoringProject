@@ -1,6 +1,9 @@
+# 3.VL vom 9.5.2025
+
 import networkx as nx
 from random import shuffle
 import math
+from solvers.greedy import greedy_desc_deg
 
 # These algorithms should only be used with 3-colorable graphs I guess
 
@@ -17,7 +20,7 @@ def brute_force(G : nx.graph, min_col: int = 1):
     lim=min_col
     #init brute force
     for i in G.nodes():
-        labels[i]=0
+        labels[i]=1
 
     nodes=list(G.nodes())
 
@@ -27,7 +30,7 @@ def brute_force(G : nx.graph, min_col: int = 1):
         while True:
             # Increase color for node a by 1, if it is equal to lim, decrease to 0 and increase next node. If all node wrap, increase lim
             labels[nodes[a]] += 1
-            if labels[nodes[a]] == lim:
+            if labels[nodes[a]] > lim:
                 labels[nodes[a]] = 0
                 a+=1
                 if a==len(nodes):
@@ -56,16 +59,32 @@ def so_called_easy_algorithm(G : nx.Graph):
         offset+=max(lab.values())+1
         yield labels
 
-def wigdersons_first( G : nx.graph):
+# this only works for 3-colorable graphs
+# I have made a small adjustment that should fix this requirement
+def wigdersons_first( G : nx.Graph):
     labels={}
 
-    for node in G.nodes():
-        used = {labels.get(neigh) for neigh in G.neighbors(node)}
-        c=1
-        while True:
-            if c not in used:
-                labels[node]= c
-                break
-            c+=1
-        
+    G=G.copy() # 1
+
+    i = 0 # 2
+
+    while max([G.degree(n) for n in G.nodes()])>=math.sqrt(G.order()): # 3
+        n = max(G.nodes(),key=lambda x: G.degree(x))    # 1
+        *_,col = greedy_desc_deg(G.subgraph(G.neighbors(n))) # 2
+        print("Hey I got a result when coloring the neighborhood of n",col)
+        for neigh in col:
+            labels[neigh]=col[neigh]+i
+
+        used_colors = max(col.values())+1 # adjustment to work for any k
+        labels[n]=i+used_colors # 3 (adjusted)
+
+        i+= used_colors # 4 (adjusted)
+
+        G.remove_nodes_from(list(G.neighbors(n))) # 5
+        G.remove_node(n) # 5
+        yield labels
+    
+    for res in greedy_desc_deg(G):
+        for label in res:
+            labels[label]=res[label]+i
         yield labels

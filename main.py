@@ -7,6 +7,8 @@ from solvers.greedy import *
 from solvers.wigderson import so_called_easy_algorithm,wigdersons_first
 from web_elements import *
 
+rseed=randint(0,10000)
+
 async def solve_graph(G : nx.graph, solver,do_print=False,delay=0):
     print("I am using the delay",delay)
 
@@ -46,7 +48,8 @@ def generate_graph(method):
                         graph.add_edge(u,v)
             return graph
         case _:
-            return nx.erdos_renyi_graph(20,0.2)
+
+            return nx.erdos_renyi_graph(100,0.2,seed=rseed)
 
 def start_solver(event):
     stop_solver(event)
