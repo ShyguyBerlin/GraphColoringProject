@@ -3,8 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from random import shuffle,randint
 import asyncio
-from solvers.greedy import *
-from solvers.wigderson import so_called_easy_algorithm,wigdersons_first
+from solvers.solvers import get_solvers
 from web_elements import *
 
 rseed=randint(0,10000)
@@ -60,7 +59,7 @@ def start_solver(event):
     selected_solver = get_solver_selection()
     selected_graph = get_graph_selection()
 
-    solvers={"greedy": greedy_no_sort, "greedy_min":greedy_asc_deg, "greedy_max":greedy_desc_deg, "so_called_easy":so_called_easy_algorithm, "wigdersons_first":wigdersons_first}
+    solvers=get_solvers()
     G = generate_graph(selected_graph)
 
     current_draw_task = asyncio.create_task(solve_graph(G,solvers[selected_solver],True,delay=delay))

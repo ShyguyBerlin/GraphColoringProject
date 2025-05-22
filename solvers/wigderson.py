@@ -71,7 +71,6 @@ def wigdersons_first( G : nx.Graph):
     while max([G.degree(n) for n in G.nodes()])>=math.sqrt(G.order()): # 3
         n = max(G.nodes(),key=lambda x: G.degree(x))    # 1
         *_,col = greedy_desc_deg(G.subgraph(G.neighbors(n))) # 2
-        print("Hey I got a result when coloring the neighborhood of n",col)
         for neigh in col:
             labels[neigh]=col[neigh]+i
 
