@@ -14,11 +14,9 @@ def get_and_parse_file(file_path,parser):
                 for graph_raw in file.read().split("\n\n"):
                     raw_lines = graph_raw.split("\n")
                     graph :nx.graph = nx.empty_graph(int(raw_lines[0]))
-                    print("Graph ",graph,graph.nodes())
                     for i in raw_lines[1:]:
                         nodes = i.split(" ")
                         graph.add_edge(int(nodes[0]),int(nodes[1]))
-                    print("Graph ",graph,graph.nodes())
                     graphs.append(graph)
                 return graphs
         case "adjacency-matrix":
