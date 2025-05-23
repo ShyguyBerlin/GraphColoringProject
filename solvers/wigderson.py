@@ -67,8 +67,7 @@ def wigdersons_first( G : nx.Graph):
     G=G.copy() # 1
 
     i = 0 # 2
-
-    while max([G.degree(n) for n in G.nodes()])>=math.sqrt(G.order()): # 3
+    while G.order()>0 and max([G.degree(n) for n in G.nodes()])>=math.sqrt(G.order()): # 3
         n = max(G.nodes(),key=lambda x: G.degree(x))    # 1
         *_,col = greedy_desc_deg(G.subgraph(G.neighbors(n))) # 2
         for neigh in col:
