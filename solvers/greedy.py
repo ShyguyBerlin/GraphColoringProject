@@ -70,3 +70,23 @@ def greedy_desc_deg( G : nx.graph):
             c+=1
         
         yield labels
+
+def greedy_most_colors( G : nx.graph):
+    labels={}
+
+    G_remaining :list =list(G.nodes())
+
+    while len(G_remaining)>0:
+        most_colored_neigh_node = max(G_remaining, key=lambda x: len([neigh for neigh in G.neighbors(x) if neigh in labels.keys()]))
+        used = [labels.get(neigh) for neigh in G.neighbors(most_colored_neigh_node)]
+        c=1
+        while True:
+            if c not in used:
+                labels[most_colored_neigh_node]= c
+                break
+            c+=1
+        
+        G_remaining.remove(most_colored_neigh_node)
+        yield labels
+    
+    return
