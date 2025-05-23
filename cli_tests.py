@@ -1,3 +1,5 @@
+#!/usr/bin/python
+
 from solvers.solvers import get_solvers
 import networkx as nx
 from sys import argv
@@ -80,7 +82,7 @@ if __name__=="__main__":
                     print("You need to specify a parser/format to run a test on a data containing file.")
                 files.append((x,x,parser))
         i+=1
-    print(use_def_files,test_name,timeout,parser,output_path,files)
+    #print(use_def_files,test_name,timeout,parser,output_path,files)
     # Set default values for arguments not given:
     if test_name==None:
         test_name="Test"
