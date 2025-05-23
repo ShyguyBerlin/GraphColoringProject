@@ -57,6 +57,9 @@ class Test_input:
             self.graph_sets.append(Graph_set(parser,file_path,set_name))
         self.solvers=solvers
 
+    def get_total_steps(self):
+        return sum([len(graph_set.graphs) for graph_set in self.graph_sets])*len(self.solvers)
+
 class Graph_set:
     def __init__(self,parser,file_path,set_name):
         self.graphs=get_and_parse_file(file_path,parser)
@@ -120,8 +123,15 @@ def solve_graph(G : nx.graph, solver) -> tuple[float,int]:
     return (execution_time,max(a.values()))
 
 def run_test(input : Test_input) -> Test_result:
+    print(f"Running test {input.test_name}")
     res=Test_result()
     res.test_name=input.test_name
+
+    start_time=time.time()
+    last_log=start_time
+    steps_completed=0
+    total_steps=input.get_total_steps()
+    do_logging= (total_steps>=1000)
 
     for solver in input.solvers:
         if not solver in get_solvers():
@@ -134,8 +144,13 @@ def run_test(input : Test_input) -> Test_result:
             graph_set_result = Graph_set_result(graph_set.name)
             for graph in graph_set.graphs:
                 graph : nx.Graph = graph
-                time, cols = solve_graph(graph,get_solvers()[solver])
-                graph_set_result.add_result(graph.order(),cols,time)
+                exec_time, cols = solve_graph(graph,get_solvers()[solver])
+                graph_set_result.add_result(graph.order(),cols,exec_time)
+                steps_completed+=1
+                if (do_logging and time.time()-last_log>5):
+                    print(f"Done by {round(steps_completed/total_steps*100,1)}% est. time remaining: {round((time.time()-start_time)/steps_completed*(total_steps-steps_completed),1)}s")
+                    last_log=time.time()
             solver_results.append(graph_set_result)
         res.add_results(solver,solver_results)
+    print(f"Finished test {input.test_name}")
     return res

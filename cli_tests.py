@@ -96,6 +96,7 @@ if __name__=="__main__":
         exit(1)
 
     if not use_def_files:
+        print("Preparing test input..")
         input = Test_input(test_name,timeout,files,solvers)
         test_result = run_test(input)
         csv = format_tests_as_csv(test_result)
