@@ -4,7 +4,7 @@ A project where we try to visualize/ work on some graph coloring algorithms
 ## How to run
 
 To run the webinterface, you have to set up a Webserver to host the webpage contained in this repository. There are many ways to achieve this. For example, if editing in visual studio code, you can use a live server extension. Also the page is available at our [github page](https://shyguyberlin.github.io/GraphColoringProject/).<br>
-To run local tests you can use the cli_tests.py script (It contains a solver which is seperated from the webpage, but no real CLI capabilities like arguments or test input).
+To run local tests you can use the cli_tests.py script, more thoroughly explained in the [About-Tests](#about-tests) section.
 
 ## About Tests
 Besides visualizing all the algorithms, it also makes sense to compare them in a few different factors, these include:
