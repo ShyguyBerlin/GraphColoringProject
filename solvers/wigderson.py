@@ -41,8 +41,6 @@ def brute_force(G : nx.graph, min_col: int = 1):
     yield labels
 
 
-
-
 def so_called_easy_algorithm(G : nx.Graph):
     nodes=list(G.nodes())
     part_size=round(math.log(len(nodes)))
@@ -69,11 +67,9 @@ def wigdersons_first( G : nx.Graph):
     G=G.copy() # 1
 
     i = 0 # 2
-
-    while max([G.degree(n) for n in G.nodes()])>=math.sqrt(G.order()): # 3
+    while G.order()>0 and max([G.degree(n) for n in G.nodes()])>=math.sqrt(G.order()): # 3
         n = max(G.nodes(),key=lambda x: G.degree(x))    # 1
         *_,col = greedy_desc_deg(G.subgraph(G.neighbors(n))) # 2
-        print("Hey I got a result when coloring the neighborhood of n",col)
         for neigh in col:
             labels[neigh]=col[neigh]+i
 
@@ -89,4 +85,55 @@ def wigdersons_first( G : nx.Graph):
     for res in greedy_desc_deg(G):
         for label in res:
             labels[label]=res[label]+i
+        yield labels
+
+# Again, this is a modified version, because we do not know the actual k
+# We try to guess k, but in the end it does not make a big difference
+def wigdersons_second( G : nx.Graph):
+    for i in __wigdersons_second(G):
+        yield i
+    
+    return
+
+def __wigdersons_second(G :nx.Graph):
+    labels={}
+    G=G.copy()
+
+    def fk(n):
+        if(n<=4):
+            return 1
+        k=math.log(n) # arbitrary
+        return math.ceil(n**(1-1/(k-1)))
+
+    col=0
+
+    while G.order()>0:
+        n = max(G.nodes(), key=lambda x: G.degree(x)) # 1
+        if G.degree(n) < fk(G.order()):
+            # If the highest degree of the graph is less than fk, we can stop
+            break
+        neighs=list(G.neighbors(n))
+        if len(neighs)>0:
+            *_, res = __wigdersons_second(G.subgraph(neighs)) # 2
+        else:
+            res={}
+        max_col=max(res.values())
+        if len(res.values())==0:
+            max_col=0
+        labels[n]=max_col+col+1 # 3
+        for i in res:
+            labels[i]=res[i]+col
+        col+=max_col # 4
+        
+        removes=list(G.neighbors(n)) # 5
+        removes.append(n)
+        G.remove_nodes_from(removes)
+        yield labels
+
+    if G.order()==0:
+        return
+
+    *_,rem_lab = greedy_desc_deg(G)
+    for i in rem_lab:
+        labels[i]=rem_lab[i]+col
         yield labels
