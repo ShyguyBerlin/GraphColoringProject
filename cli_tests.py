@@ -11,6 +11,7 @@ def print_help():
         Options:
         --test-name -n <name> : Set a specific test name which will be printed to the results
         --timeout -t <time> : Sets a timeout for the test, give time in miliseconds
+        --repititions -r <number> : Repeat the test n times, averaging results and counteracting randomness on small datasets
         --parser -p <format> : Sets the format the parser should use to read the file
         --definition-file -d : Assume files given to be in Test definition format, refer to README to learn about the format. 
         --solver -s <array of sorters> : Set which sorters the test should run, defaults to all of them
@@ -26,6 +27,7 @@ if __name__=="__main__":
     use_def_files=False
     test_name=None
     timeout=None
+    repetitions=None
     parser=None
     output_path=None
 
@@ -50,6 +52,13 @@ if __name__=="__main__":
             case "--timeout" | "-t":
                 if len(argv) > i+1:
                     timeout=int(argv[i+1])
+                    i+=1
+                else:
+                    print("Incorrect amount/layout of arguments")
+                    exit(1)
+            case "--repetitions" | "-r":
+                if len(argv) > i+1:
+                    repetitions=int(argv[i+1])
                     i+=1
                 else:
                     print("Incorrect amount/layout of arguments")
@@ -92,6 +101,8 @@ if __name__=="__main__":
             timeout=10000
         if solvers==None:
             solvers=get_solvers().keys()
+        if repetitions==None:
+            repetitions=1
 
     if len(files)==0:
         print("No files to run tests on given!")
@@ -100,7 +111,7 @@ if __name__=="__main__":
     print("Preparing test input..")
     csv=""
     if not use_def_files:
-        input = Test_input(test_name,timeout,files,solvers)
+        input = Test_input(test_name,timeout,files,solvers,repetitions)
         test_result = run_test(input)
         csv = format_test_as_csv(test_result)
     else:
@@ -112,6 +123,8 @@ if __name__=="__main__":
                 test.test_name=test
             if timeout!=None:
                 test.timeout=timeout
+            if repetitions!=None:
+                test.repetitions=repetitions
             if solvers!=None:
                 test.solvers=solvers
             tests.append(test)

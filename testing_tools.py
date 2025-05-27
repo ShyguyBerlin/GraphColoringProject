@@ -46,16 +46,17 @@ def get_and_parse_file(file_path,parser):
             exit(1)
 
 class Test_input:
-    def __init__(self,test_name,timeout,raw_graph_sets,solvers):
+    def __init__(self,test_name,timeout,raw_graph_sets,solvers,repetitions):
         self.test_name=test_name
         self.timeout=timeout
         self.graph_sets=[]
         for (file_path,set_name,parser) in raw_graph_sets:
             self.graph_sets.append(Graph_set(parser,file_path,set_name))
         self.solvers=solvers
+        self.repetitions=repetitions
 
     def get_total_steps(self):
-        return sum([len(graph_set.graphs) for graph_set in self.graph_sets])*len(self.solvers)
+        return self.repetitions*sum([len(graph_set.graphs) for graph_set in self.graph_sets])*len(self.solvers)
 
 def get_test_from_file(file_path :str) -> Test_input:
     
@@ -71,6 +72,10 @@ def get_test_from_file(file_path :str) -> Test_input:
         timeout=100
         if "timeout" in obj:
             timeout=obj["timeout"]
+
+        repetitions=1
+        if "repetitions" in obj:
+            repetitions=obj["repetitions"]
 
         if "solvers" in obj:
             if not isinstance(obj["solvers"],list):
@@ -101,7 +106,7 @@ def get_test_from_file(file_path :str) -> Test_input:
             
             datasets.append((dataset["file-path"],setname,dataset["parser"]))
 
-        test= Test_input(name,timeout,datasets,solvers)
+        test= Test_input(name,timeout,datasets,solvers,repetitions)
         return test
 
 class Graph_set:
@@ -152,7 +157,7 @@ def format_tests_as_csv(tests : list[Test_result]) -> str:
             avg_exec_time = sum(graph_set_result.exec_times)/len(graph_set_result.exec_times)
             med_exec_time = sorted(graph_set_result.exec_times)[len(graph_set_result.exec_times)//2]
 
-            csv_lines.append(f"\"{test.test_name}\",\"{solver}\",\"{graph_set_result.name}\",0,{min_order},{max_order},{round(avg_order,2)},{med_order},{min_exec_time},{max_exec_time},{round(avg_exec_time,4)},{round(med_exec_time,4)},{min_colors},{max_colors},{round(avg_colors,4)},{med_colors}")
+            csv_lines.append(f"\"{test.test_name}\",\"{solver}\",\"{graph_set_result.name}\",0,{min_order},{max_order},{round(avg_order,2)},{med_order},{round(min_exec_time,4)},{round(max_exec_time,4)},{round(avg_exec_time,4)},{round(med_exec_time,4)},{round(min_colors,4)},{round(max_colors,4)},{round(avg_colors,4)},{round(med_colors,4)}")
     return "\n".join(csv_lines)
 
 def format_test_as_csv(test : Test_result) -> str:
@@ -191,9 +196,14 @@ def run_test(input : Test_input) -> Test_result:
             graph_set_result = Graph_set_result(graph_set.name)
             for graph in graph_set.graphs:
                 graph : nx.Graph = graph
-                exec_time, cols = solve_graph(graph,get_solvers()[solver])
-                graph_set_result.add_result(graph.order(),cols,exec_time)
-                steps_completed+=1
+                graph_avg_exec_time=0
+                graph_avg_cols=0
+                for i in range(input.repetitions):
+                    exec_time, cols = solve_graph(graph,get_solvers()[solver])
+                    graph_avg_exec_time+=exec_time
+                    graph_avg_cols+=cols
+                    steps_completed+=1
+                graph_set_result.add_result(graph.order(),graph_avg_cols/input.repetitions,graph_avg_exec_time/input.repetitions)
                 if (do_logging and time.time()-last_log>5):
                     print(f"Done by {round(steps_completed/total_steps*100,1)}% est. time remaining: {round((time.time()-start_time)/steps_completed*(total_steps-steps_completed),1)}s")
                     last_log=time.time()
