@@ -80,28 +80,48 @@ if __name__=="__main__":
             case x:
                 if parser==None and not use_def_files:
                     print("You need to specify a parser/format to run a test on a data containing file.")
+                    exit(1)
                 files.append((x,x,parser))
         i+=1
     #print(use_def_files,test_name,timeout,parser,output_path,files)
     # Set default values for arguments not given:
-    if test_name==None:
-        test_name="Test"
-    if timeout==None:
-        timeout=10000
-    if solvers==None:
-        solvers=get_solvers().keys()
+    if not use_def_files:
+        if test_name==None:
+            test_name="Test"
+        if timeout==None:
+            timeout=10000
+        if solvers==None:
+            solvers=get_solvers().keys()
 
     if len(files)==0:
         print("No files to run tests on given!")
         exit(1)
 
+    print("Preparing test input..")
+    csv=""
     if not use_def_files:
-        print("Preparing test input..")
         input = Test_input(test_name,timeout,files,solvers)
         test_result = run_test(input)
-        csv = format_tests_as_csv(test_result)
-        if output_path==None:
-            print(csv)
-        else:
-            with open(output_path,"w") as f:
-                f.write(csv)
+        csv = format_test_as_csv(test_result)
+    else:
+        tests:list[Test_input]=[]
+        for _,i,_ in files:
+            test=get_test_from_file(i)
+
+            if test_name!=None:
+                test.test_name=test
+            if timeout!=None:
+                test.timeout=timeout
+            if solvers!=None:
+                test.solvers=solvers
+            tests.append(test)
+
+        results:list[Test_result]=[]
+        for test in tests:
+            results.append(run_test(test))
+        csv = format_tests_as_csv(results)
+    if output_path==None:
+        print(csv)
+    else:
+        with open(output_path,"w") as f:
+            f.write(csv)
