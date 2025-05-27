@@ -11,14 +11,12 @@ from solvers.wigderson import check_complete
 # We shall use nodes to index a subgraph in each function as we make a lot of modifications and it should be faster to make the subgraph instead of copying and editing the whole graph
 # This is an assumption I made without any proof
 
-@cache
 def generate_independent_sets(G : nx.Graph, nodes):
-    nodes=list(nodes)
     if len(nodes)==0:
         yield []
         return
     pivot=nodes[0]
-    for i in generate_independent_sets(G,tuple(nodes[1:])):
+    for i in generate_independent_sets(G,nodes[1:]):
         yield i
     nodes2=[]
     edges=list(G.edges())
@@ -26,7 +24,7 @@ def generate_independent_sets(G : nx.Graph, nodes):
         if not ((pivot,o) in edges or (o,pivot) in edges):
             nodes2.append(o)
     
-    for i in generate_independent_sets(G,tuple(nodes2)):
+    for i in generate_independent_sets(G,nodes2):
         yield [pivot]+i
 
 # This estimates the coloring number, but if it is wrong, it will output a SMALLER number
@@ -44,7 +42,7 @@ def a_star_solver(G : nx.Graph):
             print(inst)
             yield inst[4]
             return
-        for i in generate_independent_sets(G, tuple(inst[3])):
+        for i in generate_independent_sets(G, inst[3]):
             new_nodes=[x for x in inst[3] if not x in i]
             labels=inst[4].copy()
             for n in i:
