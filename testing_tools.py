@@ -5,10 +5,6 @@ import json
 
 def get_and_parse_file(file_path,parser):
     match parser:
-        case "gml":
-            return [nx.read_gml(file_path)]
-        case "graphml":
-            return [nx.read_graphml(file_path)]
         case "edge-list":
             with open(file_path, "r") as file:
                 graphs=[]
@@ -34,21 +30,19 @@ def get_and_parse_file(file_path,parser):
                                 graph.add_edge(u,v)
                     graphs.append(graph)
                 return graphs
-        case "pickle":
-            G = nx.read_gpickle(file_path)
-            return [G]
         case "graph6":
             G = nx.graph6.read_graph6(file_path)
             if isinstance(G,list):
                 return G
             return [G]
         case x:
+            valids="edge-list adjacency-matrix graph6"
             if x is None:
                 print(f"""No parser specified. Please use one of the following formats:
-                gml graphml edge-list adjacency-matrix pickle graph6""")
+                {valids}""")
             else:
                 print(f"""The format "{x}" is not supported. Please use one of the following formats:
-                gml graphml edge-list adjacency-matrix pickle graph6""")
+                {valids}""")
             exit(1)
 
 class Test_input:
