@@ -1,5 +1,6 @@
 from . import greedy
 from . import wigderson
+from . import solvers
 import networkx as nx
 
 def test_color_swap_success():
@@ -24,9 +25,21 @@ def test_color_swap_trivial_input():
 
     assert greedy.try_swap(graph,labels,[1],2,[3])==[]
 
+
+# Test the color_swap solver on 5 random graphs
 def test_color_swap_solver_correctness():
-    graph :nx.Graph = nx.erdos_renyi_graph(40,0.2)
+    for i in range(5):
+        graph :nx.Graph = nx.erdos_renyi_graph(40,0.2)
 
-    *_,res = greedy.greedy_color_swaps(graph)
+        *_,res = greedy.greedy_color_swaps(graph)
 
-    assert wigderson.check_complete(graph,res)
+        assert wigderson.check_complete(graph,res)
+
+def test_all_solvers_correctness():
+    for solver in solvers.get_solvers().values():
+        for i in range(3):
+            graph :nx.Graph = nx.erdos_renyi_graph(25,0.2)
+
+            *_,res = solver(graph)
+
+            assert wigderson.check_complete(graph,res)
