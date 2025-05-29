@@ -1,0 +1,4 @@
+# Environment for use with Conda
+dependencies:
+  - networkx
+  - pip
