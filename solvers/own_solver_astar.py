@@ -6,7 +6,7 @@ from random import shuffle
 import math
 from functools import cache
 from heapq import *
-from solvers.wigderson import check_complete
+from .wigderson import check_complete
 
 # We shall use nodes to index a subgraph in each function as we make a lot of modifications and it should be faster to make the subgraph instead of copying and editing the whole graph
 # This is an assumption I made without any proof

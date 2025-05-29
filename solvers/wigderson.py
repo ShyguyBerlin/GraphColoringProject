@@ -3,7 +3,7 @@
 import networkx as nx
 from random import shuffle
 import math
-from solvers.greedy import greedy_desc_deg
+from .greedy import greedy_desc_deg
 
 # These algorithms should only be used with 3-colorable graphs I guess
 

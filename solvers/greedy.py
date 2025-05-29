@@ -90,3 +90,89 @@ def greedy_most_colors( G : nx.graph):
         yield labels
     
     return
+
+def greedy_color_swaps( G : nx.graph):
+    for i in greedy_color_swaps_continue(G,{}):
+        yield i
+
+def try_swap(G : nx.Graph, labels :dict, nodes :list , new_color:int, blocked_nodes:list):
+    # Node has color, change can be made
+    if len(nodes)==0:
+        return []
+    
+    if not nodes[-1] in labels.keys():
+        return False
+    
+    for i in range(len(nodes)-1):
+        if not nodes[i] in labels.keys():
+            return False
+        if labels[nodes[i]]!=labels[nodes[i+1]]:
+            return False
+
+    old_color=labels.get(nodes[0])
+    if old_color == new_color:
+        return []
+    
+    search=nodes
+
+    # This should include all nodes touching the start node which either have the same color as the start node or new_color
+    # Nodes which do not have a color label are ignored
+    searched=[]
+
+    while len(search)>0:
+        n=search.pop()
+        searched.append(n)
+
+        neighs=G.neighbors(n)
+        for i in neighs:
+
+            # No color
+            if not i in labels.keys():
+                continue
+            col= labels.get(i)
+
+            # irrelevant color
+            if not (col==old_color or col==new_color):
+                continue
+
+            if i in blocked_nodes:
+                return None
+            
+            if not i in search and not i in searched:
+                search.append(i)
+
+
+    return searched  # Swap successful
+
+def swap(labels:dict, keys_to_swap:list, valueA:int, valueB:int):
+    """
+    Swaps color labels valueA and valueB for the nodes in keys_to_swap.
+    """
+    if valueA == valueB:
+        return
+
+    for node in keys_to_swap:
+        if node in labels:
+            if labels[node] == valueA:
+                labels[node] = valueB
+            elif labels[node] == valueB:
+                labels[node] = valueA
+
+def greedy_color_swaps_continue(G :nx.Graph, labels :dict):
+    
+    G_remaining :list =list([i for i in G.nodes() if not i in labels.keys()])
+    
+    while len(G_remaining)>0:
+        most_colored_neigh_node = max(G_remaining, key=lambda x: len([neigh for neigh in G.neighbors(x) if neigh in labels.keys()]))
+        used = [labels.get(neigh) for neigh in G.neighbors(most_colored_neigh_node)]
+        c=1
+        while True:
+            if c not in used:
+                labels[most_colored_neigh_node]= c
+                break
+            c+=1
+        
+        G_remaining.remove(most_colored_neigh_node)
+        yield labels
+    
+    return
