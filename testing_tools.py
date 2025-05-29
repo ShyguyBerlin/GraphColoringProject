@@ -1,13 +1,10 @@
 import networkx as nx
 from solvers.solvers import get_solvers
 import time
+import json
 
 def get_and_parse_file(file_path,parser):
     match parser:
-        case "gml":
-            return [nx.read_gml(file_path)]
-        case "graphml":
-            return [nx.read_graphml(file_path)]
         case "edge-list":
             with open(file_path, "r") as file:
                 graphs=[]
@@ -33,32 +30,84 @@ def get_and_parse_file(file_path,parser):
                                 graph.add_edge(u,v)
                     graphs.append(graph)
                 return graphs
-        case "pickle":
-            G = nx.read_gpickle(file_path)
-            return [G]
         case "graph6":
-            G = nx.from_graph6_bytes(file_path)
+            G = nx.graph6.read_graph6(file_path)
+            if isinstance(G,list):
+                return G
             return [G]
         case x:
+            valids="edge-list adjacency-matrix graph6"
             if x is None:
                 print(f"""No parser specified. Please use one of the following formats:
-                gml graphml edge-list adjacency-matrix pickle graph6""")
+                {valids}""")
             else:
                 print(f"""The format "{x}" is not supported. Please use one of the following formats:
-                gml graphml edge-list adjacency-matrix pickle graph6""")
+                {valids}""")
             exit(1)
 
 class Test_input:
-    def __init__(self,test_name,timeout,raw_graph_sets,solvers):
+    def __init__(self,test_name,timeout,raw_graph_sets,solvers,repetitions):
         self.test_name=test_name
         self.timeout=timeout
         self.graph_sets=[]
         for (file_path,set_name,parser) in raw_graph_sets:
             self.graph_sets.append(Graph_set(parser,file_path,set_name))
         self.solvers=solvers
+        self.repetitions=repetitions
 
     def get_total_steps(self):
-        return sum([len(graph_set.graphs) for graph_set in self.graph_sets])*len(self.solvers)
+        return self.repetitions*sum([len(graph_set.graphs) for graph_set in self.graph_sets])*len(self.solvers)
+
+def get_test_from_file(file_path :str) -> Test_input:
+    
+    stdError=f"ERROR: Cannot convert the file {file_path} to test."
+    
+    with open(file_path,"r") as file:
+        obj=json.load(file)
+        
+        name="Test"
+        if "name" in obj:
+            name=obj["name"]
+        
+        timeout=100
+        if "timeout" in obj:
+            timeout=obj["timeout"]
+
+        repetitions=1
+        if "repetitions" in obj:
+            repetitions=obj["repetitions"]
+
+        if "solvers" in obj:
+            if not isinstance(obj["solvers"],list):
+                print(stdError+" The \"solvers\" property shall be an array of strings, each being one of the available solving algorithms.")
+                exit(1)
+            solvers=obj["solvers"]
+        else:
+            solvers=get_solvers().keys()
+
+        datasets=[]
+
+        if not "datasets" in obj:
+            print(stdError+f" The file misses the value \"datasets\".")
+            exit(1)
+    
+        if not isinstance(obj["datasets"],list):
+            print(stdError+f" The \"datasets\" property must be a list.")
+            exit(1)
+
+        for dataset in obj["datasets"]:
+            stdDataSetError=stdError+" Each dataset must be an object containing the \"parser\" and the \"file-path\" to a dataset."
+            if (not isinstance(dataset,dict)) or (not "file-path" in dataset) or (not "parser" in dataset):
+                print(stdDataSetError)
+                exit(1)
+            setname = dataset["file-path"]
+            if "name" in dataset:
+                setname = dataset["name"]
+            
+            datasets.append((dataset["file-path"],setname,dataset["parser"]))
+
+        test= Test_input(name,timeout,datasets,solvers,repetitions)
+        return test
 
 class Graph_set:
     def __init__(self,parser,file_path,set_name):
@@ -89,27 +138,30 @@ class Test_result:
 
 CSV_HEADER="test_name,solver,graph_set,graph_idx,graph_order_min,graph_order_max,graph_order_avg,graph_order_med,exec_time_min,exec_time_max,exec_time_avg,exec_time_med,colors_min,colors_max,colors_avg,colors_med"
 
-def format_tests_as_csv(test : Test_result) -> str:
+def format_tests_as_csv(tests : list[Test_result]) -> str:
     csv_lines=[CSV_HEADER]
+    for test in tests:
+        for graph_set_result,solver in test.results:
+            min_order = min(graph_set_result.orders)
+            max_order = max(graph_set_result.orders)
+            avg_order = sum(graph_set_result.orders)/len(graph_set_result.orders)
+            med_order = sorted(graph_set_result.orders)[len(graph_set_result.orders)//2]
 
-    for graph_set_result,solver in test.results:
-        min_order = min(graph_set_result.orders)
-        max_order = max(graph_set_result.orders)
-        avg_order = sum(graph_set_result.orders)/len(graph_set_result.orders)
-        med_order = sorted(graph_set_result.orders)[len(graph_set_result.orders)//2]
+            min_colors = min(graph_set_result.colors)
+            max_colors = max(graph_set_result.colors)
+            avg_colors = sum(graph_set_result.colors)/len(graph_set_result.colors)
+            med_colors = sorted(graph_set_result.colors)[len(graph_set_result.colors)//2]
 
-        min_colors = min(graph_set_result.colors)
-        max_colors = max(graph_set_result.colors)
-        avg_colors = sum(graph_set_result.colors)/len(graph_set_result.colors)
-        med_colors = sorted(graph_set_result.colors)[len(graph_set_result.colors)//2]
+            min_exec_time = min(graph_set_result.exec_times)
+            max_exec_time = max(graph_set_result.exec_times)
+            avg_exec_time = sum(graph_set_result.exec_times)/len(graph_set_result.exec_times)
+            med_exec_time = sorted(graph_set_result.exec_times)[len(graph_set_result.exec_times)//2]
 
-        min_exec_time = min(graph_set_result.exec_times)
-        max_exec_time = max(graph_set_result.exec_times)
-        avg_exec_time = sum(graph_set_result.exec_times)/len(graph_set_result.exec_times)
-        med_exec_time = sorted(graph_set_result.exec_times)[len(graph_set_result.exec_times)//2]
-
-        csv_lines.append(f"{test.test_name},{solver},{graph_set_result.name},0,{min_order},{max_order},{avg_order},{med_order},{min_exec_time},{max_exec_time},{avg_exec_time},{med_exec_time},{min_colors},{max_colors},{avg_colors},{med_colors}")
+            csv_lines.append(f"\"{test.test_name}\",\"{solver}\",\"{graph_set_result.name}\",0,{min_order},{max_order},{round(avg_order,2)},{med_order},{round(min_exec_time,4)},{round(max_exec_time,4)},{round(avg_exec_time,4)},{round(med_exec_time,4)},{round(min_colors,4)},{round(max_colors,4)},{round(avg_colors,4)},{round(med_colors,4)}")
     return "\n".join(csv_lines)
+
+def format_test_as_csv(test : Test_result) -> str:
+    return format_tests_as_csv([test])
 
 #Returns (Runtime in miliseconds, Number of colors used)
 def solve_graph(G : nx.graph, solver) -> tuple[float,int]:
@@ -144,9 +196,14 @@ def run_test(input : Test_input) -> Test_result:
             graph_set_result = Graph_set_result(graph_set.name)
             for graph in graph_set.graphs:
                 graph : nx.Graph = graph
-                exec_time, cols = solve_graph(graph,get_solvers()[solver])
-                graph_set_result.add_result(graph.order(),cols,exec_time)
-                steps_completed+=1
+                graph_avg_exec_time=0
+                graph_avg_cols=0
+                for i in range(input.repetitions):
+                    exec_time, cols = solve_graph(graph,get_solvers()[solver])
+                    graph_avg_exec_time+=exec_time
+                    graph_avg_cols+=cols
+                    steps_completed+=1
+                graph_set_result.add_result(graph.order(),graph_avg_cols/input.repetitions,graph_avg_exec_time/input.repetitions)
                 if (do_logging and time.time()-last_log>5):
                     print(f"Done by {round(steps_completed/total_steps*100,1)}% est. time remaining: {round((time.time()-start_time)/steps_completed*(total_steps-steps_completed),1)}s")
                     last_log=time.time()
