@@ -160,19 +160,46 @@ def swap(labels:dict, keys_to_swap:list, valueA:int, valueB:int):
 
 def greedy_color_swaps_continue(G :nx.Graph, labels :dict):
     
-    G_remaining :list =list([i for i in G.nodes() if not i in labels.keys()])
-    
-    while len(G_remaining)>0:
-        most_colored_neigh_node = max(G_remaining, key=lambda x: len([neigh for neigh in G.neighbors(x) if neigh in labels.keys()]))
-        used = [labels.get(neigh) for neigh in G.neighbors(most_colored_neigh_node)]
+    labels={}
+
+    G_sorting =G.copy()
+    sorting=[]
+    for i in range(len(G)):
+        deg=min([G_sorting.degree(n) for n in G_sorting.nodes()])
+        nodes = list(G_sorting.nodes())
+        shuffle(nodes)
+        for node in nodes:
+            if G_sorting.degree(node)==deg:
+                sorting.append(node)
+                G_sorting.remove_node(node)
+                break
+    sorting.reverse()
+
+    for node in sorting:
+        neighs= {(labels.get(neigh),neigh) for neigh in G.neighbors(node)}
+        used = [i[0] for i in neighs]
         c=1
         while True:
             if c not in used:
-                labels[most_colored_neigh_node]= c
+                labels[node]= c
                 break
             c+=1
         
-        G_remaining.remove(most_colored_neigh_node)
+        could_swap=False
+        for alt_col in range(1,c):
+            for exg_col in range(alt_col+1,c):
+                res=try_swap(G,labels,[i[1] for i in neighs if i[0]==alt_col],exg_col,[i[1] for i in neighs if i[0]==exg_col])
+                if res!=None:
+                    swap(labels,res,alt_col,exg_col)
+                    could_swap=True
+                    c=alt_col
+                    break
+            if could_swap:
+                break
+        
+        labels[node]=c
+
         yield labels
     
     return
+
