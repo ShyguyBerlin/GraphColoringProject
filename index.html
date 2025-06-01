@@ -47,17 +47,39 @@
 			</td>
 			<td>
 				<select id="graph_select">
-					<option value="auto">Generate a Graph for me</option>
+					<option value="define-own-graph">Define own graph</option>
 					<option value="edge-list">Graph as edge list</option>
 					<option value="adjacency-matrix">Graph as adjacency matrix</option>
+					<option value="erdos-renyi-graph">Erdos-renyi-graph</option>
 				</select>
 			</td>
 		</tr>
 		<tr>
-			<td>
+        	<td>Anzahl der Knoten:</td>
+        	<td>
+            	<input type = "number" id = "Knotenanzahl">
+       	 	</td>
+    	</tr>
+    	<tr>
+        	<td>Cliquengroesse:</td>
+        	<td>
+            	<input type = "number" id = "Cliquengroesse">
+        	</td>
+    	</tr>
+    	<tr>
+        	<td>Kantendichte:</td>
+        	<td>
+            	<div class="slide-container">
+                	<input type="range" min="0" max="100" value="50" id="edge-density-range" class = "slider" oninput="updateEdgeDensitySliderValue(value)">
+            	</div>
+            	<span style="min-width: 20px; float:right; margin-left: 1em;" id="edge-density-value-display"></span>
+        	</td>
+    	</tr>
+			<tr>
+				<td>
 				Delay
 			</td>
-			<td style="display: flex; justify-content: space-between;">
+				<td style="display: flex; justify-content: space-between;">
 				<div class="slide-container">
 					<input type="range" min="0" max="100" value="50" class="slider" id="delay-range" oninput="updateSliderValue(value)">
 				</div>
@@ -93,4 +115,10 @@
 	const loading = document.getElementById('loading');
 	addEventListener('py:ready', () => loading.close());
 	loading.showModal();
+</script>
+<script>
+  function updateEdgeDensitySliderValue(val) {
+    document.getElementById("edge-density-value-display").textContent = val/100;
+	console.log("changed display")
+  }
 </script>
