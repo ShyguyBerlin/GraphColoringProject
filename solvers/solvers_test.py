@@ -43,3 +43,12 @@ def test_all_solvers_correctness():
             *_,res = solver(graph)
 
             assert wigderson.check_complete(graph,res)
+
+def test_all_solvers_correctness_dense():
+    for solver in solvers.get_solvers().values():
+        for i in range(3):
+            graph :nx.Graph = nx.erdos_renyi_graph(35,0.9)
+
+            *_,res = solver(graph)
+
+            assert wigderson.check_complete(graph,res)

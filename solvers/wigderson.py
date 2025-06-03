@@ -3,7 +3,7 @@
 import networkx as nx
 from random import shuffle
 import math
-from .greedy import greedy_desc_deg
+from .greedy import greedy_desc_deg,greedy_most_colors,greedy_color_swaps
 
 # These algorithms should only be used with 3-colorable graphs I guess
 
@@ -87,34 +87,86 @@ def wigdersons_first( G : nx.Graph):
             labels[label]=res[label]+i
         yield labels
 
+# this only works for 3-colorable graphs
+# I have made a small adjustment that should fix this requirement
+def wigdersons_first_greedy_color( G : nx.Graph):
+    labels={}
+
+    G=G.copy() # 1
+
+    i = 0 # 2
+    while G.order()>0 and max([G.degree(n) for n in G.nodes()])>=math.sqrt(G.order()): # 3
+        n = max(G.nodes(),key=lambda x: G.degree(x))    # 1
+        *_,col = greedy_most_colors(G.subgraph(G.neighbors(n))) # 2
+        for neigh in col:
+            labels[neigh]=col[neigh]+i
+
+        used_colors = max(col.values())+1 # adjustment to work for any k
+        labels[n]=i+used_colors # 3 (adjusted)
+
+        i+= used_colors # 4 (adjusted)
+
+        G.remove_nodes_from(list(G.neighbors(n))) # 5
+        G.remove_node(n) # 5
+        yield labels
+    
+    for res in greedy_desc_deg(G):
+        for label in res:
+            labels[label]=res[label]+i
+        yield labels
+
 # Again, this is a modified version, because we do not know the actual k
 # We try to guess k, but in the end it does not make a big difference
-def wigdersons_second( G : nx.Graph):
-    for i in __wigdersons_second(G):
-        yield i
-    
-    return
-
-def __wigdersons_second(G :nx.Graph):
-    labels={}
-    G=G.copy()
+def wigdersons_second(G :nx.Graph):
 
     def fk(n):
         if(n<=4):
             return 1
         k=math.log(n) # arbitrary
+        if k==1: return n
         return math.ceil(n**(1-1/(k-1)))
+
+    for i in wigdersons_second__(G,fk):
+        yield i
+
+
+def wigdersons_second_sqrt(G :nx.Graph):
+
+    def fk(n):
+        return math.ceil(math.sqrt(n))
+
+    for i in wigdersons_second__(G,fk):
+        yield i
+
+def wigdersons_second_log(G :nx.Graph):
+
+    def fk(n):
+        return math.ceil(math.log2(n))
+
+    for i in wigdersons_second__(G,fk):
+        yield i
+    
+
+def wigdersons_second__(G :nx.Graph,fk):
+    labels={}
+    G=G.copy()
 
     col=0
 
+    def fk_fix(x):
+        res=fk(x)
+        if res>=1:
+            return res
+        return 1
+
     while G.order()>0:
         n = max(G.nodes(), key=lambda x: G.degree(x)) # 1
-        if G.degree(n) < fk(G.order()):
+        if G.degree(n) < fk_fix(G.order()):
             # If the highest degree of the graph is less than fk, we can stop
             break
         neighs=list(G.neighbors(n))
         if len(neighs)>0:
-            *_, res = __wigdersons_second(G.subgraph(neighs)) # 2
+            *_, res = wigdersons_second__(G.subgraph(neighs),fk) # 2
         else:
             res={}
         max_col=max(res.values())
