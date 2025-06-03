@@ -1,10 +1,9 @@
 #!/usr/bin/python
 
 from solvers.solvers import get_solvers
-import networkx as nx
 from sys import argv
 from testing_tools import *
-from random import randint
+
 
 def print_help():
     print(f"""     Use: {argv[0]} OPTIONS FILES\n
