@@ -10,7 +10,7 @@ def print_help():
         Options:
         --test-name -n <name> : Set a specific test name which will be printed to the results
         --timeout -t <time> : Sets a timeout for the test, give time in miliseconds
-        --repititions -r <number> : Repeat the test n times, averaging results and counteracting randomness on small datasets
+        --repetitions -r <number> : Repeat the test n times, averaging results and counteracting randomness on small datasets
         --parser -p <format> : Sets the format the parser should use to read the file
         --definition-file -d : Assume files given to be in Test definition format, refer to README to learn about the format. 
         --solver -s <array of sorters> : Set which sorters the test should run, defaults to all of them

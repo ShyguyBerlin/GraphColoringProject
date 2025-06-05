@@ -1,0 +1,13 @@
+{
+    "name": "Test1",
+    "timeout": "1500",
+    "solvers": ["greedy_min","greedy_max"],
+    "repetitions": 1,
+    "datasets":
+    [
+        {
+            "parser": "edge-list",
+            "file-path": "tests/input/small_handcrafted_graphs.txt"
+        }
+    ]
+}

@@ -17,24 +17,16 @@ This data should be sampled over large datasets, which need to be formated in a 
 
 Example Test definition file, which includes all available or planned parameters:
 ```json
-// Test definition file
 {
     "name": "Test1",
-    "timeout": "1500", // miliseconds
-    // "solvers": ["greedy_min","greedy_max"]
+    "timeout": "1500",
+    "solvers": ["greedy_min","greedy_max"],
+    "repetitions": 1,
     "datasets":
     [
         {
-            "format": "edge-list",
-            "file": "tests/SmallGraphs.txt"
-        },
-        {
-            "format": "adjacency-matrix",
-            "file": "tests/LargeGraphs.txt",
-        }
-        {
-            "format": "planar-code",
-            "file": "tests/SmallPlanarGraphs.txt"
+            "parser": "edge-list",
+            "file-path": "tests/input/small_handcrafted_graphs.txt"
         }
     ]
 }
