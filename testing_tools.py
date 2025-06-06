@@ -165,12 +165,12 @@ def format_test_as_csv(test : Test_result) -> str:
 
 #Returns (Runtime in miliseconds, Number of colors used)
 def solve_graph(G : nx.graph, solver) -> tuple[float,int]:
-    start_time = time.monotonic_ns()
+    start_time = time.perf_counter_ns()
 
     *_,a = solver(G)
     
     # Calculate difference, devide by 
-    execution_time = (time.monotonic_ns() - start_time)/1_000_000
+    execution_time = (time.monotperf_counter_ns() - start_time)/1_000_000
 
     return (execution_time,max(a.values()))
 
