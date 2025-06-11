@@ -1,7 +1,7 @@
 # This script is meant to be executed as a CLI tool and may assist in generating graph datasets
 
 from sys import argv
-from tools.graph_gen_tools import define_own_graph,convert_to_text
+from tools.graph_gen_tools import define_own_graph,convert_to_text, define_own_graph_chromatic
 
 def print_help():
     print(f"""     Use: {argv[0]} OPTIONS \n
@@ -81,8 +81,20 @@ def cli():
                 seed+=1
             graphs.append(graph)
     else:
-        print("Chromatic number is not yet implemented, sry")
-        exit(0)
+        if(chromatic_number > 2):
+            print("Chromatic number is too small")
+            exit(0)
+        elif(chromatic_number > nodes_count):
+            print("Chromatic number is too high")
+            exit(0)
+        for i in range(amount):
+            graph= define_own_graph_chromatic(nodes_count,edge_density=density,chromatic_number=chromatic_number,seed=seed)
+            if seed:
+                seed+=1
+            graphs.append(graph)
+
+        #print("Chromatic number is not yet implemented, sry")
+        #exit(0)
     
     with open(output,"w") as file:
         output_string = convert_to_text(graphs)
