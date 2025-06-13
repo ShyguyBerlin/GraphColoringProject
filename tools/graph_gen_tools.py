@@ -63,7 +63,7 @@ def determine_edge_count(edge_density, nodes, groups):
             else:
                 edges = edges + (anz*anz)
             count2 = count2 - 1
-        count2 = nodes
+        count2 = groups
         count1 = count1 + 1
     edges = round(edges*edge_density)
     return edges 
@@ -75,8 +75,8 @@ def create_nodes_in_groups(nodes, edges, groups):  # Die implementation gerade a
 
     edge_counter = 0
     random_counter = 1
-    non_edges = nx.non_edges(graph)
-    random_non_edges = sample(list(non_edges), nodes*(nodes-1)/2)
+    non_edges = list(nx.non_edges(graph))
+    random_non_edges = sample(list(non_edges), min(int(nodes*(nodes-1)/2), len(non_edges)))
     while edge_counter < edges:
         if(random_counter == len(random_non_edges)):
             print("Error: not enough edges possible")

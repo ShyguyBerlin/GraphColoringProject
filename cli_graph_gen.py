@@ -81,7 +81,7 @@ def cli():
                 seed+=1
             graphs.append(graph)
     else:
-        if(chromatic_number > 2):
+        if(chromatic_number < 2):
             print("Chromatic number is too small")
             exit(0)
         elif(chromatic_number > nodes_count):

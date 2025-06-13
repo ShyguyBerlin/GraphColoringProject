@@ -170,7 +170,7 @@ def solve_graph(G : nx.graph, solver) -> tuple[float,int]:
     *_,a = solver(G)
     
     # Calculate difference, devide by 
-    execution_time = (time.monotperf_counter_ns() - start_time)/1_000_000
+    execution_time = (time.perf_counter_ns() - start_time)/1_000_000
 
     return (execution_time,max(a.values()))
 
