@@ -135,6 +135,35 @@ def define_own_graph_chromatic(nodes=10, *, edge_density=None, chromatic_number=
 
     return G
 
+def define_own_cograph(nodes = 10):
+    G = nx.Graph()
+    #G = define_own_cograph_recursive(nodes, 1)
+    G = nx.random_cograph(nodes)
+    return G
+    
+
+
+def define_own_cograph_recursive(nodes = 10, counter = 1) -> nx.Graph:
+    graph = nx.Graph()
+    if(nodes == 1):
+        graph.add_node(counter)
+        return graph
+    split = randint(1, nodes-1)
+    Part1 = nx.Graph()
+    Part2 = nx.Graph()
+    Part1 = define_own_cograph_recursive(split, counter)
+    Part2 = define_own_cograph_recursive(nodes-split, counter+split)
+    construction_rule = randint(1,2) # 1 ist Vereinigung, 2 ist Summe
+    if(construction_rule == 1):
+        graph = nx.compose(Part1, Part2)
+    if(construction_rule == 2):
+        graph = nx.compose(Part1, Part2)
+        for node in Part1.nodes:
+            for node2 in Part2.nodes:
+                graph.add_edge(node, node2)
+
+    return graph
+
 def convert_to_text(graphs:list[nx.Graph]):
     graph6_lines = [nx.to_graph6_bytes(g, header=False).decode("ascii") for g in graphs]
 

@@ -1,7 +1,7 @@
 # This script is meant to be executed as a CLI tool and may assist in generating graph datasets
 
 from sys import argv
-from tools.graph_gen_tools import define_own_graph,convert_to_text, define_own_graph_chromatic
+from tools.graph_gen_tools import define_own_graph,convert_to_text, define_own_graph_chromatic, define_own_cograph
 
 def print_help():
     print(f"""     Use: {argv[0]} OPTIONS \n
@@ -11,6 +11,7 @@ def print_help():
         --density -d <edge_density> : Formula to determine the density of edges, can be given as constant or formula
         --max_clique -mc <size> : Guarantees that the maximum clique will be of this size
         --chromatic-number -cn <number> : Sets an UPPER limit to the resulting coloring number
+        --cograph -cg <bool> : If True, will create a Cograph and will ignore density, max_clique etc.
         --seed -s <number> : Sets a seed to use for random algorithms
         --output -o <path> : Will write resulting graphs to this file
         """)
@@ -22,6 +23,7 @@ def cli():
     clique_size=None
     density=None
     chromatic_number=None
+    cograph=None
     seed=None
     output=None
 
@@ -53,6 +55,8 @@ def cli():
                 clique_size = int(get_arg())
             case "--chromatic-number" | "-cn":
                 chromatic_number = int(get_arg())
+            case "--cograph" | "-cg":
+                cograph = bool(get_arg())
             case "--seed" | "-s":
                 seed = int(get_arg())
             case "--output" | "-o":
@@ -61,6 +65,9 @@ def cli():
                 print_help()
                 exit()
         i+=1
+    
+    if density==None:
+        density = 0.3 # arbitrary
     
     if nodes_count==None:
         nodes_count = 10
@@ -74,7 +81,13 @@ def cli():
 
     graphs = []
 
-    if chromatic_number==None:
+    if(cograph == True):
+        graph= define_own_cograph(nodes_count)
+        if seed:
+            seed+=1
+        graphs.append(graph)
+
+    elif chromatic_number==None:
         for i in range(amount):
             graph= define_own_graph(nodes_count,edge_density=density,max_clique=clique_size,seed=seed)
             if seed:
