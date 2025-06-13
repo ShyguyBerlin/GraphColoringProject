@@ -1,7 +1,8 @@
 # This script is meant to be executed as a CLI tool and may assist in generating graph datasets
 
 from sys import argv
-from tools.graph_gen_tools import define_own_graph,convert_to_text, define_own_graph_chromatic
+from tools.graph_gen_tools import define_own_graph,convert_to_text, define_own_graph_chromatic,apply_modulator
+from tools.graph_gen_data_classes import ModulatorData
 
 def print_help():
     print(f"""     Use: {argv[0]} OPTIONS \n
@@ -13,6 +14,10 @@ def print_help():
         --chromatic-number -cn <number> : Sets an UPPER limit to the resulting coloring number
         --seed -s <number> : Sets a seed to use for random algorithms
         --output -o <path> : Will write resulting graphs to this file
+          
+        --modulator-size -ms <count> : Defines the node amount of a modulator, which will be added to each completed graph
+        --modulator-density -md <edge_density> : Same as -d but for the modulator and connections with existing nodes
+                , leave empty to mimic edge density of original graph
         """)
 
 def cli():
@@ -24,6 +29,13 @@ def cli():
     chromatic_number=None
     seed=None
     output=None
+
+    modulator = ModulatorData(None,None)
+
+    def post_gen_alteration(G):
+        if modulator.nodes:
+            return apply_modulator(G,modulator)
+        return G
 
     if len(argv)<=1:
         print_help()
@@ -57,6 +69,10 @@ def cli():
                 seed = int(get_arg())
             case "--output" | "-o":
                 output = get_arg()
+            case "--modulator-size" | "-ms":
+                modulator.nodes=int(get_arg())
+            case "--modulator-density" |"-md":
+                modulator.density=float(get_arg())
             case _:
                 print_help()
                 exit()
@@ -79,7 +95,7 @@ def cli():
             graph= define_own_graph(nodes_count,edge_density=density,max_clique=clique_size,seed=seed)
             if seed:
                 seed+=1
-            graphs.append(graph)
+            graphs.append(post_gen_alteration(graph))
     else:
         if(chromatic_number < 2):
             print("Chromatic number is too small")
@@ -91,7 +107,7 @@ def cli():
             graph= define_own_graph_chromatic(nodes_count,edge_density=density,chromatic_number=chromatic_number,seed=seed)
             if seed:
                 seed+=1
-            graphs.append(graph)
+            graphs.append(post_gen_alteration(graph))
 
         #print("Chromatic number is not yet implemented, sry")
         #exit(0)
