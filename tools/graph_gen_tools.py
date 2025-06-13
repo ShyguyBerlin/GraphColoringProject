@@ -47,6 +47,7 @@ def create_clique(G: nx.Graph, clique):
     return G
 
 def determine_edge_count(edge_density, nodes, groups):
+    # Calculates the amount of all possible edges
     mod = nodes % groups
     anz = nodes // groups
     anz2 = nodes // groups + 1

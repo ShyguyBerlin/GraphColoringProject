@@ -1,5 +1,5 @@
 import networkx as nx
-from solvers.solvers import get_solvers
+from .solvers.solvers import get_solvers
 import time
 import json
 
@@ -164,7 +164,7 @@ def format_test_as_csv(test : Test_result) -> str:
     return format_tests_as_csv([test])
 
 #Returns (Runtime in miliseconds, Number of colors used)
-def solve_graph(G : nx.graph, solver) -> tuple[float,int]:
+def solve_graph(G : nx.Graph, solver) -> tuple[float,int]:
     start_time = time.perf_counter_ns()
 
     *_,a = solver(G)
