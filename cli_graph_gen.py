@@ -98,10 +98,11 @@ def cli():
     graphs = []
 
     if(cograph == True):
-        graph= define_own_cograph(nodes_count)
-        if seed:
-            seed+=1
-        graphs.append(graph)
+        for i in range(amount):
+            graph= define_own_cograph(nodes_count)
+            if seed:
+                seed+=1
+            graphs.append(post_gen_alteration(graph))
 
     elif chromatic_number==None:
         for i in range(amount):
