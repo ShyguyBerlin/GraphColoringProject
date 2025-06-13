@@ -27,6 +27,6 @@ def indiset (G : nx.graph):
             #print(node)
         runs = runs +1  
    
-    print(indi)
-    print(runs)
+    #print(indi)
+    #print(runs)
     return indi
