@@ -99,7 +99,7 @@ def define_own_graph(nodes=10, *, edge_density=None, max_clique=None, seed=globa
     if nodes==None:
         nodes=10
     
-    if seed==None:
+    if True:
         setseed(seed)
 
     knoten_anzahl = int(nodes)
@@ -121,7 +121,7 @@ def define_own_graph_chromatic(nodes=10, *, edge_density=None, chromatic_number=
     if nodes==None:
         nodes=10
     
-    if seed==None:
+    if True:
         setseed(seed)
 
     if edge_density==None:
