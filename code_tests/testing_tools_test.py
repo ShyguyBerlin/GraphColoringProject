@@ -1,4 +1,4 @@
-from .. import testing_tools as tt
+from tools import testing_tools as tt
 import networkx as nx
 
 def test_solve_graph_runs():

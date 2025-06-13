@@ -1,6 +1,6 @@
-from ..solvers import greedy
-from ..solvers import wigderson
-from ..solvers import solvers
+from solvers import greedy
+from solvers import wigderson
+from solvers import solvers
 import networkx as nx
 
 def test_color_swap_success():

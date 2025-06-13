@@ -1,5 +1,5 @@
 import networkx as nx
-from .solvers.solvers import get_solvers
+from solvers.solvers import get_solvers
 import time
 import json
 

@@ -2,7 +2,7 @@
 
 from solvers.solvers import get_solvers
 from sys import argv
-from testing_tools import *
+from tools.testing_tools import *
 
 
 def print_help():
