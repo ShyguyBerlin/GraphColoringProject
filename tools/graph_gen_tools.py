@@ -1,6 +1,7 @@
 import networkx as nx
-from random import sample,randint
+from random import sample,randint,random
 from random import seed as setseed
+from .graph_gen_data_classes import ModulatorData
 
 global_seed=randint(0,1000000)
 
@@ -47,6 +48,7 @@ def create_clique(G: nx.Graph, clique):
     return G
 
 def determine_edge_count(edge_density, nodes, groups):
+    # Calculates the amount of all possible edges
     mod = nodes % groups
     anz = nodes // groups
     anz2 = nodes // groups + 1
@@ -93,13 +95,36 @@ def create_nodes_in_groups(nodes, edges, groups):  # Die implementation gerade a
 
     return graph
 
+def apply_modulator(G : nx.Graph,modulator:ModulatorData) -> nx.Graph :
+    
+    if modulator.nodes==None or modulator.nodes==0:
+        return G
+
+    if modulator.density==None:
+        modulator.density=nx.function.density(G)
+
+    m_graph=nx.erdos_renyi_graph(modulator.nodes,modulator.density)
+
+    union_graph : nx.Graph =nx.disjoint_union(G,m_graph)
+
+    union_nodes=list(union_graph.nodes())
+    m_nodes=union_nodes[G.order():]
+    g_nodes=union_nodes[:G.order()]
+
+    for i in m_nodes:
+        for o in g_nodes:
+            if random()<modulator.density:
+                union_graph.add_edge(i,o)
+
+    return union_graph
+
 def define_own_graph(nodes=10, *, edge_density=None, max_clique=None, seed=global_seed) -> nx.Graph:
     G = nx.Graph()
 
     if nodes==None:
         nodes=10
     
-    if seed==None:
+    if True:
         setseed(seed)
 
     knoten_anzahl = int(nodes)
@@ -121,7 +146,7 @@ def define_own_graph_chromatic(nodes=10, *, edge_density=None, chromatic_number=
     if nodes==None:
         nodes=10
     
-    if seed==None:
+    if True:
         setseed(seed)
 
     if edge_density==None:
