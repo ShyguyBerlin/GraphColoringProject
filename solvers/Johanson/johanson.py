@@ -5,11 +5,12 @@ Created on Thu Jun  5 17:08:14 2025
 @author: Alice Mirror
 """
 import networkx as nx
-import indiset as iset
+import solvers.Johanson.indiset as iset
 
 def johnson(G : nx.graph):
  
-    colors = 0
+    labels={}
+    colors = 1
     surching = 1
 
     
@@ -17,8 +18,10 @@ def johnson(G : nx.graph):
     while(surching == 1):
         indi = iset.indiset(G)
         G.remove_nodes_from(indi)
+        for i in indi:
+            labels[i]=colors
         colors = colors + 1
         if (G.number_of_nodes() == 0):
             surching = 0
-    
-    return colors
+        yield labels
+    yield labels
