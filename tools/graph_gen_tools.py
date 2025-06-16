@@ -158,6 +158,8 @@ def define_own_graph_chromatic(nodes=10, *, edge_density=None, chromatic_number=
     
     G = create_nodes_in_groups(knoten_anzahl, kanten_anzahl, chromatic_number)
 
+    G.graph["chromatic-number"]=chromatic_number
+
     return G
 
 def define_own_cograph(nodes = 10):
@@ -193,3 +195,32 @@ def convert_to_text(graphs:list[nx.Graph]):
     graph6_lines = [nx.to_graph6_bytes(g, header=False).decode("ascii") for g in graphs]
 
     return "".join(graph6_lines)
+
+import json
+
+def add_gsm_header(metadata,gsm_text):
+    if metadata==None or len(metadata.keys())==0:
+        return gsm_text
+    header=json.dumps(metadata)[1:-1]
+    return "m"+header+"\n"+gsm_text
+
+def trim_graph_set_metadata(metadata,graphs):
+    for g in graphs:
+        dup_props=[]
+        for prop in g.graph.keys():
+            print(prop,prop in metadata.keys(), metadata[prop] == g.graph[prop])
+            if prop in metadata and metadata[prop] == g.graph[prop]:
+                dup_props.append(prop)
+        
+        for prop in dup_props:
+            del g.graph[prop]
+
+def convert_to_text_gsm(graphs:list[nx.Graph]):
+    lines=[]
+    for g in graphs:
+        print(g.graph)
+        lines.append("g"+nx.to_graph6_bytes(g, header=False).decode("ascii"))
+        if len(g.graph.keys())>0:
+            lines.append("m"+json.dumps(g.graph)[1:-1]+"\n")
+
+    return "".join(lines)

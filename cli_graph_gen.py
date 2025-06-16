@@ -1,7 +1,8 @@
 # This script is meant to be executed as a CLI tool and may assist in generating graph datasets
 
 from sys import argv
-from tools.graph_gen_tools import define_own_graph,convert_to_text, define_own_graph_chromatic, define_own_cograph, apply_modulator
+from tools.graph_gen_tools import define_own_graph, define_own_graph_chromatic, define_own_cograph, apply_modulator
+from tools.graph_gen_tools import convert_to_text_gsm, add_gsm_header, trim_graph_set_metadata # Functions for graph output
 from tools.graph_gen_data_classes import ModulatorData
 
 def print_help():
@@ -31,6 +32,7 @@ def cli():
     cograph=None
     seed=None
     output=None
+    metadata={}
 
     modulator = ModulatorData(None,None)
 
@@ -117,6 +119,7 @@ def cli():
         elif(chromatic_number > nodes_count):
             print("Chromatic number is too high")
             exit(0)
+        metadata["chromatic-number"]=chromatic_number
         for i in range(amount):
             graph= define_own_graph_chromatic(nodes_count,edge_density=density,chromatic_number=chromatic_number,seed=seed)
             if seed:
@@ -127,8 +130,11 @@ def cli():
         #exit(0)
     
     with open(output,"w") as file:
-        output_string = convert_to_text(graphs)
-        
+        trim_graph_set_metadata(metadata,graphs)
+
+        output_string = convert_to_text_gsm(graphs)
+        output_string = add_gsm_header(metadata,output_string)
+
         file.write(output_string)
 
 if __name__=="__main__":
