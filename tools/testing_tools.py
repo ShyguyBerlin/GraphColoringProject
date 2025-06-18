@@ -2,6 +2,7 @@ import networkx as nx
 from solvers.solvers import get_solvers
 import time
 import json
+import asyncio
 
 def get_and_parse_file(file_path,parser):
     match parser:
@@ -181,16 +182,16 @@ def solve_graph(G : nx.Graph, solver) -> tuple[float,int]:
 
     return (execution_time,max(a.values()))
 
-def run_test(input : Test_input) -> Test_result:
+async def run_test(input : Test_input) -> Test_result:
     print(f"Running test {input.test_name}")
-    res=Test_result()
-    res.test_name=input.test_name
+    res = Test_result()
+    res.test_name = input.test_name
 
-    start_time=time.time()
-    last_log=start_time
-    steps_completed=0
-    total_steps=input.get_total_steps()
-    do_logging= (total_steps>=1000)
+    start_time = time.time()
+    last_log = start_time
+    steps_completed = 0
+    total_steps = input.get_total_steps()
+    do_logging = (total_steps >= 1000)
 
     for solver in input.solvers:
         if not solver in get_solvers():
