@@ -208,7 +208,6 @@ def trim_graph_set_metadata(metadata,graphs):
     for g in graphs:
         dup_props=[]
         for prop in g.graph.keys():
-            print(prop,prop in metadata.keys(), metadata[prop] == g.graph[prop])
             if prop in metadata and metadata[prop] == g.graph[prop]:
                 dup_props.append(prop)
         
@@ -218,7 +217,6 @@ def trim_graph_set_metadata(metadata,graphs):
 def convert_to_text_gsm(graphs:list[nx.Graph]):
     lines=[]
     for g in graphs:
-        print(g.graph)
         lines.append("g"+nx.to_graph6_bytes(g, header=False).decode("ascii"))
         if len(g.graph.keys())>0:
             lines.append("m"+json.dumps(g.graph)[1:-1]+"\n")
