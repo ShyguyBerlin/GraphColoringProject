@@ -1,4 +1,5 @@
 import networkx as nx
+import json
 
 def parse_edge_list(file):
     graphs=[]
@@ -31,6 +32,37 @@ def parse_graph6(file):
         return G
     return [G]
 
+def parse_gsm(file):
+    lines = file.read().split("\n")
+    meta = {}
+    graphs = []
+
+    def process_meta(meta):
+        return json.loads("{"+meta+"}")
+
+    for i in range(len(lines)):
+        line=lines[i]
+        line_type=line[0]
+        line=line[1:]
+        match line_type:
+            case 'g':
+                graphs.append(nx.graph6.from_graph6_bytes(line.encode(encoding="utf-8")))
+            case 's':
+                graphs.append(nx.sparse6.from_sparse6_bytes(line.encode(encoding="utf-8")))
+            case 'm':
+                if len(graphs)==0:
+                    d = process_meta(line)
+                    for key in d.keys():
+                        meta[key]=d[key]
+                else:
+                    d = process_meta(line)
+                    for key in d.keys():
+                        graphs[-1].graph[key]=d[key]
+            case x:
+                print(f"ERROR: incorrect gsm format. Found illegal character '{x}' in line {i} at position 0.")
+                exit(1)
+    return graphs
+
 def parse_file(file, parser):
     match parser:
         case "edge-list":
@@ -42,8 +74,11 @@ def parse_file(file, parser):
         case "graph6":
             return parse_graph6(file)
             
+        case "gsm":
+            return parse_gsm(file)
+
         case x:
-            valids="edge-list adjacency-matrix graph6"
+            valids="edge-list adjacency-matrix graph6 gsm"
             if x is None:
                 print(f"""No parser specified. Please use one of the following formats:
                 {valids}""")
