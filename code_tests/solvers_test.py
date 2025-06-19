@@ -35,20 +35,23 @@ def test_color_swap_solver_correctness():
 
         assert wigderson.check_complete(graph,res)
 
-def test_all_solvers_correctness():
-    for solver in solvers.get_solvers().values():
+def test_generic_solvers_correctness():
+    for solver in solvers.get_generic_solvers().values():
         for i in range(3):
             graph :nx.Graph = nx.erdos_renyi_graph(25,0.2)
 
-            *_,res = solver(graph)
+            *_,res = solver.func(graph)
 
             assert wigderson.check_complete(graph,res)
 
-def test_all_solvers_correctness_dense():
-    for solver in solvers.get_solvers().values():
+def test_generic_solvers_correctness_dense():
+    for solver in solvers.get_generic_solvers().values():
         for i in range(3):
             graph :nx.Graph = nx.erdos_renyi_graph(35,0.9)
 
-            *_,res = solver(graph)
+            *_,res = solver.func(graph)
 
             assert wigderson.check_complete(graph,res)
+
+def test_generic_solvers_correct_listing():
+    assert not "berger-rompel" in solvers.get_generic_solvers().keys()

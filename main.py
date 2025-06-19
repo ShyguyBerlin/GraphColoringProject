@@ -3,7 +3,7 @@ import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from random import shuffle,randint
 import asyncio
-from solvers.solvers import get_solvers
+from solvers.solvers import get_generic_solvers
 from web_elements import *
 from random import sample
 from tools.graph_gen_tools import define_own_graph
@@ -82,7 +82,7 @@ def start_solver(event):
     selected_solver = get_solver_selection()
     selected_graph = get_graph_selection()
 
-    solvers=get_solvers()
+    solvers=get_generic_solvers()
     G = generate_graph(selected_graph)
 
     current_draw_task = asyncio.create_task(solve_graph(G,solvers[selected_solver],True,delay=delay))

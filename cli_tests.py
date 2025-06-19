@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from solvers.solvers import get_solvers
+from solvers.solvers import get_generic_solvers
 from sys import argv
 from tools.testing_tools import *
 
@@ -99,7 +99,7 @@ if __name__=="__main__":
         if timeout==None:
             timeout=10000
         if solvers==None:
-            solvers=get_solvers().keys()
+            solvers=get_generic_solvers().keys()
         if repetitions==None:
             repetitions=1
 

@@ -2,20 +2,35 @@ from .greedy import *
 from .wigderson import so_called_easy_algorithm,wigdersons_first,wigdersons_first_greedy_color,wigdersons_second,wigdersons_second_log,wigdersons_second_sqrt
 from .independent_set_algorithms import berger_rompel
 from .Johanson.johanson import johnson
-solvers={"greedy": greedy_no_sort,
-         "greedy_min":greedy_asc_deg,
-         "greedy_max":greedy_desc_deg,
-         "greedy_colors":greedy_most_colors,
-         "greedy_color_swaps":greedy_color_swaps,
-         "so_called_easy":so_called_easy_algorithm,
-         "wigdersons_first":wigdersons_first,
-         "wigdersons_first_greedy_color":wigdersons_first_greedy_color,
-         "wigdersons_second":wigdersons_second,
-         "wigdersons_second_log":wigdersons_second_log,
-         "wigdersons_second_sqrt":wigdersons_second_sqrt,
-         #"berger_rompel": berger_rompel
-         "johnson":johnson
+
+from collections.abc import Callable
+
+# Data class so we can provide more info on an algorithm before executing it
+class Solver:
+    def __init__(self,solver_algorithm : Callable[[nx.Graph],None], required_info: list[str]):
+        self.func=solver_algorithm
+        self.dependencies=required_info
+
+# Dict of all available Solving algorithms; when you add a solver, also add it here!
+solvers={"greedy": Solver(greedy_no_sort,[]),
+         "greedy_min": Solver(greedy_asc_deg,[]),
+         "greedy_max": Solver(greedy_desc_deg,[]),
+         "greedy_colors": Solver(greedy_most_colors,[]),
+         "greedy_color_swaps": Solver(greedy_color_swaps,[]),
+         "so_called_easy": Solver(so_called_easy_algorithm,[]),
+         "wigdersons_first": Solver(wigdersons_first,[]),
+         "wigdersons_first_greedy_color": Solver(wigdersons_first_greedy_color,[]),
+         "wigdersons_second": Solver(wigdersons_second,[]),
+         "wigdersons_second_log": Solver(wigdersons_second_log,[]),
+         "wigdersons_second_sqrt": Solver(wigdersons_second_sqrt,[]),
+         "berger_rompel": Solver(berger_rompel,["chromatic-number"]),
+         "johnson": Solver(johnson,[])
          }
 
+# Get all solvers without dependencies
+def get_generic_solvers():
+    return {k : v for k, v in solvers.items() if len(v.dependencies)==0}
+
+# get all solvers
 def get_solvers():
     return solvers

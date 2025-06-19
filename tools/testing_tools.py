@@ -1,5 +1,5 @@
 import networkx as nx
-from solvers.solvers import get_solvers
+from solvers.solvers import get_solvers,get_generic_solvers
 import time
 import json
 from tools.graph_importer import get_and_parse_file
@@ -43,7 +43,7 @@ def get_test_from_file(file_path :str) -> Test_input:
                 exit(1)
             solvers=obj["solvers"]
         else:
-            solvers=get_solvers().keys()
+            solvers=get_generic_solvers().keys()
 
         datasets=[]
 
@@ -157,6 +157,8 @@ def run_test(input : Test_input) -> Test_result:
             print(f"Solver {solver} not found!")
             continue
 
+        solver_obj=get_solvers()[solver]
+
         solver_results = []
         for graph_set in input.graph_sets:
             graph_set : Graph_set = graph_set
@@ -165,8 +167,14 @@ def run_test(input : Test_input) -> Test_result:
                 graph : nx.Graph = graph
                 graph_avg_exec_time=0
                 graph_avg_cols=0
+
+                for dep in solver_obj.dependencies:
+                    if not dep in graph.graph.keys():
+                        print(f"ERROR: A graph is missing the property {dep} which is required by the solver {solver}. Either remove the solver from the test or remove all graphs/graph-sets where the property isn't set.")
+                        exit(1)
+
                 for i in range(input.repetitions):
-                    exec_time, cols = solve_graph(graph,get_solvers()[solver])
+                    exec_time, cols = solve_graph(graph,solver_obj.func)
                     graph_avg_exec_time+=exec_time
                     graph_avg_cols+=cols
                     steps_completed+=1
