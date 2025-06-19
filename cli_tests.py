@@ -18,9 +18,6 @@ def print_help():
           
     When using definition files, the parameters set through arguments overwrite their counterparts in the definition files.""")
 
-def do_test():
-    pass
-
 if __name__=="__main__":
     
     use_def_files=False
