@@ -3,6 +3,7 @@
 from solvers.solvers import get_generic_solvers
 from sys import argv
 from tools.testing_tools import *
+import asyncio
 
 
 def print_help():
@@ -18,14 +19,14 @@ def print_help():
           
     When using definition files, the parameters set through arguments overwrite their counterparts in the definition files.""")
 
-if __name__=="__main__":
-    
+async def main():
     use_def_files=False
     test_name=None
     timeout=None
     repetitions=None
     parser=None
     output_path=None
+    timeout_ms=None
 
     solvers=None
     files=[]
@@ -104,12 +105,16 @@ if __name__=="__main__":
         print("No files to run tests on given!")
         exit(1)
 
-    print("Preparing test input..")
+    print("Preparing test input...")
     csv=""
     if not use_def_files:
         input = Test_input(test_name,timeout,files,solvers,repetitions)
-        test_result = run_test(input)
-        csv = format_test_as_csv(test_result)
+        timeout_ms = timeout/1000
+        try:
+            test_result = await asyncio.wait_for(run_test(input), timeout=timeout_ms)
+            csv = format_test_as_csv(test_result)
+        except asyncio.TimeoutError:
+            print("run_test() timed out")
     else:
         tests:list[Test_input]=[]
         for _,i,_ in files:
@@ -127,10 +132,18 @@ if __name__=="__main__":
 
         results:list[Test_result]=[]
         for test in tests:
-            results.append(run_test(test))
+            timeout_ms = timeout/1000
+            try:
+                test_result = await asyncio.wait_for(run_test(test), timeout=timeout_ms)
+                results.append(test_result)
+            except asyncio.TimeoutError:
+                print("run_test() timed out")
         csv = format_tests_as_csv(results)
     if output_path==None:
         print(csv)
     else:
         with open(output_path,"w") as f:
             f.write(csv)
+
+if __name__=="__main__":
+    asyncio.run(main())
