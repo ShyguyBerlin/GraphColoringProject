@@ -119,6 +119,12 @@ def wigdersons_first_greedy_color( G : nx.Graph):
 # We try to guess k, but in the end it does not make a big difference
 def wigdersons_second(G :nx.Graph):
 
+    if not "chromatic-number" in G.graph.keys():
+        print("ERROR: wigdersons_second needs the property \"chromatic-number\", try not to run this solver if you do not have it.")
+        exit(1)
+
+    k=G.graph["chromatic-number"]
+
     def fk(n):
         if(n<=4):
             return 1
