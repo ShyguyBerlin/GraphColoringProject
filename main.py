@@ -85,7 +85,7 @@ def start_solver(event):
     solvers=get_generic_solvers()
     G = generate_graph(selected_graph)
 
-    current_draw_task = asyncio.create_task(solve_graph(G,solvers[selected_solver],True,delay=delay))
+    current_draw_task = asyncio.create_task(solve_graph(G,solvers[selected_solver].func,True,delay=delay))
 
 def stop_solver(event):
     global current_draw_task
