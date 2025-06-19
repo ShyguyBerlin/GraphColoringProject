@@ -65,6 +65,11 @@ def parse_gsm(file):
             case x:
                 print(f"ERROR: incorrect gsm format. Found illegal character '{x}' in line {i} at position 0.")
                 exit(1)
+    for i in graphs:
+        for key in meta.keys():
+            if not key in i.graph.keys():
+                i.graph[key]=meta[key]
+
     return graphs
 
 def parse_file(file, parser):
