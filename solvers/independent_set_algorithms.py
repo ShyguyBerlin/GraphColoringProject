@@ -24,12 +24,17 @@ def all_independent_sets(G):
 
     yield from backtrack(set(), nodes)
 
-def berger_rompel(G : nx.Graph, k:int=4):
+def berger_rompel(G : nx.Graph):
     labels={}
     
     uncolored = list(G.nodes())
 
-    
+    if not "chromatic-number" in G.graph.keys():
+        print("ERROR: berger_rompel needs the property \"chromatic-number\", try not to run this solver if you do not have it.")
+        exit(1)
+
+    k=G.graph["chromatic-number"]
+
     if k>sqrt(G.order()):
         # Color all uncolored with a new color
         # 1

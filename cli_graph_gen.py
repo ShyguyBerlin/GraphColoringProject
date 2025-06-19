@@ -96,7 +96,8 @@ def cli():
     
     if output==None:
         print("You have to set an output file. Printing the graphs would be useless")
-
+        exit(1)
+    
     graphs = []
 
     if(cograph == True):
@@ -125,9 +126,6 @@ def cli():
             if seed:
                 seed+=1
             graphs.append(post_gen_alteration(graph))
-
-        #print("Chromatic number is not yet implemented, sry")
-        #exit(0)
     
     with open(output,"w") as file:
         trim_graph_set_metadata(metadata,graphs)

@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-from solvers.solvers import get_solvers
+from solvers.solvers import get_generic_solvers
 from sys import argv
 from tools.testing_tools import *
 import asyncio
@@ -18,10 +18,6 @@ def print_help():
         --output -o <path> : Output to specified path
           
     When using definition files, the parameters set through arguments overwrite their counterparts in the definition files.""")
-
-def do_test():
-    pass
-
 
 async def main():
     use_def_files=False
@@ -101,7 +97,7 @@ async def main():
         if timeout==None:
             timeout=10000
         if solvers==None:
-            solvers=get_solvers().keys()
+            solvers=get_generic_solvers().keys()
         if repetitions==None:
             repetitions=1
 

@@ -3,6 +3,8 @@ from solvers import wigderson
 from solvers import solvers
 import networkx as nx
 
+import pytest
+
 def test_color_swap_success():
     graph :nx.Graph = nx.cycle_graph(5)
     graph.remove_edge(4,0)
@@ -35,20 +37,31 @@ def test_color_swap_solver_correctness():
 
         assert wigderson.check_complete(graph,res)
 
-def test_all_solvers_correctness():
-    for solver in solvers.get_solvers().values():
-        for i in range(3):
-            graph :nx.Graph = nx.erdos_renyi_graph(25,0.2)
+@pytest.mark.parametrize("solver", solvers.get_generic_solvers().values(), ids=solvers.get_generic_solvers().keys())
+def test_generic_solvers_correctness(solver : solvers.Solver):
+    for i in range(3):
+        graph :nx.Graph = nx.erdos_renyi_graph(25,0.2)
 
-            *_,res = solver(graph)
+        graph_copied=graph.copy()
 
-            assert wigderson.check_complete(graph,res)
+        *_,res = solver.func(graph)
 
-def test_all_solvers_correctness_dense():
-    for solver in solvers.get_solvers().values():
-        for i in range(3):
-            graph :nx.Graph = nx.erdos_renyi_graph(35,0.9)
+        assert wigderson.check_complete(graph,res) # solver should create a valid solution
 
-            *_,res = solver(graph)
+        assert nx.is_isomorphic(graph,graph_copied) # solver should not change the graph
 
-            assert wigderson.check_complete(graph,res)
+@pytest.mark.parametrize("solver", solvers.get_generic_solvers().values(), ids=solvers.get_generic_solvers().keys())
+def test_generic_solvers_correctness_dense(solver : solvers.Solver):
+    for i in range(3):
+        graph :nx.Graph = nx.erdos_renyi_graph(35,0.9)
+
+        graph_copied=graph.copy()
+
+        *_,res = solver.func(graph)
+
+        assert wigderson.check_complete(graph,res) # solver should create a valid solution
+
+        assert nx.is_isomorphic(graph,graph_copied) # solver should not change the graph
+
+def test_generic_solvers_correct_listing():
+    assert not "berger-rompel" in solvers.get_generic_solvers().keys()

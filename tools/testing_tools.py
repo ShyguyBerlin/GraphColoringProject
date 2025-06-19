@@ -1,50 +1,10 @@
 import networkx as nx
-from solvers.solvers import get_solvers
+from solvers.solvers import get_solvers,get_generic_solvers
 import time
 import json
+from tools.graph_importer import get_and_parse_file
 import asyncio
 
-def get_and_parse_file(file_path,parser):
-    match parser:
-        case "edge-list":
-            with open(file_path, "r") as file:
-                graphs=[]
-                for graph_raw in file.read().split("\n\n"):
-                    raw_lines = graph_raw.split("\n")
-                    graph :nx.graph = nx.empty_graph(int(raw_lines[0]))
-                    for i in raw_lines[1:]:
-                        nodes = i.split(" ")
-                        graph.add_edge(int(nodes[0]),int(nodes[1]))
-                    graphs.append(graph)
-                return graphs
-        case "adjacency-matrix":
-            with open(file_path, "r") as file:
-                graphs=[]
-                for graph_raw in file.read().split("\n\n"):
-                    if graph_raw == "":
-                        continue
-                    raw_lines = graph_raw.split("\n")
-                    graph :nx.graph = nx.empty_graph(len(raw_lines))
-                    for u in range(len(raw_lines)):
-                        for v in range(len(raw_lines)):
-                            if int(raw_lines[u].split(" ")[v])!=0:
-                                graph.add_edge(u,v)
-                    graphs.append(graph)
-                return graphs
-        case "graph6":
-            G = nx.graph6.read_graph6(file_path)
-            if isinstance(G,list):
-                return G
-            return [G]
-        case x:
-            valids="edge-list adjacency-matrix graph6"
-            if x is None:
-                print(f"""No parser specified. Please use one of the following formats:
-                {valids}""")
-            else:
-                print(f"""The format "{x}" is not supported. Please use one of the following formats:
-                {valids}""")
-            exit(1)
 
 class Test_input:
     def __init__(self,test_name,timeout,raw_graph_sets,solvers,repetitions):
@@ -84,7 +44,7 @@ def get_test_from_file(file_path :str) -> Test_input:
                 exit(1)
             solvers=obj["solvers"]
         else:
-            solvers=get_solvers().keys()
+            solvers=get_generic_solvers().keys()
 
         datasets=[]
 
@@ -198,6 +158,8 @@ async def run_test(input : Test_input) -> Test_result:
             print(f"Solver {solver} not found!")
             continue
 
+        solver_obj=get_solvers()[solver]
+
         solver_results = []
         for graph_set in input.graph_sets:
             graph_set : Graph_set = graph_set
@@ -206,8 +168,14 @@ async def run_test(input : Test_input) -> Test_result:
                 graph : nx.Graph = graph
                 graph_avg_exec_time=0
                 graph_avg_cols=0
+
+                for dep in solver_obj.dependencies:
+                    if not dep in graph.graph.keys():
+                        print(f"ERROR: A graph is missing the property {dep} which is required by the solver {solver}. Either remove the solver from the test or remove all graphs/graph-sets where the property isn't set.")
+                        exit(1)
+
                 for i in range(input.repetitions):
-                    exec_time, cols = solve_graph(graph,get_solvers()[solver])
+                    exec_time, cols = solve_graph(graph,solver_obj.func)
                     graph_avg_exec_time+=exec_time
                     graph_avg_cols+=cols
                     steps_completed+=1
