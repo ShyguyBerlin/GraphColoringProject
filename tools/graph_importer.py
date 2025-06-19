@@ -42,6 +42,10 @@ def parse_gsm(file):
 
     for i in range(len(lines)):
         line=lines[i]
+
+        if len(line)==0:
+            continue
+
         line_type=line[0]
         line=line[1:]
         match line_type:
