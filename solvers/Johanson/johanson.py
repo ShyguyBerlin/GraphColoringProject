@@ -7,8 +7,10 @@ Created on Thu Jun  5 17:08:14 2025
 import networkx as nx
 import solvers.Johanson.indiset as iset
 
-def johnson(G : nx.graph):
+def johnson(G : nx.Graph):
  
+    G=G.copy()
+
     labels={}
     colors = 1
     surching = 1

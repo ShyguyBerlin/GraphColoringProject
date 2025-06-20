@@ -7,13 +7,16 @@ Created on Thu Jun  5 17:47:54 2025
 
 import networkx as nx
 
-def indiset (G : nx.graph):
+def indiset (G : nx.Graph):
     
     indi = []
     ajd = []
     runs = 0
     
-    for node in G.nodes():
+    nodes = list(G.nodes())
+    nodes.sort(key= lambda x: G.degree(x))
+
+    for node in nodes:
         control = 0
         #print(node)
         for i in ajd:
