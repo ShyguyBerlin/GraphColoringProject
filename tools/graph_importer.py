@@ -27,10 +27,12 @@ def parse_adjacency_matrix(file):
     return graphs
 
 def parse_graph6(file):
-    G = nx.graph6.read_graph6(file)
-    if isinstance(G,list):
-        return G
-    return [G]
+    graphs=[]
+    for i in file.read().split("\n"):
+        if i=="":
+            continue
+        graphs.append(nx.graph6.from_graph6_bytes(i.encode(encoding="utf-8")))
+    return graphs
 
 def parse_gsm(file):
     lines = file.read().split("\n")
