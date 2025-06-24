@@ -164,10 +164,23 @@ def define_own_graph_chromatic(nodes=10, *, edge_density=None, chromatic_number=
 
 def define_own_cograph(nodes = 10):
     G = nx.Graph()
-    #G = define_own_cograph_recursive(nodes, 1)
-    G = nx.random_cograph(nodes)
+    G = define_own_cograph_recursive(nodes, 1)
+    #G = nx.random_cograph(nodes)
     return G
-    
+
+def define_own_cograph_first(nodes = 10, mode = False ):
+    graph = nx.Graph()
+    split = randint(1, nodes-1)
+    Part1 = nx.Graph()
+    Part2 = nx.Graph()
+    Part1 = define_own_cograph_recursive(split, 1)
+    Part2 = define_own_cograph_recursive(nodes-split, 1+split)
+    if(mode == True):
+        graph = nx.union(Part1, Part2)
+    if(mode == False):
+        graph = nx.full_join(Part1, Part2, rename=("G", "H"))
+    return graph
+        
 
 
 def define_own_cograph_recursive(nodes = 10, counter = 1) -> nx.Graph:
@@ -182,12 +195,9 @@ def define_own_cograph_recursive(nodes = 10, counter = 1) -> nx.Graph:
     Part2 = define_own_cograph_recursive(nodes-split, counter+split)
     construction_rule = randint(1,2) # 1 ist Vereinigung, 2 ist Summe
     if(construction_rule == 1):
-        graph = nx.compose(Part1, Part2)
+        graph = nx.union(Part1, Part2)
     if(construction_rule == 2):
-        graph = nx.compose(Part1, Part2)
-        for node in Part1.nodes:
-            for node2 in Part2.nodes:
-                graph.add_edge(node, node2)
+        graph = nx.full_join(Part1, Part2, rename=("G", "H"))
 
     return graph
 
