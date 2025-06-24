@@ -2,6 +2,7 @@ from .greedy import *
 from .wigderson import so_called_easy_algorithm,wigdersons_first,wigdersons_first_greedy_color,wigdersons_second,wigdersons_second_log,wigdersons_second_sqrt
 from .independent_set_algorithms import berger_rompel
 from .Johanson.johanson import johnson
+from .own_solver import simulated_solver
 
 from collections.abc import Callable
 
@@ -24,7 +25,8 @@ solvers={"greedy": Solver(greedy_no_sort,[]),
          "wigdersons_second_log": Solver(wigdersons_second_log,[]),
          "wigdersons_second_sqrt": Solver(wigdersons_second_sqrt,[]),
          "berger_rompel": Solver(berger_rompel,["chromatic-number"]),
-         "johnson": Solver(johnson,[])
+         "johnson": Solver(johnson,[]),
+         "sim_solver": Solver(simulated_solver,[])
          }
 
 # Get all solvers without dependencies
