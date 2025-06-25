@@ -26,12 +26,12 @@ def brute_force(G : nx.graph, min_col: int = 1):
 
     while not check_complete(G,labels):
         yield labels
-        a=0
+        a=1
         while True:
             # Increase color for node a by 1, if it is equal to lim, decrease to 0 and increase next node. If all node wrap, increase lim
             labels[nodes[a]] += 1
             if labels[nodes[a]] > lim:
-                labels[nodes[a]] = 0
+                labels[nodes[a]] = 1
                 a+=1
                 if a==len(nodes):
                     lim+=1
