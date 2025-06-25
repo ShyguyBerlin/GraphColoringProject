@@ -75,11 +75,11 @@ def cli():
             case "--chromatic-number" | "-cn":
                 chromatic_number = int(get_arg())
             case "--cograph" | "-cg":
-                cograph = bool(get_arg())
+                cograph = get_arg()=="True"
             case "--cographforce" | "-cf":
-                cographforce = bool(get_arg())
+                cographforce = get_arg()=="True"
             case "--chordal" | "-ch":
-                chordal = bool(get_arg())
+                chordal = get_arg()=="True"
             case "--seed" | "-s":
                 seed = int(get_arg())
             case "--output" | "-o":
