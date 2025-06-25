@@ -109,10 +109,9 @@ async def main():
     csv=""
     if not use_def_files:
         input = Test_input(test_name,timeout,files,solvers,repetitions)
-        #print("heh", timeout)
-        #timeout_ms = timeout/1000
+        timeout_ms = timeout/1000
         try:
-            test_result = await asyncio.wait_for(run_test(input),timeout=100000)
+            test_result = await asyncio.wait_for(run_test(input), timeout=timeout_ms)
             csv = format_test_as_csv(test_result)
         except asyncio.TimeoutError:
             print("run_test() timed out")
@@ -133,9 +132,9 @@ async def main():
 
         results:list[Test_result]=[]
         for test in tests:
-            #timeout_ms = timeout/1000
+            timeout_ms = timeout/1000
             try:
-                test_result = await asyncio.wait_for(run_test(test), timeout=10000)
+                test_result = await asyncio.wait_for(run_test(test), timeout=timeout_ms)
                 results.append(test_result)
             except asyncio.TimeoutError:
                 print("run_test() timed out")
