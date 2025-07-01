@@ -203,3 +203,55 @@ def greedy_color_swaps_continue(G :nx.Graph, labels :dict):
     
     return
 
+def greedy_elim_colors( G : nx.graph):
+    labels={}
+    coloramount = 1
+
+    for node in G.nodes():
+        used = {labels.get(neigh) for neigh in G.neighbors(node)}
+        c=1
+        while True:
+            if c not in used:
+                labels[node]= c
+                break
+            c+=1
+            if c > coloramount:
+                coloramount = c
+        
+    labels = do_the_elim(G, labels, coloramount)
+    return labels
+
+def do_the_elim(G:nx.Graph, labels, maxcolor):
+    lasti = 1
+    for i in range(1, maxcolor+1):
+        labels, G, test = try_elim_color_simple(G, labels, i, maxcolor)
+        if(test == 0):
+            lasti = i
+            break
+    if(test == 0):
+        for node in G.nodes():
+            if(labels[node] == maxcolor):
+                labels[node] = lasti
+        labels = do_the_elim(G, labels, maxcolor-1)
+    return labels
+
+def try_elim_color_simple(G:nx.graph, labels, currcolor, maxcolor):
+    fail = 0
+    labelscopy = labels.copy()
+
+    for node in G.nodes():
+        if(labelscopy[node] == currcolor):
+            used =  {labelscopy.get(neigh) for neigh in G.neighbors(node)}
+            notused = list(range(1,maxcolor))
+            for i in range(1,maxcolor+1,1):
+                if i in used:
+                    notused.remove(i)
+            if len(notused) == 0:
+                fail = 1
+            else:
+                labelscopy[node] = notused[0]
+    if(fail == 1):
+        return labels, G, 1
+    else:
+        return labelscopy, G, 0
+
