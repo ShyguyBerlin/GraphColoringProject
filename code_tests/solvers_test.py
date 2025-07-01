@@ -50,6 +50,8 @@ def test_generic_solvers_correctness(solver : solvers.Solver):
 
         assert nx.is_isomorphic(graph,graph_copied) # solver should not change the graph
 
+        assert not 0 in res.values() # Guarantee that colors begin at 1
+
 @pytest.mark.parametrize("solver", solvers.get_generic_solvers().values(), ids=solvers.get_generic_solvers().keys())
 def test_generic_solvers_correctness_dense(solver : solvers.Solver):
     for i in range(3):
@@ -62,6 +64,8 @@ def test_generic_solvers_correctness_dense(solver : solvers.Solver):
         assert wigderson.check_complete(graph,res) # solver should create a valid solution
 
         assert nx.is_isomorphic(graph,graph_copied) # solver should not change the graph
+
+        assert not 0 in res.values() # Guarantee that colors begin at 1
 
 def test_generic_solvers_correct_listing():
     assert not "berger-rompel" in solvers.get_generic_solvers().keys()

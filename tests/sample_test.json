@@ -1,6 +1,6 @@
 {
     "name": "Test1",
-    "timeout": "1500",
+    "timeout": 1500,
     "solvers": ["greedy_min","greedy_max"],
     "repetitions": 1,
     "datasets":

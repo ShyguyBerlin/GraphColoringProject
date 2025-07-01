@@ -137,7 +137,7 @@ async def main():
 
         results:list[Test_result]=[]
         for test in tests:
-            timeout_ms = timeout/1000
+            timeout_ms = test.timeout/1000
             try:
                 test_result = await asyncio.wait_for(run_test(test,use_multiprocessing), timeout=timeout_ms)
                 results.append(test_result)

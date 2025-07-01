@@ -1,7 +1,8 @@
 # This script is meant to be executed as a CLI tool and may assist in generating graph datasets
 
 from sys import argv
-from tools.graph_gen_tools import define_own_graph, define_own_graph_chromatic, define_own_cograph, apply_modulator
+from networkx import complete_to_chordal_graph
+from tools.graph_gen_tools import define_own_graph, define_own_graph_chromatic, define_own_cograph, apply_modulator, define_own_cograph_first
 from tools.graph_gen_tools import convert_to_text_gsm, add_gsm_header, trim_graph_set_metadata # Functions for graph output
 from tools.graph_gen_data_classes import ModulatorData
 
@@ -14,6 +15,8 @@ def print_help():
         --max_clique -mc <size> : Guarantees that the maximum clique will be of this size
         --chromatic-number -cn <number> : Sets an UPPER limit to the resulting coloring number
         --cograph -cg <bool> : If True, will create a Cograph and will ignore density, max_clique etc.
+        --cographforce -cf <bool> : If True, will force the Cograph to union the two subgraphs and if False will join them
+        --chordal -ch <bool> : If True, will create a Chordal Graph (only works without Cograph)
         --seed -s <number> : Sets a seed to use for random algorithms
         --output -o <path> : Will write resulting graphs to this file
           
@@ -30,6 +33,8 @@ def cli():
     density=None
     chromatic_number=None
     cograph=None
+    cographforce=None
+    chordal=None
     seed=None
     output=None
     metadata={}
@@ -70,7 +75,11 @@ def cli():
             case "--chromatic-number" | "-cn":
                 chromatic_number = int(get_arg())
             case "--cograph" | "-cg":
-                cograph = bool(get_arg())
+                cograph = get_arg()=="True"
+            case "--cographforce" | "-cf":
+                cographforce = get_arg()=="True"
+            case "--chordal" | "-ch":
+                chordal = get_arg()=="True"
             case "--seed" | "-s":
                 seed = int(get_arg())
             case "--output" | "-o":
@@ -102,7 +111,12 @@ def cli():
 
     if(cograph == True):
         for i in range(amount):
-            graph= define_own_cograph(nodes_count)
+            if cographforce == True:
+                graph= define_own_cograph_first(nodes_count, True)
+            elif cographforce == False:
+                graph= define_own_cograph_first(nodes_count, False)
+            else:
+                graph= define_own_cograph(nodes_count)
             if seed:
                 seed+=1
             graphs.append(post_gen_alteration(graph))
@@ -110,8 +124,11 @@ def cli():
     elif chromatic_number==None:
         for i in range(amount):
             graph= define_own_graph(nodes_count,edge_density=density,max_clique=clique_size,seed=seed)
+
             if seed:
                 seed+=1
+            if chordal == True:
+                graph, blub = complete_to_chordal_graph(graph) # blub is a useless thing that needs to be there or else it doesn't work because of the signature of complete_to_chordal_graph()
             graphs.append(post_gen_alteration(graph))
     else:
         if(chromatic_number < 2):
