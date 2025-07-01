@@ -213,13 +213,14 @@ def greedy_elim_colors( G : nx.graph):
         while True:
             if c not in used:
                 labels[node]= c
+                if c > coloramount:
+                    coloramount = c
                 break
             c+=1
-            if c > coloramount:
-                coloramount = c
+            
         
     labels = do_the_elim(G, labels, coloramount)
-    return labels
+    yield labels
 
 def do_the_elim(G:nx.Graph, labels, maxcolor):
     lasti = 1
@@ -242,10 +243,12 @@ def try_elim_color_simple(G:nx.graph, labels, currcolor, maxcolor):
     for node in G.nodes():
         if(labelscopy[node] == currcolor):
             used =  {labelscopy.get(neigh) for neigh in G.neighbors(node)}
-            notused = list(range(1,maxcolor))
-            for i in range(1,maxcolor+1,1):
+            notused = list(range(1,maxcolor+1))
+            notused.remove(currcolor)
+            for i in range(1,maxcolor+1):
                 if i in used:
-                    notused.remove(i)
+                    if i in notused:
+                        notused.remove(i)
             if len(notused) == 0:
                 fail = 1
             else:

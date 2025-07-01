@@ -24,7 +24,8 @@ solvers={"greedy": Solver(greedy_no_sort,[]),
          "wigdersons_second_log": Solver(wigdersons_second_log,[]),
          "wigdersons_second_sqrt": Solver(wigdersons_second_sqrt,[]),
          "berger_rompel": Solver(berger_rompel,["chromatic-number"]),
-         "johnson": Solver(johnson,[])
+         "johnson": Solver(johnson,[]),
+         "greedy_elim_colors": Solver(greedy_elim_colors,[])
          }
 
 # Get all solvers without dependencies
