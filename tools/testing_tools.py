@@ -142,7 +142,26 @@ def solve_graph(G : nx.Graph, solver) -> tuple[float,int]:
 
     return (execution_time,max(a.values()))
 
-async def run_test(input : Test_input) -> Test_result:
+import multiprocessing as mp
+import os
+def run_graph(args):
+    graph, solver, solver_obj,repetitions=args
+    graph : nx.Graph = graph
+    graph_avg_exec_time=0
+    graph_avg_cols=0
+
+    for dep in solver_obj.dependencies:
+        if not dep in graph.graph.keys():
+            print(f"ERROR: A graph is missing the property {dep} which is required by the solver {solver}. Either remove the solver from the test or remove all graphs/graph-sets where the property isn't set.")
+            exit(1)
+
+    for i in range(repetitions):
+        exec_time, cols = solve_graph(graph,solver_obj.func)
+        graph_avg_exec_time+=exec_time
+        graph_avg_cols+=cols
+    return [graph.order(),nx.function.density(graph),graph_avg_cols/repetitions,graph_avg_exec_time/repetitions]
+
+async def run_test(input : Test_input, run_multicore : bool = False) -> Test_result:
     print(f"Running test {input.test_name}")
     res = Test_result()
     res.test_name = input.test_name
@@ -151,7 +170,7 @@ async def run_test(input : Test_input) -> Test_result:
     last_log = start_time
     steps_completed = 0
     total_steps = input.get_total_steps()
-    do_logging = (total_steps >= 1000)
+    do_logging = (total_steps >= 10)
 
     for solver in input.solvers:
         if not solver in get_solvers():
@@ -164,25 +183,41 @@ async def run_test(input : Test_input) -> Test_result:
         for graph_set in input.graph_sets:
             graph_set : Graph_set = graph_set
             graph_set_result = Graph_set_result(graph_set.name)
-            for graph in graph_set.graphs:
-                graph : nx.Graph = graph
-                graph_avg_exec_time=0
-                graph_avg_cols=0
+            if not run_multicore:
+                for graph in graph_set.graphs:
+                    graph : nx.Graph = graph
+                    graph_avg_exec_time=0
+                    graph_avg_cols=0
 
-                for dep in solver_obj.dependencies:
-                    if not dep in graph.graph.keys():
-                        print(f"ERROR: A graph is missing the property {dep} which is required by the solver {solver}. Either remove the solver from the test or remove all graphs/graph-sets where the property isn't set.")
-                        exit(1)
+                    for dep in solver_obj.dependencies:
+                        if not dep in graph.graph.keys():
+                            print(f"ERROR: A graph is missing the property {dep} which is required by the solver {solver}. Either remove the solver from the test or remove all graphs/graph-sets where the property isn't set.")
+                            exit(1)
 
-                for i in range(input.repetitions):
-                    exec_time, cols = solve_graph(graph,solver_obj.func)
-                    graph_avg_exec_time+=exec_time
-                    graph_avg_cols+=cols
-                    steps_completed+=1
-                graph_set_result.add_result(graph.order(),nx.function.density(graph),graph_avg_cols/input.repetitions,graph_avg_exec_time/input.repetitions)
-                if (do_logging and time.time()-last_log>5):
-                    print(f"Done by {round(steps_completed/total_steps*100,1)}% est. time remaining: {round((time.time()-start_time)/steps_completed*(total_steps-steps_completed),1)}s")
-                    last_log=time.time()
+                    for i in range(input.repetitions):
+                        exec_time, cols = solve_graph(graph,solver_obj.func)
+                        graph_avg_exec_time+=exec_time
+                        graph_avg_cols+=cols
+                        steps_completed+=1
+                    graph_set_result.add_result(graph.order(),nx.function.density(graph),graph_avg_cols/input.repetitions,graph_avg_exec_time/input.repetitions)
+                    if (do_logging and time.time()-last_log>5):
+                        print(f"Done by {round(steps_completed/total_steps*100,1)}% est. time remaining: {round((time.time()-start_time)/steps_completed*(total_steps-steps_completed),1)}s")
+                        last_log=time.time()
+            else:
+                with mp.Pool(os.cpu_count()-1) as p:
+                    fut = p.map_async(run_graph,[(i,solver,solver_obj,input.repetitions) for i in graph_set.graphs])
+                    while (True):
+                        if (fut.ready()): break
+                        steps = steps_completed+(len(graph_set.graphs)-fut._number_left)*input.repetitions
+                        if (do_logging and time.time()-last_log>5):
+                            print(f"Done by {round(steps/total_steps*100,1)}% est. time remaining: {round((time.time()-start_time)/steps*(total_steps-steps),1)}s")
+                            last_log=time.time()
+                        time.sleep(0.4)
+                    for i in fut.get():
+                        steps_completed+=input.repetitions
+                        graph_set_result.add_result(i[0],i[1],i[2],i[3])
+    
+                
             solver_results.append(graph_set_result)
         res.add_results(solver,solver_results)
     print(f"Finished test {input.test_name}")
