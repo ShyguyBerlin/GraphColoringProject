@@ -2,7 +2,7 @@
 # let's see how efficient/fast it is
 
 import networkx as nx
-from random import shuffle
+from random import shuffle,random
 import math
 from functools import cache
 from heapq import *
@@ -53,3 +53,49 @@ def a_star_solver(G : nx.Graph):
         print(inst, len(heap))
         yield inst[4]
     return {}
+
+def simulated_solver(G : nx.Graph):
+    
+    phase=0 # 0 := EDGES, 1 := NODES
+
+    labels={N:1 for N in list(G.nodes())}
+
+    r=0.9
+    stepsize=(r/10)/math.log(G.order())
+    while r>0 or not check_complete(G,labels):
+        match phase:
+            case 0:
+                for (u,v) in list(G.edges()):
+                    if labels[u]==labels[v]:
+                        n=0
+                        if random()<(G.degree(u)+r)/(G.degree(v)+G.degree(u)+2*r):
+                            n=u
+                        else:
+                            n=v
+                        neighs=list(G.neighbors(n))
+                        color=0
+                        used=True
+                        while used:
+                            color+=1
+                            used=False
+                            for i in neighs:
+                                if labels[i]==color:
+                                    used=True
+                                    break
+                        labels[n]=color
+
+                if r>0:
+                    phase=1
+            case 1:
+                for i in list(G.nodes()):
+                    if labels[i]>1 and random()<r/2:
+                        labels[i]-=1
+                phase=0
+        
+        r-=stepsize
+        #if r<=0.1:
+        #    stepsize*=0.5
+        if r<0:
+            r=0
+        
+        yield labels

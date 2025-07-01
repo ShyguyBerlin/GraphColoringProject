@@ -17,6 +17,8 @@ def print_help():
         --solver -s <array of sorters> : Set which sorters the test should run, defaults to all of them
         --output -o <path> : Output to specified path
           
+        --multiprocessing -mp : Enables Multiprocessing
+
     When using definition files, the parameters set through arguments overwrite their counterparts in the definition files.""")
 
 async def main():
@@ -27,6 +29,7 @@ async def main():
     parser=None
     output_path=None
     timeout_ms=None
+    use_multiprocessing=False
 
     solvers=None
     files=[]
@@ -83,6 +86,8 @@ async def main():
                 else:
                     print("Incorrect amount/layout of arguments")
                     exit(1)
+            case "--multiprocessing" | "-mp":
+                use_multiprocessing=True
             case x:
                 if parser==None and not use_def_files:
                     print("You need to specify a parser/format to run a test on a data containing file.")
@@ -111,7 +116,7 @@ async def main():
         input = Test_input(test_name,timeout,files,solvers,repetitions)
         timeout_ms = timeout/1000
         try:
-            test_result = await asyncio.wait_for(run_test(input), timeout=timeout_ms)
+            test_result = await asyncio.wait_for(run_test(input,use_multiprocessing), timeout=timeout_ms)
             csv = format_test_as_csv(test_result)
         except asyncio.TimeoutError:
             print("run_test() timed out")
@@ -134,7 +139,7 @@ async def main():
         for test in tests:
             timeout_ms = test.timeout/1000
             try:
-                test_result = await asyncio.wait_for(run_test(test), timeout=timeout_ms)
+                test_result = await asyncio.wait_for(run_test(test,use_multiprocessing), timeout=timeout_ms)
                 results.append(test_result)
             except asyncio.TimeoutError:
                 print("run_test() timed out")

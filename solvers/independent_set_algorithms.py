@@ -44,6 +44,8 @@ def berger_rompel(G : nx.Graph):
         for i in uncolored:
             taken+=1
             labels[i]=taken
+        yield labels
+        return
 
     m = floor(log(G.order(),k)) # 2
     color = 1 # 3
@@ -52,22 +54,23 @@ def berger_rompel(G : nx.Graph):
         U:list=uncolored.copy() # 1
         shuffle(U)
         while len(U)>=k*m: # 2
-            print("\nuncolored:",uncolored)
-            print("U:",U)
-            partitions=[]
+            print("\nuncolored:",len(uncolored),uncolored)
+            print("U:",len(U),U)
+            partitions=[] # 1
             while len(U)>(len(partitions)+1)*k*m:
                 partitions.append(G.subgraph(U[len(partitions)*k*m:(len(partitions)+1)*k*m]))
             partitions.append(G.subgraph(U[len(partitions)*k*m:]))
-
-            for i in partitions:
+            print("partitions: ",len(partitions))
+            for i in partitions: # 2
                 i :nx.Graph = i
                 done=False
                 for X in all_independent_sets(i):
-                    if len(X)>=m:
+                    if len(X)==m:
                         neighborhood :set=set()
                         Ugraph : nx.Graph=G.subgraph(U)
                         for n in X:
                             neighborhood |= set(Ugraph.neighbors(n))
+                        neighborhood |= set(X)
                         if len(neighborhood)<=len(U)-len(U)/k:
                             print("found iset,",X)
                             # 3
@@ -75,7 +78,6 @@ def berger_rompel(G : nx.Graph):
                             for n in X:
                                 labels[n]=color
                                 uncolored.remove(n)
-                            neighborhood |= set(X)
                             for n in neighborhood:
                                 U.remove(n)
                             done=True
