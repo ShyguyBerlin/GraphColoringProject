@@ -3,7 +3,7 @@ from .wigderson import so_called_easy_algorithm,wigdersons_first,wigdersons_firs
 from .independent_set_algorithms import berger_rompel
 from .Johanson.johanson import johnson
 from .own_solver import simulated_solver
-from .flow import flow_trivial,flow_merge
+from .flow import flow_trivial,flow_merge,flow_merge_bf
 
 from collections.abc import Callable
 
@@ -29,7 +29,8 @@ solvers={"greedy": Solver(greedy_no_sort,[]),
          "johnson": Solver(johnson,[]),
          "sim_solver": Solver(simulated_solver,[]),
          "flow_trivial": Solver(flow_trivial,[]),
-         "flow_merge": Solver(flow_merge,[])
+         "flow_merge": Solver(flow_merge,[]),
+         "flow_merge_bf": Solver(flow_merge_bf,[])
          }
 
 # Get all solvers without dependencies

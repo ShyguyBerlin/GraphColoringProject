@@ -272,3 +272,49 @@ def flow_merge(G : nx.Graph,muffle=True):
 
     if not muffle:
         print("Aha3")
+
+from .wigderson import brute_force
+
+def flow_merge_bf(G : nx.Graph,muffle=True):
+    if G.order()<=7:
+        *_,res= brute_force(G)
+        yield res
+        return
+    
+    if not muffle:
+        print("Aha", G.order())
+    
+    if nx.is_connected(G):
+        Comps,cut=flow_cut_edge(G)
+        if not muffle:
+            print("comp",Comps,"cut",cut)
+    else:
+        cut=[]
+        Comps= [G.subgraph(c).copy() for c in nx.connected_components(G)]
+        labels={}
+        for i in Comps:
+            for f in flow_merge(i,True):
+                for k in f.keys():
+                    labels[k]=f[k]
+                yield labels
+        return
+
+    if not muffle:
+        print("Aha2",len(Comps),max(G.order() for G in Comps))
+
+    labels={}
+    did_comp1=False
+    for i in Comps:
+        for f in flow_merge(i,True):
+            yield f
+            l=f
+        if did_comp1:
+            merge_color_labels_optimized(l,labels,list(i.edges()),cut)
+        else:
+            labels=l
+            did_comp1=True
+
+        yield labels
+
+    if not muffle:
+        print("Aha3")
