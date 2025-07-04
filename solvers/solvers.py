@@ -31,7 +31,9 @@ solvers={"greedy": Solver(greedy_no_sort,[]),
          "flow_trivial": Solver(flow_trivial,[]),
          "flow_merge": Solver(flow_merge,[]),
          "flow_merge_bf": Solver(flow_merge_bf,[]),
-         "greedy_elim_colors": Solver(greedy_elim_colors,[])
+         "greedy_elim_colors": Solver(greedy_elim_colors,[]),
+         "greedy_color_swaps_and_elim_colors": Solver(greedy_color_swaps_and_elim_colors,[]),
+         "elim_colors_basic": Solver(elim_colors_basic,[])
          }
 
 # Get all solvers without dependencies

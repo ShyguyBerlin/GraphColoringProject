@@ -203,6 +203,31 @@ def greedy_color_swaps_continue(G :nx.Graph, labels :dict):
     
     return
 
+def greedy_color_swaps_and_elim_colors(G:nx.Graph):
+    labels = {}
+    coloramount = 1
+    labels = greedy_color_swaps(G)
+
+    for node in G.nodes():
+        if coloramount < labels[node]:
+            coloramount = labels[node]
+
+    labels = do_the_elim(G, labels, coloramount)
+    yield labels
+
+
+def elim_colors_basic(G: nx.Graph):
+    labels={}
+    coloramount = 1
+
+    for node in G.nodes():
+        labels[node] = coloramount
+        coloramount+=1
+    coloramount-=1
+
+    labels = do_the_elim(G, labels, coloramount)
+    yield labels
+
 def greedy_elim_colors( G : nx.graph):
     labels={}
     coloramount = 1
