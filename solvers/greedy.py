@@ -206,7 +206,7 @@ def greedy_color_swaps_continue(G :nx.Graph, labels :dict):
 def greedy_color_swaps_and_elim_colors(G:nx.Graph):
     labels = {}
     coloramount = 1
-    labels = greedy_color_swaps(G)
+    *_,labels = greedy_color_swaps(G)
 
     for node in G.nodes():
         if coloramount < labels[node]:
@@ -281,5 +281,6 @@ def try_elim_color_simple(G:nx.graph, labels, currcolor, maxcolor):
     if(fail == 1):
         return labels, G, 1
     else:
+        #print("ELIMINATING COLOR,",currcolor,maxcolor,G.nodes,G.edges,labels,labelscopy)
         return labelscopy, G, 0
 
