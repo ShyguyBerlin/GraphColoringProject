@@ -226,6 +226,7 @@ def elim_colors_basic(G: nx.Graph):
     coloramount-=1
 
     labels = do_the_elim(G, labels, coloramount)
+
     yield labels
 
 def greedy_elim_colors( G : nx.graph):
@@ -283,3 +284,79 @@ def try_elim_color_simple(G:nx.graph, labels, currcolor, maxcolor):
     else:
         return labelscopy, G, 0
 
+def aus_3_mach_2(G:nx.Graph):
+    labels={}
+    coloramount = 1
+
+    for node in G.nodes():
+        used = {labels.get(neigh) for neigh in G.neighbors(node)}
+        c=1
+        while True:
+            if c not in used:
+                labels[node]= c
+                if c > coloramount:
+                    coloramount = c
+                break
+            c+=1
+    if(coloramount > 2):
+        labels = do_the_3_to_2(G, labels, 1, 2, 3, coloramount)
+    yield labels
+
+def do_the_3_to_2(G:nx.Graph, labels: dict, color1, color2, color3, maxcolor):
+    Gsub = G.copy()
+    labelscopy = labels.copy()
+    for node in G.nodes():
+        if labelscopy[node] != color1 and labelscopy[node] != color2 and labelscopy[node] != color3 :        
+            Gsub.remove_node(node)
+        else:
+            del labelscopy[node]
+    startpoints = [list(Gsub.nodes)[0]]
+    for node in Gsub.nodes():
+        for start in startpoints:
+            if (nx.has_path(Gsub, node, start ) == False):
+                startpoints.append(node)
+                break
+    for node in startpoints:
+        labelscopy[node] = color1
+    maincheck = 0
+    while maincheck == True:
+        check = 0
+        for node in Gsub.nodes():
+            check = check_color(Gsub, labelscopy, node)
+            if(check == 2):
+                maincheck = False
+        if check == 0:
+            break
+    if maincheck == False:
+        if(color3 < maxcolor):
+            return do_the_3_to_2(G, labels, color1, color2, (color3+1), maxcolor)
+        else:
+            if(color2 < (color3-1)):
+                do_the_3_to_2(G, labels, color1, (color2+1), (color2+2), maxcolor)
+            else:
+                if(color1 < (color2-1)):
+                    do_the_3_to_2(G, labels, (color1+1), (color1+2), (color1+3), maxcolor)
+                else:
+                    return labels
+    elif maincheck == True:
+        for node in G.nodes():
+            if labelscopy[node] == maxcolor:
+                labelscopy[node] = color3
+        return do_the_3_to_2(G, labelscopy, 1, 2, 3, maxcolor-1)
+
+
+def check_color(Gsub:nx.Graph, labelscopy, node, color1, color2):
+    if(labelscopy[node] == color1 or labelscopy[node] == color2 ):
+        return 0
+    else:
+        used = {labelscopy.get(neigh) for neigh in Gsub.neighbors(node)}
+        if(color1 in used) and (color2 not in used):
+            labelscopy[node] = color2
+            return 0
+        elif (color1 not in used) and (color2 in used):
+            labelscopy[node] = color1
+            return 0
+        elif(color1 not in used) and (color2 not in used):
+            return 1
+        else:
+            return 2
