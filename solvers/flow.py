@@ -132,9 +132,6 @@ from .greedy import color_swaps_color_node
 
 # Merges labels_A into labels_B based on edge constraints between A and B and inside A
 def merge_color_labels(subgraph,labels_A,labels_B,edges_A,edges_border):
-    print("Yee")
-    print(labels_A)
-    print(labels_B)
     adj_A,adj_B=build_adj_sets(labels_A,labels_B,edges_A,edges_border)
     remap={}
     to_remap=list(set(labels_A.values()))
@@ -157,9 +154,7 @@ def merge_color_labels(subgraph,labels_A,labels_B,edges_A,edges_border):
                 merge_graph.add_edge(remap_to,used_colors+col)
     
     merge_matching = nx.maximal_matching(merge_graph)
-    print("matching",merge_matching)
     for u,v in merge_matching:
-        print("u,v, ",u,v)
         col_remap(v-used_colors,u)
 
     # Nodes that cannot be colored through remapping
@@ -174,10 +169,6 @@ def merge_color_labels(subgraph,labels_A,labels_B,edges_A,edges_border):
     for k in problem_nodes:
         color_swaps_color_node(subgraph,labels_B,k)
 
-    print (remap)
-    print (labels_B)
-#    print("after:",labels_B)
-#    print("adjA",adj_A,"adjB",adj_B)
     return labels_B
 
 
