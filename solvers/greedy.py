@@ -158,24 +158,7 @@ def swap(labels:dict, keys_to_swap:list, valueA:int, valueB:int):
             elif labels[node] == valueB:
                 labels[node] = valueA
 
-def greedy_color_swaps_continue(G :nx.Graph, labels :dict):
-    
-    labels={}
-
-    G_sorting =G.copy()
-    sorting=[]
-    for i in range(len(G)):
-        deg=min([G_sorting.degree(n) for n in G_sorting.nodes()])
-        nodes = list(G_sorting.nodes())
-        shuffle(nodes)
-        for node in nodes:
-            if G_sorting.degree(node)==deg:
-                sorting.append(node)
-                G_sorting.remove_node(node)
-                break
-    sorting.reverse()
-
-    for node in sorting:
+def color_swaps_color_node(G :nx.Graph,labels:dict,node):
         neighs= {(labels.get(neigh),neigh) for neigh in G.neighbors(node)}
         used = [i[0] for i in neighs]
         c=1
@@ -199,6 +182,25 @@ def greedy_color_swaps_continue(G :nx.Graph, labels :dict):
         
         labels[node]=c
 
+def greedy_color_swaps_continue(G :nx.Graph, labels :dict):
+    
+    labels={}
+
+    G_sorting =G.copy()
+    sorting=[]
+    for i in range(len(G)):
+        deg=min([G_sorting.degree(n) for n in G_sorting.nodes()])
+        nodes = list(G_sorting.nodes())
+        shuffle(nodes)
+        for node in nodes:
+            if G_sorting.degree(node)==deg:
+                sorting.append(node)
+                G_sorting.remove_node(node)
+                break
+    sorting.reverse()
+
+    for node in sorting:
+        color_swaps_color_node(G,labels,node)
         yield labels
     
     return
