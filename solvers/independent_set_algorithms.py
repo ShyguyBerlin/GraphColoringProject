@@ -61,8 +61,11 @@ def berger_rompel(G : nx.Graph):
                 partitions.append(G.subgraph(U[len(partitions)*k*m:(len(partitions)+1)*k*m]))
             partitions.append(G.subgraph(U[len(partitions)*k*m:]))
             print("partitions: ",len(partitions))
+            print("looking for iset of size",m)
             for i in partitions: # 2
                 i :nx.Graph = i
+                print("partition")
+                print(list(i.nodes()),list(i.edges()))
                 done=False
                 for X in all_independent_sets(i):
                     if len(X)==m:
