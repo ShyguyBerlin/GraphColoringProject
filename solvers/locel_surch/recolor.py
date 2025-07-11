@@ -67,16 +67,29 @@ def recolor(G : nx.graph, pf : []): #pf is a list of prblemfree colors
     #print("used colores are")   
     #print(usedc)
     
-    for i in unusedc:
-        #print(i)  
-        for node1 in G.nodes:
-            if G.nodes[node1]['color'] > i:
-                #print("thinking abourt")
-                #print(node1)
-                #print(G.nodes[node1]['color'])
-                G.nodes[node1]['color'] = G.nodes[node1]['color'] -1
-                #print(G.nodes[node1]['color'])
-       
-    G.graph['colors'] = G.graph['colors'] - len(unusedc) 
+    if len(unusedc) != 0:
+    
+        unusedcolorindex = 0
+        
+        for i in usedc:
+            #print(i)  
+            for node1 in G.nodes:
+                if G.nodes[node1]['color'] == i:
+                    #print("thinking about")
+                    #print(node1)
+                    #print("changing color from")
+                    #print(G.nodes[node1]['color'])
+                    
+                    #print("unusedcolorindex")
+                    #print(unusedcolorindex)
+                    G.nodes[node1]['color'] = unusedc[unusedcolorindex]
+    
+                    
+                    #print("to")
+                    #print(G.nodes[node1]['color'])
+           
+            unusedcolorindex += 1
+            unusedc.insert(i, i)
+            #print(unusedc) 
         
     return G
