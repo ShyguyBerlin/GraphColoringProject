@@ -61,6 +61,9 @@ def swaparound(G : nx.graph, node : int()):
             for adj in G.adj[node]:
                 G = ct.color_to(G, adj, G.nodes[node]['color'], oldcolor)
             
+            for node1 in G.nodes:
+                 G.nodes[node1]['used'] = False
+            
             return G
             
         else:
