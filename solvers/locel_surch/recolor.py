@@ -89,7 +89,7 @@ def recolor(G : nx.graph, pf : []): #pf is a list of prblemfree colors
                     #print(G.nodes[node1]['color'])
            
             unusedcolorindex += 1
-            unusedc.insert(i, i)
+            unusedc.insert(i-1, i)
             #print(unusedc) 
         
     return G
