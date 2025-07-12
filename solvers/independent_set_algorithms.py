@@ -18,9 +18,13 @@ def all_independent_sets(G):
         # Exclude v
         yield from backtrack(current_set, rest)
 
-        # Include v only if none of its neighbors are in current_set
-        if all(neigh not in current_set for neigh in G.neighbors(v)):
-            yield from backtrack(current_set | {v}, rest)
+        # Remove all neighbors of v but add v
+        rem:list= remaining_nodes[1:].copy()
+        for i in G.neighbors(v):
+            if i>v and i in rem:
+                rem.remove(i)
+
+        yield from backtrack(current_set | {v}, rem)
 
     yield from backtrack(set(), nodes)
 
@@ -50,14 +54,16 @@ def berger_rompel(G : nx.Graph):
     m = floor(log(G.order(),k)) # 2
     color = 1 # 3
     print("m is",m)
+    c=0
     while len(uncolored)>=m*k: # 4
         U:list=uncolored.copy() # 1
         shuffle(U)
         while len(U)>=k*m: # 2
+            c+=1
             print("\nuncolored:",len(uncolored),uncolored)
             print("U:",len(U),U)
             partitions=[] # 1
-            while len(U)>(len(partitions)+1)*k*m:
+            while len(U)>(len(partitions)+2)*k*m:
                 partitions.append(G.subgraph(U[len(partitions)*k*m:(len(partitions)+1)*k*m]))
             partitions.append(G.subgraph(U[len(partitions)*k*m:]))
             print("partitions: ",len(partitions))
@@ -67,14 +73,19 @@ def berger_rompel(G : nx.Graph):
                 print("partition")
                 print(list(i.nodes()),list(i.edges()))
                 done=False
+                if c>100:
+                    print("Now come the isets")
                 for X in all_independent_sets(i):
+                    if c>100:
+                        print("iset",X)
                     if len(X)==m:
+                        print("Iset good")
                         neighborhood :set=set()
                         Ugraph : nx.Graph=G.subgraph(U)
                         for n in X:
                             neighborhood |= set(Ugraph.neighbors(n))
-                        neighborhood |= set(X)
                         if len(neighborhood)<=len(U)-len(U)/k:
+                            neighborhood |= set(X)
                             print("found iset,",X)
                             # 3
                             # found good subset
@@ -86,6 +97,7 @@ def berger_rompel(G : nx.Graph):
                             done=True
                             found=1
                             break
+                        print("neighborhood too smol")
                 if done:
                     break
 
@@ -104,3 +116,8 @@ def berger_rompel(G : nx.Graph):
             taken+=1
             labels[i]=taken
     yield labels
+
+#"Test","johnson","tests/input/250_8cn_250n_35d.gsm",0,250,250,250.0,250,0.3075,0.3075,0.3075,0.3075,23.1264,51.6251,38.8428,39.3422,25.0,33.0,29.904,30.0
+#"Test","johnson","tests/input/250_8cn_250n_70d.gsm",0,250,250,250.0,250,0.6149,0.6149,0.6149,0.6149,43.605,99.6086,72.3014,72.6353,12.0,44.0,24.6,24.0
+#"Test","berger_rompel, X>=m","tests/input/250_8cn_250n_35d.gsm",0,250,250,250.0,250,0.3075,0.3075,0.3075,0.3075,299.0658,683.8709,565.942,601.6281,41.0,47.0,43.728,44.0
+#"Test","berger_rompel, X>=m","tests/input/250_8cn_250n_70d.gsm",0,250,250,250.0,250,0.6149,0.6149,0.6149,0.6149,455.1391,807.6338,685.0964,707.2383,65.0,81.0,73.684,74.0
