@@ -249,6 +249,25 @@ def greedy_elim_colors( G : nx.graph):
     labels = do_the_elim(G, labels, coloramount)
     yield labels
 
+def greedy_elim_colors_all_paths( G : nx.graph):
+    labels={}
+    coloramount = 1
+
+    for node in G.nodes():
+        used = {labels.get(neigh) for neigh in G.neighbors(node)}
+        c=1
+        while True:
+            if c not in used:
+                labels[node]= c
+                if c > coloramount:
+                    coloramount = c
+                break
+            c+=1
+            
+        
+    labels, test = do_the_elim_full(G, labels, coloramount)
+    yield labels
+
 def do_the_elim(G:nx.Graph, labels, maxcolor):
     lasti = 1
     for i in range(1, maxcolor+1):
@@ -262,6 +281,29 @@ def do_the_elim(G:nx.Graph, labels, maxcolor):
                 labels[node] = lasti
         labels = do_the_elim(G, labels, maxcolor-1)
     return labels
+
+def do_the_elim_full(G:nx.Graph, labels, maxcolor):
+    labellist = []
+    maxcolors = []
+    for i in range(1, maxcolor+1):
+        labelscopy, G, test = try_elim_color_simple(G, labels, i, maxcolor)
+        if(test == 0):
+            for node in G.nodes():
+                if(labelscopy[node] == maxcolor):
+                    labelscopy[node] = i
+            labelscopy, newmaxcolor = do_the_elim_full(G, labels, maxcolor-1)
+            labellist.append(labelscopy)
+            maxcolors.append(newmaxcolor)
+    if(len(labellist) == 0):
+        return labels, maxcolor
+    else:
+        labels = labellist[0]
+        maxcolor = maxcolors[0]
+        for i in range(0, len(labellist)+1):
+            if(maxcolors[i] < maxcolor):
+                labels = labellist[i]
+                maxcolor = maxcolors[i]
+        return labels, maxcolor
 
 def try_elim_color_simple(G:nx.graph, labels, currcolor, maxcolor):
     fail = 0
