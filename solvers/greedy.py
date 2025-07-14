@@ -291,18 +291,20 @@ def do_the_elim_full(G:nx.Graph, labels, maxcolor):
             for node in G.nodes():
                 if(labelscopy[node] == maxcolor):
                     labelscopy[node] = i
-            labelscopy, newmaxcolor = do_the_elim_full(G, labels, maxcolor-1)
+            labelscopy, newmaxcolor = do_the_elim_full(G, labelscopy, maxcolor-1)
             labellist.append(labelscopy)
             maxcolors.append(newmaxcolor)
     if(len(labellist) == 0):
         return labels, maxcolor
     else:
+        print("ayy")
         labels = labellist[0]
         maxcolor = maxcolors[0]
-        for i in range(0, len(labellist)+1):
+        for i in range(0, len(labellist)):
             if(maxcolors[i] < maxcolor):
                 labels = labellist[i]
                 maxcolor = maxcolors[i]
+                print("yo waddup")
         return labels, maxcolor
 
 def try_elim_color_simple(G:nx.graph, labels, currcolor, maxcolor):
