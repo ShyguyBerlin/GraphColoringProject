@@ -34,6 +34,8 @@ solvers={"greedy": Solver(greedy_no_sort,[]),
          "greedy_elim_colors": Solver(greedy_elim_colors,[]),
          "greedy_color_swaps_and_elim_colors": Solver(greedy_color_swaps_and_elim_colors,[]),
          "aus_3_mach_2": Solver(aus_3_mach_2,[]),
+         "aus_3_mach_2_it": Solver(aus_3_mach_2_it,[]),
+         "aus_3_mach_2_elim": Solver(aus_3_mach_2_elim,[]),
          "elim_colors_basic": Solver(elim_colors_basic,[])
          }
 
