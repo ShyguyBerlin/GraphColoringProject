@@ -332,17 +332,17 @@ def do_the_3_to_2(G:nx.Graph, labels: dict, color1, color2, color3, maxcolor):
             return do_the_3_to_2(G, labels, color1, color2, (color3+1), maxcolor)
         else:
             if(color2 < (color3-1)):
-                do_the_3_to_2(G, labels, color1, (color2+1), (color2+2), maxcolor)
+                return do_the_3_to_2(G, labels, color1, (color2+1), (color2+2), maxcolor)
             else:
                 if(color1 < (color2-1)):
-                    do_the_3_to_2(G, labels, (color1+1), (color1+2), (color1+3), maxcolor)
+                    return do_the_3_to_2(G, labels, (color1+1), (color1+2), (color1+3), maxcolor)
                 else:
                     return labels
     elif maincheck == True:
         for node in G.nodes():
             if labelscopy[node] == maxcolor:
                 labelscopy[node] = color3
-        return do_the_3_to_2(G, labelscopy, 1, 2, 3, maxcolor-1)
+        return do_the_3_to_2(G, labelscopy, color1, color2, color3, maxcolor-1)
 
 
 def check_color(Gsub:nx.Graph, labelscopy: dict, node, color1, color2):
