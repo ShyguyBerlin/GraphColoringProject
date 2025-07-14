@@ -284,6 +284,27 @@ def try_elim_color_simple(G:nx.graph, labels, currcolor, maxcolor):
     else:
         return labelscopy, G, 0
 
+def aus_3_mach_2_elim_it(G:nx.Graph):
+    labels={}
+    coloramount = 1
+
+    for node in G.nodes():
+        used = {labels.get(neigh) for neigh in G.neighbors(node)}
+        c=1
+        while True:
+            if c not in used:
+                labels[node]= c
+                if c > coloramount:
+                    coloramount = c
+                break
+            c+=1
+
+    labels=do_the_elim(G,labels,coloramount)
+    coloramount=max(labels.values())
+    if(coloramount > 2):
+        labels = do_the_3_to_2_it(G, labels, 1, 2, 3, coloramount)
+    yield labels
+
 def aus_3_mach_2_elim(G:nx.Graph):
     labels={}
     coloramount = 1
@@ -417,6 +438,15 @@ def do_the_3_to_2_it(G:nx.Graph, labels: dict, color1, color2, color3, maxcolor)
                     labelscopy[node] = color3
                 labels[node]=labelscopy[node]
             maxcolor-=1
+            if(color3>maxcolor):
+                color2+=1
+                color3=color2+1
+            if color3>maxcolor:
+                color1+=1
+                color2=color1+1
+                color3=color2+1
+            if color3>maxcolor:
+                break
             continue
     return labels
 

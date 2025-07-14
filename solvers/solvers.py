@@ -36,6 +36,7 @@ solvers={"greedy": Solver(greedy_no_sort,[]),
          "aus_3_mach_2": Solver(aus_3_mach_2,[]),
          "aus_3_mach_2_it": Solver(aus_3_mach_2_it,[]),
          "aus_3_mach_2_elim": Solver(aus_3_mach_2_elim,[]),
+         "aus_3_mach_2_elim_it": Solver(aus_3_mach_2_elim_it,[]),
          "elim_colors_basic": Solver(elim_colors_basic,[])
          }
 
