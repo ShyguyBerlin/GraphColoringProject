@@ -309,20 +309,20 @@ def do_the_3_to_2(G:nx.Graph, labels: dict, color1, color2, color3, maxcolor):
         if labelscopy[node] != color1 and labelscopy[node] != color2 and labelscopy[node] != color3 :        
             Gsub.remove_node(node)
         else:
-            del labelscopy[node]
+            labelscopy[node] = 0
     startpoints = [list(Gsub.nodes)[0]]
     for node in Gsub.nodes():
         for start in startpoints:
-            if (nx.has_path(Gsub, node, start ) == False):
+            if (nx.has_path(Gsub, node, start) == False):
                 startpoints.append(node)
                 break
     for node in startpoints:
         labelscopy[node] = color1
-    maincheck = 0
+    maincheck = True
     while maincheck == True:
         check = 0
         for node in Gsub.nodes():
-            check = check_color(Gsub, labelscopy, node)
+            check = check_color(Gsub, labelscopy, node, color1, color2)
             if(check == 2):
                 maincheck = False
         if check == 0:
@@ -345,7 +345,7 @@ def do_the_3_to_2(G:nx.Graph, labels: dict, color1, color2, color3, maxcolor):
         return do_the_3_to_2(G, labelscopy, 1, 2, 3, maxcolor-1)
 
 
-def check_color(Gsub:nx.Graph, labelscopy, node, color1, color2):
+def check_color(Gsub:nx.Graph, labelscopy: dict, node, color1, color2):
     if(labelscopy[node] == color1 or labelscopy[node] == color2 ):
         return 0
     else:
