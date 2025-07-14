@@ -217,6 +217,29 @@ def greedy_color_swaps_and_elim_colors(G:nx.Graph):
     labels = do_the_elim(G, labels, coloramount)
     yield labels
 
+def greedy_asc_deg_and_elim_colors(G:nx.Graph):
+    labels = {}
+    coloramount = 1
+    *_,labels = greedy_asc_deg(G)
+
+    for node in G.nodes():
+        if coloramount < labels[node]:
+            coloramount = labels[node]
+
+    labels = do_the_elim(G, labels, coloramount)
+    yield labels
+
+def greedy_desc_deg_and_elim_colors(G:nx.Graph):
+    labels = {}
+    coloramount = 1
+    *_,labels = greedy_desc_deg(G)
+
+    for node in G.nodes():
+        if coloramount < labels[node]:
+            coloramount = labels[node]
+
+    labels = do_the_elim(G, labels, coloramount)
+    yield labels
 
 def elim_colors_basic(G: nx.Graph):
     labels={}
@@ -329,4 +352,3 @@ def try_elim_color_simple(G:nx.graph, labels, currcolor, maxcolor):
     else:
         #print("ELIMINATING COLOR,",currcolor,maxcolor,G.nodes,G.edges,labels,labelscopy)
         return labelscopy, G, 0
-
