@@ -207,3 +207,15 @@ def widgersons_first_and_elim_colors(G:nx.Graph):
 
     labels = do_the_elim(G, labels, coloramount)
     yield labels
+
+def widgersons_second_and_elim_colors(G:nx.Graph):
+    labels = {}
+    coloramount = 1
+    *_,labels = wigdersons_second(G)
+
+    for node in G.nodes():
+        if coloramount < labels[node]:
+            coloramount = labels[node]
+
+    labels = do_the_elim(G, labels, coloramount)
+    yield labels

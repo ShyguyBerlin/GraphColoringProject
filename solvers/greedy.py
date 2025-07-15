@@ -530,10 +530,14 @@ def do_the_3_to_2(G:nx.Graph, labels: dict, color1, color2, color3, maxcolor):
             labelscopy[node] = 0
     startpoints = [list(Gsub.nodes)[0]]
     for node in Gsub.nodes():
+        to_all_disconnected=True
         for start in startpoints:
-            if (nx.has_path(Gsub, node, start) == False):
-                startpoints.append(node)
+            if (nx.has_path(Gsub, node, start) == True):
+                to_all_disconnected=False
                 break
+        if to_all_disconnected:
+            startpoints.append(node)
+                    
     for node in startpoints:
         labelscopy[node] = color1
     maincheck = True
