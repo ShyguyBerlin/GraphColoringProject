@@ -18,11 +18,12 @@ def flow_cut_edge(G : nx.Graph):
         return ([G.copy()], [])
 
     # Pick 2 random centers
-    center1, center2 = random.sample(nodes, 2)
+    center1, = random.sample(nodes, 1)
 
     # Run Dijkstra from both centers
     try:
         dist1 = nx.single_source_dijkstra_path_length(G, center1)
+        center2= max(nodes,key=lambda x: dist1.get(x, float('inf')))
         dist2 = nx.single_source_dijkstra_path_length(G, center2)
     except nx.NetworkXError:
         # Handle disconnected components - fall back to simple split
@@ -127,46 +128,53 @@ def build_adj_sets(labels_A,labels_B,edges_A,edges_border):
         adj_B[labels_A[u]].add(labels_B[v])
     return adj_A,adj_B
 
+from .greedy import color_swaps_color_node
+
 # Merges labels_A into labels_B based on edge constraints between A and B and inside A
-def merge_color_labels(labels_A,labels_B,edges_A,edges_border):
+def merge_color_labels(subgraph,labels_A,labels_B,edges_A,edges_border):
     adj_A,adj_B=build_adj_sets(labels_A,labels_B,edges_A,edges_border)
     remap={}
-    to_remap=list(labels_A.values())
+    to_remap=list(set(labels_A.values()))
     used_colors=max(labels_B.values())
     
     def col_remap(Acol,Bcol):
-        for src in adj_A.keys():
-            if Acol in adj_A[src]:
-                adj_B[src].add(Bcol)
         remap[Acol]=Bcol
+    
+    # first 0-used_colors nodes are from B, others from A
+    merge_graph :nx.Graph= nx.empty_graph(len(to_remap)+used_colors)
+
     # Try to remap each color
     while len(to_remap):
         # Remap the color with the most constraints
         col=max(to_remap,key=lambda x: len(adj_B[x]))
         to_remap.remove(col)
         
-        # Cannot map to a color in B, use new color
-        if len(adj_B[col])==used_colors:
-            col_remap(col,used_colors+1)
-            used_colors+=1
-            continue
-        
         for remap_to in range(1,used_colors+1):
             if not remap_to in adj_B[col]:
-                col_remap(col,remap_to)
-                break
-#    print("before remap A:",labels_A,"B:",labels_B)
-#    print("remap",remap,"edges_a",edges_A)
+                merge_graph.add_edge(remap_to,used_colors+col)
+    
+    merge_matching = nx.maximal_matching(merge_graph)
+    for u,v in merge_matching:
+        col_remap(v-used_colors,u)
+
+    # Nodes that cannot be colored through remapping
+    problem_nodes=[]
+
     for k in labels_A.keys():
-        labels_B[k]=remap[labels_A[k]]
-#    print("after:",labels_B)
-#    print("adjA",adj_A,"adjB",adj_B)
+        if not labels_A[k] in remap:
+            problem_nodes.append(k)
+        else:
+            labels_B[k]=remap[labels_A[k]]
+
+    for k in problem_nodes:
+        color_swaps_color_node(subgraph,labels_B,k)
+
     return labels_B
 
 
 # An LLM was insulting me for my inoptimal implementation, so I let them fix it, it runs ~25% faster, I won't complain
 def merge_color_labels_optimized(labels_A, labels_B, edges_A, edges_border):                                        
-    """                                                                                                             
+    """                                                                                       
     Optimized version of color merging with better data structures                                                  
     """                                                                                                             
     # Pre-compute color sets for faster lookups                                                                     
@@ -263,7 +271,7 @@ def flow_merge(G : nx.Graph,muffle=True):
             yield f
             l=f
         if did_comp1:
-            merge_color_labels_optimized(l,labels,list(i.edges()),cut)
+            merge_color_labels(nx.subgraph(G,set(l.keys()).union(set(labels.keys()))),l,labels,list(i.edges()),cut)
         else:
             labels=l
             did_comp1=True
@@ -309,7 +317,7 @@ def flow_merge_bf(G : nx.Graph,muffle=True):
             yield f
             l=f
         if did_comp1:
-            merge_color_labels_optimized(l,labels,list(i.edges()),cut)
+            merge_color_labels(nx.subgraph(G,set(l.keys()).union(set(labels.keys()))),l,labels,list(i.edges()),cut)
         else:
             labels=l
             did_comp1=True

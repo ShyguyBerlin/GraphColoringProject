@@ -158,24 +158,7 @@ def swap(labels:dict, keys_to_swap:list, valueA:int, valueB:int):
             elif labels[node] == valueB:
                 labels[node] = valueA
 
-def greedy_color_swaps_continue(G :nx.Graph, labels :dict):
-    
-    labels={}
-
-    G_sorting =G.copy()
-    sorting=[]
-    for i in range(len(G)):
-        deg=min([G_sorting.degree(n) for n in G_sorting.nodes()])
-        nodes = list(G_sorting.nodes())
-        shuffle(nodes)
-        for node in nodes:
-            if G_sorting.degree(node)==deg:
-                sorting.append(node)
-                G_sorting.remove_node(node)
-                break
-    sorting.reverse()
-
-    for node in sorting:
+def color_swaps_color_node(G :nx.Graph,labels:dict,node):
         neighs= {(labels.get(neigh),neigh) for neigh in G.neighbors(node)}
         used = [i[0] for i in neighs]
         c=1
@@ -199,6 +182,25 @@ def greedy_color_swaps_continue(G :nx.Graph, labels :dict):
         
         labels[node]=c
 
+def greedy_color_swaps_continue(G :nx.Graph, labels :dict):
+    
+    labels={}
+
+    G_sorting =G.copy()
+    sorting=[]
+    for i in range(len(G)):
+        deg=min([G_sorting.degree(n) for n in G_sorting.nodes()])
+        nodes = list(G_sorting.nodes())
+        shuffle(nodes)
+        for node in nodes:
+            if G_sorting.degree(node)==deg:
+                sorting.append(node)
+                G_sorting.remove_node(node)
+                break
+    sorting.reverse()
+
+    for node in sorting:
+        color_swaps_color_node(G,labels,node)
         yield labels
     
     return
@@ -206,7 +208,7 @@ def greedy_color_swaps_continue(G :nx.Graph, labels :dict):
 def greedy_color_swaps_and_elim_colors(G:nx.Graph):
     labels = {}
     coloramount = 1
-    labels = greedy_color_swaps(G)
+    *_,labels = greedy_color_swaps(G)
 
     for node in G.nodes():
         if coloramount < labels[node]:
@@ -215,6 +217,29 @@ def greedy_color_swaps_and_elim_colors(G:nx.Graph):
     labels = do_the_elim(G, labels, coloramount)
     yield labels
 
+def greedy_asc_deg_and_elim_colors(G:nx.Graph):
+    labels = {}
+    coloramount = 1
+    *_,labels = greedy_asc_deg(G)
+
+    for node in G.nodes():
+        if coloramount < labels[node]:
+            coloramount = labels[node]
+
+    labels = do_the_elim(G, labels, coloramount)
+    yield labels
+
+def greedy_desc_deg_and_elim_colors(G:nx.Graph):
+    labels = {}
+    coloramount = 1
+    *_,labels = greedy_desc_deg(G)
+
+    for node in G.nodes():
+        if coloramount < labels[node]:
+            coloramount = labels[node]
+
+    labels = do_the_elim(G, labels, coloramount)
+    yield labels
 
 def elim_colors_basic(G: nx.Graph):
     labels={}
@@ -248,6 +273,25 @@ def greedy_elim_colors( G : nx.graph):
     labels = do_the_elim(G, labels, coloramount)
     yield labels
 
+def greedy_elim_colors_all_paths( G : nx.graph):
+    labels={}
+    coloramount = 1
+
+    for node in G.nodes():
+        used = {labels.get(neigh) for neigh in G.neighbors(node)}
+        c=1
+        while True:
+            if c not in used:
+                labels[node]= c
+                if c > coloramount:
+                    coloramount = c
+                break
+            c+=1
+            
+        
+    labels, test = do_the_elim_full(G, labels, coloramount)
+    yield labels
+
 def do_the_elim(G:nx.Graph, labels, maxcolor):
     lasti = 1
     for i in range(1, maxcolor+1):
@@ -261,6 +305,31 @@ def do_the_elim(G:nx.Graph, labels, maxcolor):
                 labels[node] = lasti
         labels = do_the_elim(G, labels, maxcolor-1)
     return labels
+
+def do_the_elim_full(G:nx.Graph, labels, maxcolor):
+    labellist = []
+    maxcolors = []
+    for i in range(1, maxcolor+1):
+        labelscopy, G, test = try_elim_color_simple(G, labels, i, maxcolor)
+        if(test == 0):
+            for node in G.nodes():
+                if(labelscopy[node] == maxcolor):
+                    labelscopy[node] = i
+            labelscopy, newmaxcolor = do_the_elim_full(G, labelscopy, maxcolor-1)
+            labellist.append(labelscopy)
+            maxcolors.append(newmaxcolor)
+    if(len(labellist) == 0):
+        return labels, maxcolor
+    else:
+        print("ayy")
+        labels = labellist[0]
+        maxcolor = maxcolors[0]
+        for i in range(0, len(labellist)):
+            if(maxcolors[i] < maxcolor):
+                labels = labellist[i]
+                maxcolor = maxcolors[i]
+                print("yo waddup")
+        return labels, maxcolor
 
 def try_elim_color_simple(G:nx.graph, labels, currcolor, maxcolor):
     fail = 0
@@ -282,6 +351,7 @@ def try_elim_color_simple(G:nx.graph, labels, currcolor, maxcolor):
     if(fail == 1):
         return labels, G, 1
     else:
+        #print("ELIMINATING COLOR,",currcolor,maxcolor,G.nodes,G.edges,labels,labelscopy)
         return labelscopy, G, 0
 
 def aus_3_mach_2_elim_it(G:nx.Graph):
@@ -510,3 +580,4 @@ def check_color(Gsub:nx.Graph, labelscopy: dict, node, color1, color2):
             return 1
         else:
             return 2
+
