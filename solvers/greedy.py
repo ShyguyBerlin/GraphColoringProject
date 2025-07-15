@@ -251,6 +251,7 @@ def elim_colors_basic(G: nx.Graph):
     coloramount-=1
 
     labels = do_the_elim(G, labels, coloramount)
+
     yield labels
 
 def greedy_elim_colors( G : nx.graph):
@@ -352,3 +353,231 @@ def try_elim_color_simple(G:nx.graph, labels, currcolor, maxcolor):
     else:
         #print("ELIMINATING COLOR,",currcolor,maxcolor,G.nodes,G.edges,labels,labelscopy)
         return labelscopy, G, 0
+
+def aus_3_mach_2_elim_it(G:nx.Graph):
+    labels={}
+    coloramount = 1
+
+    for node in G.nodes():
+        used = {labels.get(neigh) for neigh in G.neighbors(node)}
+        c=1
+        while True:
+            if c not in used:
+                labels[node]= c
+                if c > coloramount:
+                    coloramount = c
+                break
+            c+=1
+
+    labels=do_the_elim(G,labels,coloramount)
+    coloramount=max(labels.values())
+    if(coloramount > 2):
+        labels = do_the_3_to_2_it(G, labels, 1, 2, 3, coloramount)
+    yield labels
+
+def aus_3_mach_2_elim(G:nx.Graph):
+    labels={}
+    coloramount = 1
+
+    for node in G.nodes():
+        used = {labels.get(neigh) for neigh in G.neighbors(node)}
+        c=1
+        while True:
+            if c not in used:
+                labels[node]= c
+                if c > coloramount:
+                    coloramount = c
+                break
+            c+=1
+
+    labels=do_the_elim(G,labels,coloramount)
+    coloramount=max(labels.values())
+    if(coloramount > 2):
+        labels = do_the_3_to_2(G, labels, 1, 2, 3, coloramount)
+    yield labels
+    
+def aus_3_mach_2_it(G:nx.Graph):
+    labels={}
+    coloramount = 1
+
+    for node in G.nodes():
+        used = {labels.get(neigh) for neigh in G.neighbors(node)}
+        c=1
+        while True:
+            if c not in used:
+                labels[node]= c
+                if c > coloramount:
+                    coloramount = c
+                break
+            c+=1
+    if(coloramount > 2):
+        labels = do_the_3_to_2_it(G, labels, 1, 2, 3, coloramount)
+    yield labels
+
+def aus_3_mach_2(G:nx.Graph):
+    labels={}
+    coloramount = 1
+
+    for node in G.nodes():
+        used = {labels.get(neigh) for neigh in G.neighbors(node)}
+        c=1
+        while True:
+            if c not in used:
+                labels[node]= c
+                if c > coloramount:
+                    coloramount = c
+                break
+            c+=1
+    if(coloramount > 2):
+        labels = do_the_3_to_2(G, labels, 1, 2, 3, coloramount)
+    yield labels
+
+def do_the_3_to_2_it(G:nx.Graph, labels: dict, color1, color2, color3, maxcolor):
+    loops=0
+    while color1 <= maxcolor-2:
+        loops+=1
+        if loops>10000:
+            print("I am stuck",color1,color2,color3,maxcolor)
+        Gsub = G.copy()
+        labelscopy = labels.copy()
+
+        # Entfernt alle unrelevanten Knoten aus Gsub
+        # Färbt relevante Knoten mit Farbe 0
+        for node in G.nodes():
+            if labelscopy[node] != color1 and labelscopy[node] != color2 and labelscopy[node] != color3 :        
+                Gsub.remove_node(node)
+            else:
+                labelscopy[node] = 0
+        
+        # Wähle aus jeder Zusammenhangskomponente einen Knoten und füge diesen in startpoints hinzu
+        startpoints = [list(Gsub.nodes)[0]]
+        for node in Gsub.nodes():
+            to_all_disconnected=True
+            for start in startpoints:
+                if (nx.has_path(Gsub, node, start) == True):
+                    to_all_disconnected=False
+                    break
+            if to_all_disconnected:
+                startpoints.append(node)
+                    
+        for node in startpoints:
+            labelscopy[node] = color1
+        
+        # Färbe alle Knoten mit color1 oder color2, falls dies nicht möglich ist, setze maincheck=False
+        maincheck = True
+        miniloops=0
+        while maincheck:
+            miniloops+=1
+            if miniloops>10000:
+                print("I am stuck",labelscopy,list(Gsub.nodes()))
+            check = 0
+            all_colored=True
+            for node in Gsub.nodes():
+                if labelscopy.get(node,0)==0:
+                    check = check_color(Gsub, labelscopy, node, color1, color2)
+                else:
+                    check = 0
+                if check!=0:
+                    all_colored=False
+                if(check == 2):
+                    maincheck = False
+            if all_colored == True:
+                break
+        
+        # Subgraph ist nicht 2-färbbar
+        if maincheck == False:
+            if(color3 < maxcolor):
+                color3+=1
+                continue
+            else:
+                if(color2 < (maxcolor-1)):
+                    color2+=1
+                    color3=color2+1
+                    continue
+                else:
+                    if(color1 < (maxcolor-2)):
+                        color1+=1
+                        color2=color1+1
+                        color3=color2+1
+                        continue
+                    else:
+                        break
+        elif maincheck == True:
+            for node in G.nodes():
+                if labelscopy[node] == maxcolor:
+                    labelscopy[node] = color3
+                labels[node]=labelscopy[node]
+            maxcolor-=1
+            if(color3>maxcolor):
+                color2+=1
+                color3=color2+1
+            if color3>maxcolor:
+                color1+=1
+                color2=color1+1
+                color3=color2+1
+            if color3>maxcolor:
+                break
+            continue
+    return labels
+
+def do_the_3_to_2(G:nx.Graph, labels: dict, color1, color2, color3, maxcolor):
+    Gsub = G.copy()
+    labelscopy = labels.copy()
+    for node in G.nodes():
+        if labelscopy[node] != color1 and labelscopy[node] != color2 and labelscopy[node] != color3 :        
+            Gsub.remove_node(node)
+        else:
+            labelscopy[node] = 0
+    startpoints = [list(Gsub.nodes)[0]]
+    for node in Gsub.nodes():
+        for start in startpoints:
+            if (nx.has_path(Gsub, node, start) == False):
+                startpoints.append(node)
+                break
+    for node in startpoints:
+        labelscopy[node] = color1
+    maincheck = True
+    while maincheck == True:
+        check = 0
+        for node in Gsub.nodes():
+            check = check_color(Gsub, labelscopy, node, color1, color2)
+            if(check == 2):
+                maincheck = False
+        if check == 0:
+            break
+    if maincheck == False:
+        if(color3 < maxcolor):
+            return do_the_3_to_2(G, labels, color1, color2, (color3+1), maxcolor)
+        else:
+            if(color2 < (color3-1)):
+                return do_the_3_to_2(G, labels, color1, (color2+1), (color2+2), maxcolor)
+            else:
+                if(color1 < (color2-1)):
+                    return do_the_3_to_2(G, labels, (color1+1), (color1+2), (color1+3), maxcolor)
+                else:
+                    return labels
+    elif maincheck == True:
+        for node in G.nodes():
+            if labelscopy[node] == maxcolor:
+                labelscopy[node] = color3
+        return do_the_3_to_2(G, labelscopy, color1, color2, color3, maxcolor-1)
+
+# Gebe 0 aus und färbe node um, wenn die Nachbarschaft nur eine der Farben color 1 oder color 2 zulässt
+# Gebe 1 aus, falls node mit beiden Farbeng gefärbt werden kann
+# Gebe 2 aus, falls node weder mit color1 noch mit color2 färbbar ist
+def check_color(Gsub:nx.Graph, labelscopy: dict, node, color1, color2):
+    if(labelscopy[node] == color1 or labelscopy[node] == color2 ):
+        return 0
+    else:
+        used = {labelscopy.get(neigh) for neigh in Gsub.neighbors(node)}
+        if(color1 in used) and (color2 not in used):
+            labelscopy[node] = color2
+            return 0
+        elif (color1 not in used) and (color2 in used):
+            labelscopy[node] = color1
+            return 0
+        elif(color1 not in used) and (color2 not in used):
+            return 1
+        else:
+            return 2
+
