@@ -1,0 +1,154 @@
+{
+    "name": "Cograph test",
+    "timeout": 1500,
+    "repetitions": 1,
+    "datasets":
+    [
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_50n_cograph.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_50n_cograph_50m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_50n_cograph_100m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_50n_cograph_150m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_100n_cograph.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_100n_cograph_50m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_100n_cograph_100m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_100n_cograph_150m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_150n_cograph.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_150n_cograph_50m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_150n_cograph_100m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_150n_cograph_150m.gsm"
+        },
+
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_50n_cograph_sparse.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_50n_cograph_sparse_50m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_50n_cograph_sparse_100m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_50n_cograph_sparse_150m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_100n_cograph_sparse.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_100n_cograph_sparse_50m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_100n_cograph_sparse_100m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_100n_cograph_sparse_150m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_150n_cograph_sparse.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_150n_cograph_sparse_50m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_150n_cograph_sparse_100m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_150n_cograph_sparse_150m.gsm"
+        },
+
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_50n_cograph_dense.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_50n_cograph_dense_50m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_50n_cograph_dense_100m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_50n_cograph_dense_150m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_100n_cograph_dense.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_100n_cograph_dense_50m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_100n_cograph_dense_100m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_100n_cograph_dense_150m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_150n_cograph_dense.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_150n_cograph_dense_50m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_150n_cograph_dense_100m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_150n_cograph_dense_150m.gsm"
+        }
+    ]
+}
