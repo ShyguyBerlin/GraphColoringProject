@@ -1,0 +1,52 @@
+{
+    "name": "Chordal test",
+    "timeout": 1500,
+    "repetitions": 1,
+    "datasets":
+    [
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_50n_chordal.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_50n_chordal_50m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_50n_chordal_100m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_50n_chordal_150m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_100n_chordal.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_100n_chordal_50m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_100n_chordal_100m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_100n_chordal_150m.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_150n_chordal.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_200n_chordal.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_250n_chordal.gsm"
+        }
+    ]
+}

@@ -3,7 +3,7 @@
 import networkx as nx
 from random import shuffle
 import math
-from .greedy import greedy_desc_deg,greedy_most_colors,greedy_color_swaps
+from .greedy import greedy_desc_deg,greedy_most_colors,greedy_color_swaps, do_the_elim
 
 # These algorithms should only be used with 3-colorable graphs I guess
 
@@ -195,3 +195,27 @@ def wigdersons_second__(G :nx.Graph,fk):
     for i in rem_lab:
         labels[i]=rem_lab[i]+col
         yield labels
+
+def widgersons_first_and_elim_colors(G:nx.Graph):
+    labels = {}
+    coloramount = 1
+    *_,labels = wigdersons_first_greedy_color(G)
+
+    for node in G.nodes():
+        if coloramount < labels[node]:
+            coloramount = labels[node]
+
+    labels = do_the_elim(G, labels, coloramount)
+    yield labels
+
+def widgersons_second_and_elim_colors(G:nx.Graph):
+    labels = {}
+    coloramount = 1
+    *_,labels = wigdersons_second(G)
+
+    for node in G.nodes():
+        if coloramount < labels[node]:
+            coloramount = labels[node]
+
+    labels = do_the_elim(G, labels, coloramount)
+    yield labels

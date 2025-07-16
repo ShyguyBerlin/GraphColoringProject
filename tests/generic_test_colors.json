@@ -1,0 +1,88 @@
+{
+    "name": "Generic test - colors",
+    "timeout": 1500,
+    "repetitions": 1,
+    "datasets":
+    [
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_3cn_100n_10d.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_3cn_100n_30d.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_3cn_100n_50d.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_3cn_100n_70d.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_3cn_100n_90d.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_3cn_250n_10d.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_3cn_250n_30d.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_3cn_250n_50d.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_3cn_250n_70d.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_3cn_250n_90d.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_5cn_100n_10d.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_5cn_100n_30d.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_5cn_100n_50d.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_5cn_100n_70d.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_5cn_100n_90d.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_5cn_250n_10d.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_5cn_250n_30d.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_5cn_250n_50d.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_5cn_250n_70d.gsm"
+        },
+        {
+            "parser": "gsm",
+            "file-path": "tests/input/50_5cn_250n_90d.gsm"
+        }
+    ]
+}
