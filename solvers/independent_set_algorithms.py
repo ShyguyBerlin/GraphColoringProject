@@ -53,40 +53,34 @@ def berger_rompel(G : nx.Graph):
 
     m = floor(log(G.order(),k)) # 2
     color = 1 # 3
-    print("m is",m)
-    c=0
+    #print("m is",m)
     while len(uncolored)>=m*k: # 4
         U:list=uncolored.copy() # 1
         shuffle(U)
         while len(U)>=k*m: # 2
-            c+=1
-            print("\nuncolored:",len(uncolored),uncolored)
-            print("U:",len(U),U)
+            #print("\nuncolored:",len(uncolored),uncolored)
+            #print("U:",len(U),U)
             partitions=[] # 1
             while len(U)>(len(partitions)+2)*k*m:
                 partitions.append(G.subgraph(U[len(partitions)*k*m:(len(partitions)+1)*k*m]))
             partitions.append(G.subgraph(U[len(partitions)*k*m:]))
-            print("partitions: ",len(partitions))
-            print("looking for iset of size",m)
+            #print("partitions: ",len(partitions))
+            #print("looking for iset of size",m)
             for i in partitions: # 2
                 i :nx.Graph = i
-                print("partition")
-                print(list(i.nodes()),list(i.edges()))
+                #print("partition")
+                #print(list(i.nodes()),list(i.edges()))
                 done=False
-                if c>100:
-                    print("Now come the isets")
                 for X in all_independent_sets(i):
-                    if c>100:
-                        print("iset",X)
                     if len(X)==m:
-                        print("Iset good")
+                        #print("Iset good")
                         neighborhood :set=set()
                         Ugraph : nx.Graph=G.subgraph(U)
                         for n in X:
                             neighborhood |= set(Ugraph.neighbors(n))
                         if len(neighborhood)<=len(U)-len(U)/k:
                             neighborhood |= set(X)
-                            print("found iset,",X)
+                            #print("found iset,",X)
                             # 3
                             # found good subset
                             for n in X:
@@ -97,11 +91,11 @@ def berger_rompel(G : nx.Graph):
                             done=True
                             found=1
                             break
-                        print("neighborhood too smol")
+                        #print("neighborhood too smol")
                 if done:
                     break
 
-        print("EEP")
+        #print("EEP")
         color+=1 # 3
         yield labels
 
