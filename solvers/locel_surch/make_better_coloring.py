@@ -6,7 +6,7 @@ Created on Wed Jul  9 13:38:24 2025
 """
 
 import networkx as nx
-import makebetter as mb
+from . import makebetter as mb
 
 def make_better_coloring(G : nx.graph, coloring : dict()):
     

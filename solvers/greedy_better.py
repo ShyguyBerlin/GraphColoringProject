@@ -1,7 +1,7 @@
 import networkx as nx
 from random import shuffle
-import make_better_coloring as mbc
-import greedy as gy
+from .locel_surch import make_better_coloring as mbc
+from . import greedy as gy
 
 def greedy_no_sort_make_better( G : nx.graph):
   labels = {}

@@ -6,7 +6,7 @@ Created on Sun Jul  6 11:32:25 2025
 """
 
 import networkx as nx
-import color_to as ct
+from . import color_to as ct
 
 def swaparound(G : nx.graph, node : int()):
     

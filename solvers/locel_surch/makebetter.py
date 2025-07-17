@@ -6,9 +6,9 @@ Created on Tue Jul  1 18:50:50 2025
 """
 
 import networkx as nx
-import check_colors as cc
-import recolor as rc
-import Swaparound as sr
+from . import check_colors as cc
+from . import recolor as rc
+from . import Swaparound as sr
 
 def makebetter(G : nx.graph):
     
