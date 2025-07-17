@@ -4,7 +4,8 @@ import make_better_coloring as mbc
 import greedy as gy
 
 def greedy_no_sort_make_better( G : nx.graph):
-
+  labels = {}
+  
   labels = gy.greedy_no_sort(G)
   labels = mbc.make_batter_coloring(G, labels)
 
