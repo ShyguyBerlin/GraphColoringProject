@@ -44,11 +44,12 @@ solvers={"greedy": Solver(greedy_no_sort,[]),
          #"aus_3_mach_2_elim_it": Solver(aus_3_mach_2_elim_it,[]),
          "elim_colors_basic": Solver(elim_colors_basic,[]),
          "wigdersons_first_and_elim_colors": Solver(widgersons_first_and_elim_colors,[]),
-         "wigdersons_second_and_elim_colors": Solver(widgersons_second_and_elim_colors,[])
-         "greedy_no_sort_make_better": Solver(greedy_no_sort_make_better,[])
-         "greedy_asc_deg_make_better": Solver(greedy_asc_deg_make_better,[])
-         "greedy_desc_deg_make_better": Solver(greedy_desc_deg_make_better,[])
-         "greedy_color_swaps_make_better": Solver(greedy_color_swaps_make_better,[])
+         "greedy_no_sort_make_better": Solver(greedy_no_sort_make_better,[]),
+         "greedy_asc_deg_make_better": Solver(greedy_asc_deg_make_better,[]),
+         "greedy_desc_deg_make_better": Solver(greedy_desc_deg_make_better,[]),
+         "greedy_color_swaps_make_better": Solver(greedy_color_swaps_make_better,[]),
+         "wigdersons_second_and_elim_colors": Solver(widgersons_second_and_elim_colors,["chromatic-number"])
+
          }
 
 # Get all solvers without dependencies
