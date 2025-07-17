@@ -43,7 +43,7 @@ solvers={"greedy": Solver(greedy_no_sort,[]),
          #"aus_3_mach_2_elim_it": Solver(aus_3_mach_2_elim_it,[]),
          "elim_colors_basic": Solver(elim_colors_basic,[]),
          "wigdersons_first_and_elim_colors": Solver(widgersons_first_and_elim_colors,[]),
-         "wigdersons_second_and_elim_colors": Solver(widgersons_second_and_elim_colors,[])
+         "wigdersons_second_and_elim_colors": Solver(widgersons_second_and_elim_colors,["chromatic-number"])
          }
 
 # Get all solvers without dependencies
