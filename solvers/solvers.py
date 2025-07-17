@@ -4,6 +4,7 @@ from .independent_set_algorithms import berger_rompel
 from .Johanson.johanson import johnson,johnson_naive
 from .own_solver import simulated_solver
 from .flow import flow_trivial,flow_merge,flow_merge_bf
+from .greedy_better import greedy_no_sort_make_better, greedy_asc_deg_make_better, greedy_desc_deg_make_better, greedy_color_swaps_make_better
 
 from collections.abc import Callable
 
@@ -43,7 +44,12 @@ solvers={"greedy": Solver(greedy_no_sort,[]),
          #"aus_3_mach_2_elim_it": Solver(aus_3_mach_2_elim_it,[]),
          "elim_colors_basic": Solver(elim_colors_basic,[]),
          "wigdersons_first_and_elim_colors": Solver(widgersons_first_and_elim_colors,[]),
+         "greedy_no_sort_make_better": Solver(greedy_no_sort_make_better,[]),
+         "greedy_asc_deg_make_better": Solver(greedy_asc_deg_make_better,[]),
+         "greedy_desc_deg_make_better": Solver(greedy_desc_deg_make_better,[]),
+         "greedy_color_swaps_make_better": Solver(greedy_color_swaps_make_better,[]),
          "wigdersons_second_and_elim_colors": Solver(widgersons_second_and_elim_colors,["chromatic-number"])
+
          }
 
 # Get all solvers without dependencies
