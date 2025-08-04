@@ -30,7 +30,7 @@ jobs:
         extra-system-packages: collection-science collection-latexrecommended
         extra-font-packages: collection-fontsrecommended
       env:
-        BIBINPUTS: docs:
+        BIBINPUTS: 'docs:'
     - name: Upload PDF
       uses: actions/upload-artifact@v4
       with:
