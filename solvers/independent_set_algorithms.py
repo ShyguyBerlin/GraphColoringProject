@@ -3,6 +3,7 @@
 import networkx as nx
 from random import shuffle
 from math import sqrt,log,floor
+from .greedy import do_the_elim
 
 def all_independent_sets(G):
     nodes = list(G.nodes)
@@ -109,6 +110,18 @@ def berger_rompel(G : nx.Graph):
         for i in uncolored:
             taken+=1
             labels[i]=taken
+    yield labels
+
+def berger_rompel_and_elim_colors(G:nx.Graph):
+    labels = {}
+    coloramount = 1
+    *_,labels = berger_rompel(G)
+
+    for node in G.nodes():
+        if coloramount < labels[node]:
+            coloramount = labels[node]
+
+    labels = do_the_elim(G, labels, coloramount)
     yield labels
 
 #"Test","johnson","tests/input/250_8cn_250n_35d.gsm",0,250,250,250.0,250,0.3075,0.3075,0.3075,0.3075,23.1264,51.6251,38.8428,39.3422,25.0,33.0,29.904,30.0

@@ -6,6 +6,7 @@ Created on Thu Jun  5 17:08:14 2025
 """
 import networkx as nx
 import solvers.Johanson.indiset as iset
+from solvers.greedy import do_the_elim
 
 def johnson(G : nx.Graph):
  
@@ -48,4 +49,16 @@ def johnson_naive(G : nx.Graph):
         if (G.number_of_nodes() == 0):
             surching = 0
         yield labels
+    yield labels
+
+def johnson_and_elim_colors(G:nx.Graph):
+    labels = {}
+    coloramount = 1
+    *_,labels = johnson(G)
+
+    for node in G.nodes():
+        if coloramount < labels[node]:
+            coloramount = labels[node]
+
+    labels = do_the_elim(G, labels, coloramount)
     yield labels

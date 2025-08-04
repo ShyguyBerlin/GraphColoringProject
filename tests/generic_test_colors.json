@@ -2,6 +2,7 @@
     "name": "Generic test - colors",
     "timeout": 1500,
     "repetitions": 1,
+    "Solvers": ["greedy", "greedy_elim_colors", "johnson_and_elim_colors", "berger_rompel_and_elim_colors", "flow_and_elim_colors"],
     "datasets":
     [
         {

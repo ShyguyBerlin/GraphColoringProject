@@ -1,9 +1,9 @@
 from .greedy import *
 from .wigderson import so_called_easy_algorithm,wigdersons_first,wigdersons_first_greedy_color,wigdersons_second,wigdersons_second_log,wigdersons_second_sqrt, widgersons_first_and_elim_colors, widgersons_second_and_elim_colors
-from .independent_set_algorithms import berger_rompel
-from .Johanson.johanson import johnson,johnson_naive
+from .independent_set_algorithms import berger_rompel, berger_rompel_and_elim_colors
+from .Johanson.johanson import johnson,johnson_naive, johnson_and_elim_colors
 from .own_solver import simulated_solver
-from .flow import flow_trivial,flow_merge,flow_merge_bf
+from .flow import flow_trivial,flow_merge,flow_merge_bf, flow_and_elim_colors
 
 from collections.abc import Callable
 
@@ -43,6 +43,9 @@ solvers={"greedy": Solver(greedy_no_sort,[]),
          #"aus_3_mach_2_elim_it": Solver(aus_3_mach_2_elim_it,[]),
          "elim_colors_basic": Solver(elim_colors_basic,[]),
          "wigdersons_first_and_elim_colors": Solver(widgersons_first_and_elim_colors,[]),
+         "johnson_and_elim_colors": Solver(johnson_and_elim_colors,[]),
+         "berger_rompel_and_elim_colors": Solver(berger_rompel_and_elim_colors,[]),
+         "flow_and_elim_colors": Solver(flow_and_elim_colors,[]),
          "wigdersons_second_and_elim_colors": Solver(widgersons_second_and_elim_colors,[])
          }
 

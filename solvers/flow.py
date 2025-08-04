@@ -1,7 +1,7 @@
 import networkx as nx
 import random
 
-from .greedy import greedy_desc_deg
+from .greedy import greedy_desc_deg, do_the_elim
 
 def partition(G : nx.Graph):
     pass
@@ -326,3 +326,15 @@ def flow_merge_bf(G : nx.Graph,muffle=True):
 
     if not muffle:
         print("Aha3")
+
+def flow_and_elim_colors(G:nx.Graph):
+    labels = {}
+    coloramount = 1
+    *_,labels = flow_merge(G, True)
+
+    for node in G.nodes():
+        if coloramount < labels[node]:
+            coloramount = labels[node]
+
+    labels = do_the_elim(G, labels, coloramount)
+    yield labels
