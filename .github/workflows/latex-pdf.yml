@@ -5,10 +5,12 @@ on:
     paths:
       - '**.tex'
       - '**.bib'
+      - '.github/workflows/latex-pdf.yml'
   pull_request:
     paths:
       - '**.tex'
       - '**.bib'
+      - '.github/workflows/latex-pdf.yml'
 
 jobs:
   build:
