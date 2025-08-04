@@ -2,3 +2,15 @@ __pycache__/
 tests/
 .vscode/
 .pytest_cache/
+docs/*.aux
+docs/*.bbl
+docs/*.blg
+docs/*.dvi
+docs/*.fdb_latexmk
+docs/*.fls
+docs/*.glo
+docs/*.log
+docs/*.out
+docs/*.pdf
+docs/*.synctex.gz
+docs/*.toc
