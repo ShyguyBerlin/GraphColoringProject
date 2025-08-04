@@ -23,7 +23,7 @@ jobs:
     - name: Compile LaTeX (with BibTeX support)
       uses: dante-ev/latex-action@2024-B
       with:
-        root_file: main.tex
+        root_file: docs/Ausarbeitung.tex
         latexmk_use_xelatex: false  # set to true if you use xelatex
         extra-packages: collection-fontsrecommended collection-science collection-latexrecommended
     - name: Upload PDF
