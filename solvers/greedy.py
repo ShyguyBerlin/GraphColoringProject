@@ -321,14 +321,14 @@ def do_the_elim_full(G:nx.Graph, labels, maxcolor):
     if(len(labellist) == 0):
         return labels, maxcolor
     else:
-        print("ayy")
+        #print("ayy")
         labels = labellist[0]
         maxcolor = maxcolors[0]
         for i in range(0, len(labellist)):
             if(maxcolors[i] < maxcolor):
                 labels = labellist[i]
                 maxcolor = maxcolors[i]
-                print("yo waddup")
+                #print("yo waddup")
         return labels, maxcolor
 
 def try_elim_color_simple(G:nx.graph, labels, currcolor, maxcolor):
@@ -433,11 +433,11 @@ def aus_3_mach_2(G:nx.Graph):
     yield labels
 
 def do_the_3_to_2_it(G:nx.Graph, labels: dict, color1, color2, color3, maxcolor):
-    loops=0
+    #loops=0
     while color1 <= maxcolor-2:
-        loops+=1
-        if loops>10000:
-            print("I am stuck",color1,color2,color3,maxcolor)
+        #loops+=1
+        #if loops>10000:
+        #    print("I am stuck",color1,color2,color3,maxcolor)
         Gsub = G.copy()
         labelscopy = labels.copy()
 
@@ -465,11 +465,11 @@ def do_the_3_to_2_it(G:nx.Graph, labels: dict, color1, color2, color3, maxcolor)
         
         # Färbe alle Knoten mit color1 oder color2, falls dies nicht möglich ist, setze maincheck=False
         maincheck = True
-        miniloops=0
+        #miniloops=0
         while maincheck:
-            miniloops+=1
-            if miniloops>10000:
-                print("I am stuck",labelscopy,list(Gsub.nodes()))
+            #miniloops+=1
+            #if miniloops>10000:
+                #print("I am stuck",labelscopy,list(Gsub.nodes()))
             check = 0
             all_colored=True
             for node in Gsub.nodes():

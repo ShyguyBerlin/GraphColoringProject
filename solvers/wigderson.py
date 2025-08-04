@@ -125,14 +125,7 @@ def wigdersons_second(G :nx.Graph):
 
     k=G.graph["chromatic-number"]
 
-    def fk(n):
-        if(n<=4):
-            return 1
-        k=math.log(n) # arbitrary
-        if k==1: return n
-        return math.ceil(n**(1-1/(k-1)))
-
-    for i in wigdersons_second__(G,fk):
+    for i in wigdersons_second_real(G,k):
         yield i
 
 
@@ -173,6 +166,55 @@ def wigdersons_second__(G :nx.Graph,fk):
         neighs=list(G.neighbors(n))
         if len(neighs)>0:
             *_, res = wigdersons_second__(G.subgraph(neighs),fk) # 2
+        else:
+            res={}
+        max_col=max(res.values())
+        if len(res.values())==0:
+            max_col=0
+        labels[n]=max_col+col+1 # 3
+        for i in res:
+            labels[i]=res[i]+col
+        col+=max_col # 4
+        
+        removes=list(G.neighbors(n)) # 5
+        removes.append(n)
+        G.remove_nodes_from(removes)
+        yield labels
+
+    if G.order()==0:
+        return
+
+    *_,rem_lab = greedy_desc_deg(G)
+    for i in rem_lab:
+        labels[i]=rem_lab[i]+col
+        yield labels
+
+def wigdersons_second_real(G :nx.Graph,k):
+    labels={}
+    G=G.copy()
+
+    col=0
+
+    def fk(n):
+        if(n<=4):
+            return 1
+        if k==1: return n
+        return math.ceil(n**(1-1/(k-1)))
+
+    def fk_fix(x):
+        res=fk(x)
+        if res>=1:
+            return res
+        return 1
+
+    while G.order()>0:
+        n = max(G.nodes(), key=lambda x: G.degree(x)) # 1
+        if G.degree(n) < fk_fix(G.order()):
+            # If the highest degree of the graph is less than fk, we can stop
+            break
+        neighs=list(G.neighbors(n))
+        if len(neighs)>0:
+            *_, res = wigdersons_second_real(G.subgraph(neighs),k-1) # 2
         else:
             res={}
         max_col=max(res.values())
