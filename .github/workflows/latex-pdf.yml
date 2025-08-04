@@ -19,15 +19,20 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-
+    - name: Debug-Print docs
+      run: ls -R docs
     - name: Compile LaTeX (with BibTeX support)
       uses: dante-ev/latex-action@2024-B
       with:
-        root_file: docs/Ausarbeitung.tex
+        working_directory: docs
+        root_file: Ausarbeitung.tex
         latexmk_use_xelatex: false  # set to true if you use xelatex
-        extra-packages: collection-fontsrecommended collection-science collection-latexrecommended
+        extra-system-packages: collection-science collection-latexrecommended
+        extra-font-packages: collection-fontsrecommended
+      env:
+        BIBINPUTS: docs:
     - name: Upload PDF
       uses: actions/upload-artifact@v4
       with:
         name: compiled-pdf
-        path: main.pdf
+        path: docs/Ausarbeitung.pdf
