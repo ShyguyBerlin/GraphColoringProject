@@ -1,0 +1,31 @@
+name: Build LaTeX document
+
+on:
+  push:
+    paths:
+      - '**.tex'
+      - '**.bib'
+  pull_request:
+    paths:
+      - '**.tex'
+      - '**.bib'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    - name: Compile LaTeX (with BibTeX support)
+      uses: dante-ev/latex-action@v2
+      with:
+        root_file: main.tex
+        latexmk_use_xelatex: false  # set to true if you use xelatex
+        extra-packages: collection-fontsrecommended collection-science collection-latexrecommended
+    - name: Upload PDF
+      uses: actions/upload-artifact@v4
+      with:
+        name: compiled-pdf
+        path: main.pdf
