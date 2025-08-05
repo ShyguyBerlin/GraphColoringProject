@@ -3,6 +3,7 @@
 \usepackage{blindtext}
 \usepackage{titlesec}
 \usepackage[hidelinks]{hyperref}
+\usepackage{enumitem}
 
 % \subsection{References for the prototype}
 % 
@@ -20,9 +21,16 @@
 \maketitle
 
 \tableofcontents
+\newpage
 
 \section{Kurzfassung} % Was haben wir gemacht, ein Absatz
 \section{Begriffsklärung} % TODO, laufend aktualisieren, wenn ein neuer Begriff verwendet wurde
+\begin{itemize}[noitemsep, left=0pt]
+\item Wir behandeln in dieser Ausarbeitung ausschließlich ungerichtete \\Graphen.
+Diese seien folgendermaßen definiert:\\
+Ein Graph $G$ ist ein Tupel $G=(V,E)$, wobei $V=\{v_1,v_2,...,v_n\}$ und $E\subseteq \{(u,v)\in V\times V \mid u\neq v\}$
+\item Wir notieren einen Subgraphen $G'$ als $G'=G[V']$ wobei $G=(V,E)$ ein Graph ist und $V'\subseteq V(G)$. Es gilt $G[V']=(V',E')$ mit $E'=\{(u,v)\in E\mid u\in V'\land v\in V'\}$
+\end{itemize}
 \section{Etablierte Algorithmen}
 \subsection{Greedy Algorithmen} % TODO
 \subsection{Wigdersons Algorithmen} % TODO
@@ -36,6 +44,12 @@ und verbessert diese um einige Punkte.
 
 \section{Ergebnisse zu den etablierten Algorithmen} % TODO
 \section{Eigens produzierte Algorithmen} % TODO
+\subsection{Merging Algorithmus}
+Bei der Überlegung, welche Ansätze zur Entwicklung eines eigenen Solvers sinnvoll wären,
+kam die Idee auf, das bekannte Konzept des Divide-and-Conquer zu nutzen.
+Idee dabei ist, die Färbung für einen Graphen $G$ zu finden, indem zunächst ein Schnitt $S\subset V(G)$ gebildet wird, 
+wobei entweder $\Big| \mid S\mid-\mid V(G)\setminus S\mid \Big|$ oder $G_{3}$ angestrebt wird.
+
 \section{Ergebnisse zu den eigenen Algorithmen} % TODO
 \section{Zusammenfassung und Fazit} % TODO
 
