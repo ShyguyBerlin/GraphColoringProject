@@ -19,8 +19,6 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
-    - name: Debug-Print docs
-      run: ls -R docs
     - name: Compile LaTeX (with BibTeX support)
       uses: dante-ev/latex-action@2024-B
       with:
