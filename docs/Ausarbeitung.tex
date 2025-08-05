@@ -26,6 +26,40 @@
 \section{Etablierte Algorithmen}
 \subsection{Greedy Algorithmen} % TODO
 \subsection{Wigdersons Algorithmen} % TODO
+
+Bei den zwei Algorithmen von Wigderson handelt es sich eigentlich um einen Algorithmus und einen Spezialfall dessen.
+
+\subsubsection{Wigdersons erster Algorithmus}
+
+Der erste Algorithmus, der Spezialfall, braucht einen Graphen, der garantiert mit $3$ Farben färbbar ist.
+Er färbt diesen Graphen in $O(\sqrt{n})$ Farben, wobei $n$ die Anzahl der Knoten im Graphen ist. $O(\sqrt{n})$ bedeutet hier,
+dass im schlimmsten Fall $\sqrt{n}$ viele Farben (aufgerundet) verwendet werden, es können aber auch weniger sein. \\
+%Bei dem Satz bin ich mir nicht sicher, ob der sein muss oder ob O-Notation einfach in der Begriffserklärung reinkommt
+Dieser Algorithmus nutzt aus, dass sich ein $2-$färbbarer Graph immer und mit wenig Aufwand perfekt färben lässt. %Citation needed
+Um einen auf jeden Fall $2-$färbbaren Subgraphen zu erhalten, den man färben kann, wird nun zuerst ein Knoten des
+Ausgangsgraphen gewählt. Hierbei wird der Knoten mit höchstem Grad ausgewählt. Nun wird dessen Nachbarschaft %Begriffserklärung?
+betrachtet. Da der ausgewählte Knoten eine Farbe (o.B.d.A. nennen wir die Farbe $3$) haben muss, die in seiner Nachbarschaft nicht vorkommen kann, muss diese Nachbarschaft
+$2-$färbbar sein, da der gesamte Graph $3-$färbbar ist. Also färbt man die Nachbarschaft in $2$ (o.B.d.A. nennen wir diese Farben $1$ und $2$) und entfernt sowohl den Knoten
+als auch die Nachbarschaft für die restliche Betrachtung aus dem Ausgangsgraphen aus und kehrt zum ersten Schritt zurück, dem Wählen
+des nächsten Knotens mit höchstem Grad. Die Nachbarschaft dessen könnte aber im Ausgangsgraphen mit nun schon
+gefärbten und entfernten Knoten benachbart sein, weswegen als Farben für diesen Durchlauf eine ungenutzte Farbe (o.B.d.A. $4$) verwendet wird, sowie die Farbe, die ausgewählte Knoten des letzten Durchlaufs hatte ($3$). \\
+Der neue ausgewählte Knoten erhält ebenfalls eine neue Farbe (o.B.d.A. $5$), die dann im nächsten Durchlauf weiter verwendet werden kann.
+Dies führt man nun fort, bis es sich mehr lohnt, den Graphen per Greedy-Algorithmus fertig zu färben. 
+Dieser Punkt ist erreicht, wenn der höchste Knotengrad im verbleibenden Graphen unter die Grenze von $\sqrt{n}$ fällt. \\
+Um nun zu zeigen, wie viele Farben dieser Algorithmus verwendet und welche Komplexität dieser Algorithmus hat, kann man nun rechnen. \\
+Für die Anzahl der Farben gilt: Jeder der oben beschriebenen Durchläufe verbraucht $2$ neue Farben und färbt mindestens $\sqrt{n}+1$ Knoten, also $O(\sqrt{n})$.
+Deswegen kann es nur weniger als maximal $\sqrt{n}$ Durchläufe geben, bis alle Knoten gefärbt sind oder die Durchläufe abgebrochen werden, weil der maximale Grad zu niedrig wird.
+Also verwendet dieser Teil des Algorithmus höchstens $2*\sqrt{n}$ Farben. Da nur noch Knoten mit höchstens Grad $\sqrt{n}-1$ übrig sind, kann der Greedy-Algorithmus
+den Rest des Graphen immer in $\sqrt{n}$ Farben färben. So erhält man ein Ergebnis von maximal $3*\sqrt{n}$ Farben. \\
+Für die Komplexität des Algorithmus gilt: Jeder der oben beschriebenen Durchläufe iteriert über alle Knoten, um den mit dem größten Grad zu finden $(O(n))$,
+noch einmal, um die Nachbarschaft vom Knoten zu ermitteln $(auch \space O(n))$ %oder auch nicht, weil sich das in der NetworkX Dokumentation nicht herausfinden lässt aaaaaaaaaaaaaaaah
+und hat wie in der Rechnung zur Farbanzahl schon gezeigt $\sqrt{n}$ Durchläufe maximal $O(\sqrt{n})$.
+Dieser Teil des Algorithmus ist also in der Komplexitätsklasse $O(n*\sqrt{n})$. \\
+Der Greedy-Algorithmus hat die Komplexität von $O(n+m)$ oder $O(n^2)$, je nachdem wie NetworkX im Hintergrund die Adjacency abspeichert... %Bro ist das dumm ey. Da steht nicht genau, wie der Befehl G.neighbors funktioniert, den wir die ganze Zeit verwendet haben.
+wobei das $m$ für die Anzahl der Kanten steht. Laut Wigderson selbst sollte die Komplexität des Algorithmus $O(3*(n+m))$ sein. Vielleicht wenn der obere Teil des Algorithmus nicht $O(n*\sqrt{n})$ ist sondern $O(n)$. Aber da bin ich mir nicht ganz sicher gerade.
+
+\subsubsection{Wigdersons zweiter Algorithmus}
+
 \subsection{Johnsons Algorithmus} % TODO
 \subsection{Berger Rompel Algorithmus} % TODO
 
