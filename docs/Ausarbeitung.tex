@@ -60,6 +60,13 @@ wobei das $m$ für die Anzahl der Kanten steht. Laut Wigderson selbst sollte die
 
 \subsubsection{Wigdersons zweiter Algorithmus}
 
+Der zweite Algorithmus ist eine verallgemeinerte Variante, die funktioniert, wenn die Färbungszahl des gegebenen Graphen bekannt ist.
+Er benutzt dabei $k*n^{1-\frac{1}{k-1}}$ Farben maximal, wobei $k$ die Färbungszahl und $n$ die Anzahl der Knoten ist. \\
+Der Algorithmus verwendet die gleiche Eigenschaft, dass ein $2-$färbbarer Graph simpel zu färben ist.
+Dazu wird wie im obigen Algorithmus beschrieben, der Knoten mit höchstem Grad ausgewählt und auf dessen Nachbarschaft geschaut. Da die Färbungszahl hier wahrscheinlich noch nicht $3$ beträgt, lässt sich diese Nachbarschaft nicht mit $2$ Farben färben, aber dafür mit $k-1$ Farben. Sollte dies immer noch nicht gleich $3$ sein, so wird in dieser Nachbarschaft erneut der Knoten mit höchstem Grad ausgesucht und dann in diesem Subgraphen dessen Nachbarschaft angeschaut. Sie kann nun sicher mit $k-2$ Farben gefärbt werden. Sollte dies nun gleich $3$ ergeben, wird noch einmal so vorgegangen wie im ersten Algorithmus und so dieser Subgraph gefärbt. \\
+Auch wie im anderen Algorithmus gibt es ein Abbruchkriterium, wann sich stattdessen der Greedy-Ansatz mehr lohnt. Dieses ist erreicht, wenn der amximale Grad im betrachteten (Sub-)Graphen kleiner ist als $k*n^{\frac{1}{k-1}}$, die gleiche Gleichung wie die Maximalzahl an Farben im Graphen.
+Dieser Algorithmus hat laut Wigderson eine Laufzeitkomplexitätsklasse von $O(k(n+m))$, wobei $k$ die Färbungszahl, $n$ die Anzahl der Knoten und $m$ die Anzahl der Kanten ist.
+
 \subsection{Johnsons Algorithmus} % TODO
 \subsection{Berger Rompel Algorithmus} % TODO
 
@@ -70,6 +77,15 @@ und verbessert diese um einige Punkte.
 
 \section{Ergebnisse zu den etablierten Algorithmen} % TODO
 \section{Eigens produzierte Algorithmen} % TODO
+
+\subsection{Make-Better Algorithmus}
+
+Der Ansatz für diesen Algorithmus war es, eine schon fertige Färbung eines Graphen zu nehmen und versuche, diese zu verbessern. \\
+Um dies durchzuführen, werden die Knoten als Farbgruppen betrachtet. Dann schaut man in jeder Farbgruppe, ob man nicht die einzelnen Knoten in eine andere Farbe umfärben kann. \\
+Das kann man immer, wenn ein Knoten keine Verbindung zu mindestens einer anderen Farbe hat. Findet man so eine Farbgruppe, aus der man alle Knoten umfärben kann, 
+macht der Algorithmus dies und entfernt somit eine ganze Farbe aus der Färbung des Graphen. \\
+Dies kann man so lange wiederholen, bis sich keine Farbe mehr entfernen lässt.
+
 \section{Ergebnisse zu den eigenen Algorithmen} % TODO
 \section{Zusammenfassung und Fazit} % TODO
 
