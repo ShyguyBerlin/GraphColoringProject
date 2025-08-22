@@ -19,6 +19,25 @@ jobs:
     steps:
     - name: Checkout repository
       uses: actions/checkout@v4
+    - name: Set up Python 3.10
+      uses: actions/setup-python@v3
+      with:
+        python-version: '3.10'
+    - name: Add conda to system path
+      run: |
+        # $CONDA is an environment variable pointing to the root of the miniconda directory
+        echo $CONDA/bin >> $GITHUB_PATH
+    - name: Create Diagrams for document
+      run: |
+        conda install python-kaleido
+        conda install pandas
+        conda install plotly
+        cd docs
+        mkdir diagrams
+        cd ..
+        echo generating diagrams...
+        pwd
+        python docs/gen_diagram.py
     - name: Compile LaTeX (with BibTeX support)
       uses: dante-ev/latex-action@2024-B
       with:

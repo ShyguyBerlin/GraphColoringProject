@@ -1,13 +1,23 @@
 \documentclass[11pt]{article}
 
+% Document structure
 \usepackage{blindtext}
 \usepackage{titlesec}
 \usepackage[hidelinks]{hyperref}
+\usepackage{enumitem}
+
+\usepackage{graphicx}
+
+% Deutsche Sprache
+\usepackage[utf8]{inputenc} % this is needed for umlauts
+\usepackage[ngerman]{babel} % this is needed for umlauts
+\usepackage[T1]{fontenc}    % this is needed for correct output of umlauts in pdf
+
 
 % \subsection{References for the prototype}
 % 
 % Wenn wir irgendwas referenzieren wollen, vor allem andere Algorithmen. Sollten wir die Quelle in Quellen.bib eintragen und mit \cite{Quelle} zitieren
-% Das System beruht auf Bibtex, das muss also runtergeladen werden
+% Das System beruht auf Bibtex, das muss also runtergeladen werden, ist aber in latexmk enthalten
 % 
 % \cite{berger_rompel}
 
@@ -20,9 +30,19 @@
 \maketitle
 
 \tableofcontents
+\newpage
 
 \section{Kurzfassung} % Was haben wir gemacht, ein Absatz
 \section{Begriffsklärung} % TODO, laufend aktualisieren, wenn ein neuer Begriff verwendet wurde
+\begin{itemize}[noitemsep, left=0pt]
+\item Wir behandeln in dieser Ausarbeitung ausschließlich ungerichtete \\Graphen.
+Diese seien folgendermaßen definiert:\\
+Ein Graph $G$ ist ein Tupel $G=(V,E)$, wobei $V=\{v_1,v_2,...,v_n\}$ und $E\subseteq \{(u,v)\in V\times V \mid u\neq v\}$
+\item Wir notieren einen Subgraphen $G'$ als 
+$G'=G[V']$,
+wobei $G=(V,E)$ ein Graph ist und $V'\subseteq V(G)$.
+Es gilt $G[V']=(V',E')$ mit $E'=\{(u,v)\in E\mid u\in V'\land v\in V'\}$.
+\end{itemize}
 \section{Etablierte Algorithmen}
 \subsection{Greedy Algorithmen} % TODO
 \subsection{Wigdersons Algorithmen} % TODO
@@ -77,6 +97,120 @@ und verbessert diese um einige Punkte.
 
 \section{Ergebnisse zu den etablierten Algorithmen} % TODO
 \section{Eigens produzierte Algorithmen} % TODO
+\subsection{Merging Algorithmus}
+Bei der Überlegung, welche Ansätze zur Entwicklung eines eigenen Solvers sinnvoll wären,
+kam die Idee auf, das bekannte Konzept des Divide-and-Conquer zu nutzen.\\
+Idee dabei ist, die Färbung für einen Graphen $G$ zu finden, 
+indem zunächst ein Schnitt $S\subseteq V(G)$ gebildet wird 
+und der Algorithmus rekursiv auf die ind. Subgraphen 
+$G[S]$ und $G[V(G)\setminus] S$ angewendet wird. 
+Kleine Graphen können dann sogar optimal gelöst werden. 
+Problem jedoch ist, dass an den Kanten, 
+welche in keiner der ind. Subgraphen enthalten sind,
+Konflikte entstehen können. Diese müssen durch eine besondere Operation entfernt werden, 
+welche wir nun als Vereinigung bezeichnen.\par
+
+Wir können nun in der Wahl des Schnittes und dem Algorithmus zur Vereinigung variieren.\\
+In unserer Arbeit haben wir 2 Varianten analysiert. Wir nennen sie merge-trivial und merge-recolor.
+Dabei nutzen beide folgenden Algorithmus um einen Schnitt $S\subseteq V(G)$ zu bilden:
+\begin{itemize}
+\item[1.] Führe den folgenden Algorithmus für alle Zusammenhangskomponenten von $G$ getrennt aus
+\item[2.] Wähle einen zufälligen Knoten $u\in V(G)$
+\item[3.] Berechne zu jedem Knoten in $n\in V(G)$ die Distanz $d_u(n)$ zu $u$ mithilfe einer Breitensuche
+\item[4.] Wähle einen Knoten mit maximaler Distanz zu $u$, bezeichne ihn als $v$
+\item[5.] Berechne zu jedem Knoten in $n\in V(G)$ auch die Distanz $d_v(n)$ zu $v$
+\item[6.] Für jeden Knoten $n\in V(G)$: Füge $n$ zu $S$ hinzu, falls $d_u(n)<d_v(n)$; Falls $d_u(n)=d_v(n)$ füge $n$ mit einer Wahrscheinlichkeit von 50\% zu $S$ hinzu
+\end{itemize}
+
+Der merge-trivial Algorithmus nutzt eine triviale Vereinigungsstrategie. 
+Wenn zur Färbung von $G[S]$ die Farben $\{1,2,...,i\}$ benutzt wurden, 
+werden für die Färbung von $G[V(G)\setminus S]$ nur Farben $\{i+1,i+2,...,k\}$ verwendet.\\
+
+Der Algorithmus liefert vergleichsweise schlechte Ergebnisse, 
+da lediglich im Basisfall eine Verbesserung gegenüber der trivialen Färbung erziehlt werden kann.
+Angenommen der Algorithmus färbt ab einer Anzahl von $m$ oder weniger Knoten optimal
+und $k$ sei die optimale Färbungszahl von $G$, so kommt man auf eine untere Grenze von 
+$k*2^{log_2(|V(G)|)-log_2(m)}$ bzw. $k*\frac{|V(G)|}{m}$ Farben, vorausgesetzt, dass $m\geq k$.\par
+
+Der merge-recolor Algorithmus nutzt stattdessen einen aufwendigeren Vereinigungsalgorithmus:\\
+Wir bezeichnen hierbei den Subgraphen $G[S]$ als $A$ und den Subgraphen $G[V(G)\setminus S]$ als $B$
+\begin{itemize}
+\item[1.] Benenne Farben in $B$ um, bis keine Farbe sowohl in $A$ als auch in $B$ verwendet wird.
+\item[2.] Konstruiere einen Graphen $G'=(V',E')$, $V'$ sei die Menger verwendeter Farben
+\item[3.] $E'$ sei die Menge aller Paare aus Farben, welche nicht durch eine Kante in $G$ miteinander verbunden sind. \\Hierzu sollte nur die Menge der Kanten $E(G)\setminus (E(A)\cup E(B))$ betrachtet werden.
+\item[4.] Berechne ein maximales Matching $M$ auf $G'$
+\item[5.] Für jede Kante $(u,v)\in M$, färbe alle Knoten der Farbe $u$, stattdessen mit der Farbe $v$.
+\end{itemize}
+
+Zusätzlich behandeln wir eine Alternative Version, merge-recolor-bf, welche im Basisfall tatsächlich eine optimale Lösung (hier per \textbf{b}rute-\textbf{f}orce) findet.
+Der Standardfall merge-recolor greift lediglich auf den greedy-max Algorithmus zu.
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{diagrams/merger_pic1.png}
+  \caption{Vergleich der beschriebenen Merger Algorithmen mit Greedy bei Graphen mit 50 Knoten}
+  \label{fig:merge1}
+\end{figure}
+
+Im Vergleich zu den besseren Varianten der Greedy Algorithmen schneiden die Merging Algorithmen unterschiedlich ab. Wie in Abbildung \ref{fig:merge1} zu sehen ist, scheidet der merge-trivial Algorithmus sehr schlecht ab.
+Vielversprechender sind die merge-recolor und merge-recolor-bf Algorithmen, welche bessere Ergebnisse als merge-trivial erzielen können, jedoch immernoch schlechter sind als greedy-max. Untereinander unterscheiden sich die Ergebnisse der bisherigen merge-recolor Varianten kaum.
+
+\begin{figure}
+  \includegraphics[width=\linewidth]{diagrams/merger_pic2.png}
+  \caption{Vergleich der beschriebenen Merger Algorithmen mit Greedy bei Graphen mit 300 Knoten}
+  \label{fig:merge2}
+\end{figure}
+
+Die Unterschiede werden bei Graphen mit 300 Knoten noch deutlicher (siehe Abb. \ref{fig:merge2}).
+Um die Ergebnisse des merge Algorithmusses zu verbessern haben wir im Weiteren versucht, 
+die Farben, welche bei der Vereinigung nicht zusammengefasst werden können,
+zu entfärben und ihre Knoten mittels des in greedy-color-swaps verwendeten Verfahren neu zu färben.
+Praktisch heißt dies, dass wir den Vereinigungsschritt um eine Anwendung von color-swaps erweitern.
+Dies tun wir wie folgt:
+
+\begin{itemize}
+\item[1.] Benenne Farben in $B$ um, bis keine Farbe sowohl in $A$ als auch in $B$ verwendet wird.
+\item[2.] Konstruiere einen Graphen $G'=(V',E')$, $V'$ sei die Menger verwendeter Farben
+\item[3.] $E'$ sei die Menge aller Paare aus Farben, welche nicht durch eine Kante in $G$ miteinander verbunden sind. \\Hierzu sollte nur die Menge der Kanten $E(G)\setminus (E(A)\cup E(B))$ betrachtet werden.
+\item[4.] Berechne ein maximales Matching $M$ auf $G'$
+\item[5.] Für jede Kante $(u,v)\in M$, färbe alle Knoten der Farbe $u$, stattdessen mit der Farbe $v$.
+\item[6.] Für jeden Knoten $u\in M$, wobei $\neg \exists e\in M : u\in e$, entfärbe alle Knoten mit Farbe $u$.
+\item[7.] Wähle einen ungefärbten Knoten $x$. Existiert keiner, so springe zu 10.
+\item[8.] Finde 2 Knoten $y,z$ aus der Nachbarschaft von $x$, diese seien mit den Farben $F(y)$ und $F(z)$ gefärbt, wobei $F(y)\neq F(z)$.
+Außerdem lasse sich die Zusammenhangskomponente aus Knoten $\{v\in G | F(v)=F(y) \lor F(v)=F(z)\}$ um $z$ so umfärben, dass im Endeffekt $F(y)=F(z)$ gilt.
+\item[9.] Lässt sich 8. durchführen, so Färbe $z$ um und gebe $x$ die alte Farbe von $z$, andernfalls gebe $x$ die kleinste, nicht in seiner Nachbarschaft verwendete, Farbe.
+\item[10.] Solange noch ungefärbte Knoten existieren gehe zurück zu 7.
+\end{itemize}
+
+Diesen Algorithmus bezeichnen wir nun als greedy-recolor-color-swaps.
+Er weißt deutlich bessere Ergebnisse auf (siehe Abb. \ref{fig:merge3}), jedoch werden von greedy-color-swaps dennoch bessere Ergebnisse erzielt.
+\begin{figure}
+  \includegraphics[width=\linewidth]{diagrams/merger_pic3.png}
+  \caption{Vergleich der beschriebenen Merger Algorithmen mit dem merge-recolor-color-swaps Ansatz}
+  \label{fig:merge3}
+\end{figure}
+Besonders fällt dies auf, wenn wir statt den verwendeten Farben die Laufzeit betrachten. Die verwendeten Farben liegen auf ähnlichem Level,
+aber die Laufzeit ist bei dem merge-recolor-color-swaps Verfahren deutlich schlechter (siehe Abb. \ref{fig:merge4}).\\
+\begin{figure}
+  \includegraphics[width=\linewidth]{diagrams/merger_pic4.png}
+  \caption{Vergleich der Laufzeit zwischen greedy und merge mit color swaps}
+  \label{fig:merge4}
+\end{figure}
+Merge-recolor, welches von Farben her eher mit greedy-max vergleichbar ist, hatte auf unseren Testdaten ebenfalls eine schlechtere Laufzeit (siehe Abb.\ref{fig:merge5}).
+\begin{figure}
+  \includegraphics[width=\linewidth]{diagrams/merger_pic5.png}
+  \caption{Vergleich der Laufzeit zwischen greedy und merge ohne color swaps}
+  \label{fig:merge5}
+\end{figure}
+
+Wollte man den merge Ansatz weiter verfolgen wollen, bleibt zu analysieren, warum der bisherige Algorithmus mehr Farben braucht als greedy.
+Ein essenzieller Angriffspunkt bleibt die Wahl des Schnittes die wir zunächst vorgestellt haben und nicht variiert haben.
+Wir können diese Wahl so abwandeln, dass die Möglichkeit für Konflikte zwischen Farben pro Vereinigung minimiert wird.
+Ein Ansatz hierfür den Knoten mit der geringsten Nachbarschaft abzutrennen und den Algorithmus auf den Knoten sowie den Restgraphen anzuwenden.
+Dies gleicht jedoch weitesgehend dem Verhalten von greedy-min.
+
+Wir beenden diesen Ansatz mit dem Fazit, dass sich mit diesem Verfahren für uns keine großen Fortschritte ergeben,
+da die Abweichung zu bisherigen Algorithmen hier eher einen Nachteil dargestellt hat.
+Stattdessen wollen wir mit einem Verfahren weitermachen, welches bisherige Algorithmen veruscht zu erweitern, anstatt sie zu ersetzen.
 
 \subsection{Make-Better Algorithmus}
 
