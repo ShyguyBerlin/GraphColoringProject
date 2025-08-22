@@ -3,7 +3,7 @@ from .wigderson import so_called_easy_algorithm,wigdersons_first,wigdersons_firs
 from .independent_set_algorithms import berger_rompel, berger_rompel_and_elim_colors
 from .Johanson.johanson import johnson,johnson_naive, johnson_and_elim_colors
 from .own_solver import simulated_solver
-from .flow import flow_trivial,flow_merge,flow_merge_bf, flow_and_elim_colors
+from .merger import flow_trivial,flow_merge,flow_merge_bf, flow_and_elim_colors,flow_merge_recolor
 from .greedy_better import greedy_no_sort_make_better, greedy_asc_deg_make_better, greedy_desc_deg_make_better, greedy_color_swaps_make_better
 
 from collections.abc import Callable
@@ -32,6 +32,7 @@ solvers={"greedy": Solver(greedy_no_sort,[]),
          "sim_solver": Solver(simulated_solver,[]),
          "merge_trivial": Solver(flow_trivial,[]),
          "merge_recolor": Solver(flow_merge,[]),
+         "merge_recolor_color_swaps": Solver(flow_merge_recolor,[]),
          "merge_recolor_bf": Solver(flow_merge_bf,[]),
          "greedy_min_and_elim_colors": Solver(greedy_asc_deg_and_elim_colors,[]),
          "greedy_max_and_elim_colors": Solver(greedy_desc_deg_and_elim_colors,[]),

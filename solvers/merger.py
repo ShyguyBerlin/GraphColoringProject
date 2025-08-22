@@ -130,8 +130,7 @@ def build_adj_sets(labels_A,labels_B,edges_A,edges_border):
 
 from .greedy import color_swaps_color_node
 
-# Merges labels_A into labels_B based on edge constraints between A and B and inside A
-def merge_color_labels(subgraph,labels_A,labels_B,edges_A,edges_border):
+def build_valid_remaps(subgraph,labels_A,labels_B,edges_A,edges_border):
     adj_A,adj_B=build_adj_sets(labels_A,labels_B,edges_A,edges_border)
     remap={}
     to_remap=list(set(labels_A.values()))
@@ -157,9 +156,31 @@ def merge_color_labels(subgraph,labels_A,labels_B,edges_A,edges_border):
     for u,v in merge_matching:
         col_remap(v-used_colors,u)
 
+    return remap
+
+
+# Merges labels_A into labels_B based on edge constraints between A and B and inside A
+def merge_color_labels(subgraph,labels_A,labels_B,edges_A,edges_border):
+
+    remap=build_valid_remaps(subgraph,labels_A,labels_B,edges_A,edges_border)
+
+    used_colors=max(labels_B.values())
+
+    for k in labels_A.keys():
+        if not labels_A[k] in remap:
+            used_colors+=1
+            remap[labels_A[k]]=used_colors
+        labels_B[k]=remap[labels_A[k]]
+
+
+    return labels_B
+
+# Merges labels_A into labels_B based on edge constraints between A and B and inside A
+def merge_color_labels_with_recolor(subgraph,labels_A,labels_B,edges_A,edges_border):
     # Nodes that cannot be colored through remapping
     problem_nodes=[]
 
+    remap=build_valid_remaps(subgraph,labels_A,labels_B,edges_A,edges_border)
     for k in labels_A.keys():
         if not labels_A[k] in remap:
             problem_nodes.append(k)
@@ -167,77 +188,12 @@ def merge_color_labels(subgraph,labels_A,labels_B,edges_A,edges_border):
             labels_B[k]=remap[labels_A[k]]
 
     for k in problem_nodes:
+        labels_B[k]=0
         color_swaps_color_node(subgraph,labels_B,k)
 
     return labels_B
 
-
-# An LLM was insulting me for my inoptimal implementation, so I let them fix it, it runs ~25% faster, I won't complain
-def merge_color_labels_optimized(labels_A, labels_B, edges_A, edges_border):                                        
-    """                                                                                       
-    Optimized version of color merging with better data structures                                                  
-    """                                                                                                             
-    # Pre-compute color sets for faster lookups                                                                     
-    colors_A = set(labels_A.values())                                                                               
-    colors_B = set(labels_B.values())                                                                               
-    max_color_B = max(labels_B.values()) if labels_B else 0                                                         
-                                                                                                                    
-    # Build adjacency more efficiently                                                                              
-    adj_A = {color: set() for color in colors_A}                                                                    
-    adj_B = {color: set() for color in colors_A}                                                                    
-                                                                                                                    
-    # Process internal edges of A                                                                                   
-    for u, v in edges_A:                                                                                            
-        color_u, color_v = labels_A[u], labels_A[v]                                                                 
-        adj_A[color_u].add(color_v)                                                                                 
-        adj_A[color_v].add(color_u)                                                                                 
-                                                                                                                    
-    # Process border edges                                                                                          
-    for u, v in edges_border:                                                                                       
-        if u in labels_A:                                                                                           
-            adj_B[labels_A[u]].add(labels_B[v])                                                                     
-        elif v in labels_A:                                                                                         
-            adj_B[labels_A[v]].add(labels_B[u])                                                                     
-                                                                                                                    
-    # Greedy color assignment                                                                                       
-    remap = {}                                                                                                      
-    next_color = max_color_B + 1                                                                                    
-                                                                                                                    
-    # Sort colors by constraint count for better assignment                                                         
-    colors_to_assign = sorted(colors_A, key=lambda c: len(adj_B[c]), reverse=True)                                  
-                                                                                                                    
-    for color_a in colors_to_assign:                                                                                
-        forbidden = adj_B[color_a]                                                                                  
-                                                                                                                    
-        # Try to find an available color in B                                                                       
-        assigned = False                                                                                            
-        for color_b in range(1, max_color_B + 1):                                                                   
-            if color_b not in forbidden:                                                                            
-                remap[color_a] = color_b                                                                            
-                # Update constraints for remaining colors                                                           
-                for other_color in adj_A[color_a]:                                                                  
-                    if other_color in adj_B:                                                                        
-                        adj_B[other_color].add(color_b)                                                             
-                assigned = True                                                                                     
-                break                                                                                               
-                                                                                                                    
-        if not assigned:                                                                                            
-            remap[color_a] = next_color                                                                             
-            next_color += 1                                                                                         
-                                                                                                                    
-    # Apply remapping                                                                                               
-    for node in labels_A:                                                                                           
-        labels_B[node] = remap[labels_A[node]]                                                                      
-                                                                                                                    
-    return labels_B
-
-
-#
-# this algorithm works by separating G into 2 components and then applying itself onto the induced subgraphs
-# On very small graphs, greedy is applied instead
-# The resulting colorings are combined trying merging the colorings in a good way, without changing the colorings themselves
-#
-def flow_merge(G : nx.Graph,muffle=True):
+def merge_solver_core(G : nx.Graph,muffle=True, cutter=flow_cut_edge,merger=merge_color_labels):
     if G.order()<=10:
         *_,res= greedy_desc_deg(G)
         yield res
@@ -247,7 +203,7 @@ def flow_merge(G : nx.Graph,muffle=True):
         print("Aha", G.order())
     
     if nx.is_connected(G):
-        Comps,cut=flow_cut_edge(G)
+        Comps,cut=cutter(G)
         if not muffle:
             print("comp",Comps,"cut",cut)
     else:
@@ -255,7 +211,7 @@ def flow_merge(G : nx.Graph,muffle=True):
         Comps= [G.subgraph(c).copy() for c in nx.connected_components(G)]
         labels={}
         for i in Comps:
-            for f in flow_merge(i,True):
+            for f in merge_solver_core(i,True,cutter,merger):
                 for k in f.keys():
                     labels[k]=f[k]
                 yield labels
@@ -267,11 +223,11 @@ def flow_merge(G : nx.Graph,muffle=True):
     labels={}
     did_comp1=False
     for i in Comps:
-        for f in flow_merge(i,True):
+        for f in merge_solver_core(i,True,cutter,merger):
             yield f
             l=f
         if did_comp1:
-            merge_color_labels(nx.subgraph(G,set(l.keys()).union(set(labels.keys()))),l,labels,list(i.edges()),cut)
+            merger(nx.subgraph(G,set(l.keys()).union(set(labels.keys()))),l,labels,list(i.edges()),cut)
         else:
             labels=l
             did_comp1=True
@@ -280,6 +236,18 @@ def flow_merge(G : nx.Graph,muffle=True):
 
     if not muffle:
         print("Aha3")
+#
+# this algorithm works by separating G into 2 components and then applying itself onto the induced subgraphs
+# On very small graphs, greedy is applied instead
+# The resulting colorings are combined trying merging the colorings in a good way, without changing the colorings themselves
+#
+def flow_merge(G : nx.Graph,muffle=True):
+    for solution in merge_solver_core(G):
+        yield solution
+
+def flow_merge_recolor(G : nx.Graph,muffle=True):
+    for solution in merge_solver_core(G,merger=merge_color_labels_with_recolor):
+        yield solution
 
 from .wigderson import brute_force
 
