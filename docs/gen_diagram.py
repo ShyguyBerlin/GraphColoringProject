@@ -54,8 +54,14 @@ def make_diagram(input:str,output:str,prop_to_plot="colors_avg",solver_whitelist
     # Write figure to disk
     fig.write_image(output,scale=2,height=362,width=512)
 
+import os
+
 #   make_diagram(input:str,output:str,solver_whitelist=[],solver_blacklist=[],graphset_whitelist=[],graphset_blacklist=[],zoom_to=0)
 if __name__=="__main__":
+
+    if not os.path.exists("docs/diagrams"):
+        os.makedirs("docs/diagrams")
+
     make_diagram("docs/data/generic_test_merger_focus.csv","docs/diagrams/merger_pic1.png",graphset_wildcard_whitelist=["_50n"],solver_blacklist=["merge_recolor_color_swaps"])
     make_diagram("docs/data/generic_test_merger_focus.csv","docs/diagrams/merger_pic2.png",graphset_wildcard_whitelist=["_300n"],solver_blacklist=["merge_trivial","merge_recolor_color_swaps"])
     make_diagram("docs/data/generic_test_merger_focus.csv","docs/diagrams/merger_pic3.png",graphset_wildcard_whitelist=["_300n"],solver_blacklist=["merge_trivial","greedy_max","merge_recolor_bf"])
