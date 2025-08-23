@@ -8,9 +8,14 @@
 
 \usepackage{graphicx}
 
+% Für mathbb
+\usepackage{amssymb}
+% Für in mathmode embedded text
+\usepackage{amsmath}
+
 % Deutsche Sprache
 \usepackage[utf8]{inputenc} % this is needed for umlauts
-\usepackage[ngerman]{babel} % this is needed for umlauts
+\usepackage[ngerman]{babel} % this is needed for umlauts und damit figuren Abbildung heißen
 \usepackage[T1]{fontenc}    % this is needed for correct output of umlauts in pdf
 
 
@@ -25,6 +30,7 @@
 \author{Menschen} % TODO
 
 \renewcommand*\contentsname{Inhaltsverzeichnis} % Hier kann der Name des Inhaltsverzeichnisses verändert werden
+\newcommand{\degeneracy}{\text{degeneracy}}
 
 \begin{document}
 \maketitle
@@ -42,9 +48,33 @@ Ein Graph $G$ ist ein Tupel $G=(V,E)$, wobei $V=\{v_1,v_2,...,v_n\}$ und $E\subs
 $G'=G[V']$,
 wobei $G=(V,E)$ ein Graph ist und $V'\subseteq V(G)$.
 Es gilt $G[V']=(V',E')$ mit $E'=\{(u,v)\in E\mid u\in V'\land v\in V'\}$.
+\item Eine Färbung eines Graphen $G=(V,E)$ sei eine Zuordnung $F: V\mapsto \mathbb{N}$. Eine Färbung kann sich zur Laufzeit eines Algorithmusses ändern.
+Wenn wir einen Knoten $v$ \grqq färben\grqq\ so ändern wir eigentlich den Wert von $F(v)$.
+\item Der Grad $\deg_G(v)$ eines Knoten $v$ ist die Anzahl an von ihm ausgehenden Kanten $|\{(v_1,v_2)\in E(G) | v_1=v\lor v_2=v\}|$
+Wir definieren $\delta G=\min\{\deg_G(v)|v\in V(G)\}$
 \end{itemize}
 \section{Etablierte Algorithmen}
-\subsection{Greedy Algorithmen} % TODO
+\subsection{Greedy Algorithmen}
+Sei $G=(V,E)$ ein zu färbender Graph.
+Wir bestimmen zunächst eine Reihenfolge der Knoten in $V$, wobei $v_i$ der $i$-te Knoten ist.
+Wir nehmen zunächst an, dass die Reihenfolge keine speziellen Eigenschaften hat.
+Der Greedy Algorithmus geht nun folgendermaßen vor:
+\begin{itemize}
+\item[1.] Sei $i=1$
+\item[2.] $F(v_i) \leftarrow \min\{n\in\mathbb{N}|\nexists j < i: F(v_j)=n\land \{v_i, v_j\}\in E\}$
+\item[3.] ist $i<|V|$, so $i\leftarrow i+1$ und gehe zurück zu Schritt 1 
+\end{itemize}
+
+Je nachdem wie wir die Reihenfolge bilden, erhalten wir unterschiedliche Varianten des Greedy-Algorithmusses.
+Wählen wir eine Reihenfolge ohne spezielle Eigenschaften (in der Praxis die Definitionsreihenfolge),
+so bezeichnen wir dies als den Standard-greedy, bzw. nur greedy.
+
+Erstellen wir eine Reihenfolge $v_1,v_2,\ldots,v_n$, wobei $v_i$ ein Knoten kleinsten Grades im Graphen $G[\{v_1,\ldots,v_i\}]$ ist, so bezeichnen wir den Algorithmus als greedy-smallest-degree-last oder kurz greedy-max.
+Sei $v_i$ analog ein Knoten größten Grades im Graphen $G[\{v_1,\ldots,v_i\}]$, so reden wir von greedy-largest-degree-last oder greedy-min.
+
+Sei die degeneracy von $G$ definiert als\\
+$\degeneracy(G)=\max\{\delta G[V']|V'\subseteq V\}$.\\
+
 \subsection{Wigdersons Algorithmen} % TODO
 
 Bei den zwei Algorithmen von Wigderson handelt es sich eigentlich um einen Algorithmus und einen Spezialfall dessen.
