@@ -11,7 +11,14 @@ def check_complete(G : nx.graph, labels: dict):
     for i in G.edges():
         c1= labels.get(i[0],-1)
         c2= labels.get(i[1],-1)
-        if c1 == -1 or c2 == -1 or c1==c2:
+        if c1 == -1:
+            print(i[0],"is not colored")
+            return False
+        if c2 == -1:
+            print(i[1],"is not colored")
+            return False
+        if c1==c2:
+            print(i[0],"and",i[1],"have the same color!")
             return False
     return True
 
