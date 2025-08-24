@@ -212,6 +212,24 @@ Wir beenden diesen Ansatz mit dem Fazit, dass sich mit diesem Verfahren für uns
 da die Abweichung zu bisherigen Algorithmen hier eher einen Nachteil dargestellt hat.
 Stattdessen wollen wir mit einem Verfahren weitermachen, welches bisherige Algorithmen veruscht zu erweitern, anstatt sie zu ersetzen.
 
+\subsection{Problematische Knoten}
+Definietion: Ein probelmatischer Knoten sei ein Knoten mit Nachbarschaft zu Knoten jeder Farbe außer seiner eigenen Farbe. \\
+
+Es ist offensichtlich dass, wenn ein Knoten kein problematischer Knoten ist, mindestens eine andere Farbe existiert in welche er umgefärbt werden kann, \\
+sodass eine neue zulässige Färbung entsteht ohne das Nachbarn des Knoten ebenfalls umgefärbt werden müssen.
+
+\subsection{Elim}
+Elim ist der einfachste Algorythmus zur verbesserung einer gegebenen Färbung. \\
+
+Für alle Farben wird ausgeführt: \\
+\begin{itemize}
+\item[1.] Prüfe Farbe x auf das vohandensein von problematischen Knoten.
+\item[2.] Wenn problematischen Knoten vohanden sind breche ab und fahre mit der nächsten Farbe fort.
+\item[3.] Ansonsten; färbe alle forhandenen Knoten in zulässige andere Farben um, sodass keiner mehr Farbe x hat.
+\item[4.] Fahre mit der nächsten Farbe fort.
+\end{itemize}
+
+
 \subsection{Make-Better Algorithmus}
 
 Der Ansatz für diesen Algorithmus war es, eine schon fertige Färbung eines Graphen zu nehmen und versuche, diese zu verbessern. \\
