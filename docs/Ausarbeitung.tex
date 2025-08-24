@@ -221,6 +221,8 @@ sodass eine neue zulässige Färbung entsteht ohne das Nachbarn des Knoten ebenf
 \subsection{Elim}
 Elim ist der einfachste Algorythmus zur verbesserung einer gegebenen Färbung. \\
 
+Durch das Prüfen auf problematische Knoten können wir unnötige Farben leicht Identiefiezieren und dann Eliminieren.
+
 Für alle Farben wird ausgeführt: \\
 \begin{itemize}
 \item[1.] Prüfe Farbe x auf das vohandensein von problematischen Knoten.
@@ -229,6 +231,9 @@ Für alle Farben wird ausgeführt: \\
 \item[4.] Fahre mit der nächsten Farbe fort.
 \end{itemize}
 
+Elim verbessert vorallem Färbungen stark welche durch Algorythmen erzeugt werden die oft Farben verlassen wie die Wigdersons. \\
+Auch auf Färbungen von Greedy konnten leichte vebesserungen festgestellt werden. \\
+Zudem ist der Rechenaufwand im vergleich zum Aufwand der hier untersuchten anderen Algorythmen minimal.
 
 \subsection{Make-Better Algorithmus}
 
