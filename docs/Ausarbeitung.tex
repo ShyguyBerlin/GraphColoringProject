@@ -72,8 +72,18 @@ so bezeichnen wir dies als den Standard-greedy, bzw. nur greedy.
 Erstellen wir eine Reihenfolge $v_1,v_2,\ldots,v_n$, wobei $v_i$ ein Knoten kleinsten Grades im Graphen $G[\{v_1,\ldots,v_i\}]$ ist, so bezeichnen wir den Algorithmus als greedy-smallest-degree-last oder kurz greedy-max.
 Sei $v_i$ analog ein Knoten größten Grades im Graphen $G[\{v_1,\ldots,v_i\}]$, so reden wir von greedy-largest-degree-last oder greedy-min.
 
-Sei die degeneracy von $G$ definiert als\\
+Offensichtlich ist eine allgemeine Obergrenze für die Farben die der Greedy Algorithmus verwendet $\Delta G$.
+Die Obergrenze kann jedoch auch je nach gewählter Reihenfolge geringer ausfallen. 
+So existiert immer eine Reihenfolge um die optimale Färbung mit greedy zu erzeugen.
+Sei die Degeneracy von $G$ definiert als\\
 $\degeneracy(G)=\max\{\delta G[V']|V'\subseteq V\}$.\\
+Mit greedy-max erreichen wir sogar eine Obergrenze von $\degeneracy(G)+1$ Farben.\\
+Wir behandeln außerdem den greedy-colors Algorithmus, 
+welcher eine Reihenfolge $v_1,v_2,\ldots,v_n$ nutzt,\\ 
+wobei $\forall i: i=n\lor
+\deg_{G[\{v_1,\ldots,v_i\}]}(v_i)\geq\\
+\ \ \max(\{\deg_{G[\{v_1,\ldots,v_{i-1}\}\cup\{j\}]}(v_j)|j\in\{i+1\ldots n\}\})$
+Ziel bei diesem Algorithmus ist es, immer Knoten zu färben, welche möglichst viele gefärbte Nachbarn haben.
 
 \subsection{Wigdersons Algorithmen} % TODO
 
