@@ -33,6 +33,15 @@
 \newpage
 
 \section{Kurzfassung} % Was haben wir gemacht, ein Absatz
+
+In dieser Ausarbeitung werden die Ergebnisse unseres Semesterprojekts "Schnelle Algorithmen für schwere Probleme" mit dem Fokus auf
+Graphenfärbungsalgorithmen zusammengefasst. \\ 
+Das exakte Färben von Graphen mit möglichst wenig Farben ist mit relativ simplen Inputs bereits ein NP-schweres Problem, weswegen es bereits einige Ansätze gibt,
+möglichst gute Färbungen in vergleichbar kurzer Zeit zu erzeugen. Einige dieser Ansätze wurden von uns implementiert und auf die $2$ Faktoren 
+Laufzeit und die Anzahl der genutzten Farben untersucht.
+Desweiteren haben wir ein paar Ansätze überlegt, formuliert und die daraus entstandenen Algorithmen ebenfalls untersucht, zu denen wir keine Publikationen finden konnten. \\
+Unsere Implementierungen sind in der Sprache Python und nutzen die Bibliothek NetworkX.
+
 \section{Begriffsklärung} % TODO, laufend aktualisieren, wenn ein neuer Begriff verwendet wurde
 \begin{itemize}[noitemsep, left=0pt]
 \item Wir behandeln in dieser Ausarbeitung ausschließlich ungerichtete \\Graphen.
@@ -42,12 +51,22 @@ Ein Graph $G$ ist ein Tupel $G=(V,E)$, wobei $V=\{v_1,v_2,...,v_n\}$ und $E\subs
 $G'=G[V']$,
 wobei $G=(V,E)$ ein Graph ist und $V'\subseteq V(G)$.
 Es gilt $G[V']=(V',E')$ mit $E'=\{(u,v)\in E\mid u\in V'\land v\in V'\}$.
+\item Die Nachbarschaft $N(v)$ eines Knoten $v$ innerhalb eines Graphen sind all jene Knoten,
+die mit einer Kante mit $v$ verknüpft sind.
+\item Die Kantendichte eines Graphen $d(G)$ ist als Angabe zu verstehen, wie viele Kanten im Graphen möglich wären und wie viele davon tatsächlich vorhanden sind. \\
+Die Formel hierfür ist: $d(G) = \frac{2*|E|}{|V|(|V|-1)}$, wobei $|E|$ die Anzahl der vorhandenen Kanten ist und $|V|$ die Anzahl der Knoten. \\
+\item Ein Independent Set $V'$ (auf deutsch: Stabile Menge) ist eine Untergruppe aller Knoten, die jeweils paarweise nicht durch eine
+Kante miteinander verknüpft sind. 
 \end{itemize}
 \section{Etablierte Algorithmen}
 \subsection{Greedy Algorithmen} % TODO
 \subsection{Wigdersons Algorithmen} % TODO
 
-Bei den zwei Algorithmen von Wigderson handelt es sich eigentlich um einen Algorithmus und einen Spezialfall dessen.
+Bei den zwei Algorithmen von Wigderson handelt es sich eigentlich um einen Algorithmus und einen Spezialfall dessen. \\
+Die Prämisse beider Algorithmen ist, einen schnelleren Algorithmus für Input-Graphen mit hoher Kantendichte zu sein.
+Darunter leidet aber im Vergleich zu Greedy-Algorithmen die Zahl der verwendeten Farben. Da weiterhin ein Greedy-Algorithmus verwendet wird,
+sobald der Graph nur noch niedrige Knotengrade besitzt, sieht man keine Verbesserung in der $O$-Notation der Komplexität, aber die reale Laufzeit sollte
+für jene Graphen mit hoher Kantendichte sinken.
 
 \subsubsection{Wigdersons erster Algorithmus}
 
@@ -88,6 +107,18 @@ Auch wie im anderen Algorithmus gibt es ein Abbruchkriterium, wann sich stattdes
 Dieser Algorithmus hat laut Wigderson eine Laufzeitkomplexitätsklasse von $O(k(n+m))$, wobei $k$ die Färbungszahl, $n$ die Anzahl der Knoten und $m$ die Anzahl der Kanten ist.
 
 \subsection{Johnsons Algorithmus} % TODO
+
+Dieser Algorithmus unterteilt den Graphen auf eine andere Art. Hier wird ein anderes Konzept der Graphentheorie verwendet, nämlich die Independent Sets. \\
+Independent Sets haben die Eigenschaft, dass ihre Knoten nicht miteinander verknüpft sind und somit im Kontext Graphenfärbung alle die gleiche Farbe haben können.
+Dies wird vom Algorithmus folgendermaßen verwendet: \\
+Da das Ermitteln des größten Independent Sets innerhalb eines Graphen auch ein NP-schweres Problem ist, wird im Folgenden immer ein möglichst großes Independent Set gesucht,und zwar wie folgt: \\
+Man startet mit dem Knoten $v$ mit kleinstem Grad. Dies kann mehrdeutig sein, dann wählt man z.B. per Zufall einen aus. Dieser ist nun der erste Knoten des Independent Sets. Das bedeutet, dass seine Nachbarschaft nicht Teil dessen wird und aus der Betrachtung entfernt wird, es entsteht ein Subgraph $G' = G - N[v]$
+Dann wird in diesem der Knoten mit kleinstem Grad ermittelt und ins Independent Set hinzugefügt und mitsamt Nachbarschaft aus dem Graphen entfernt. Dies macht man so lange, bis der komplette Graph abgedeckt wurde und bildet so ein möglichst großes Independent Set, was dann für den weiteren Algorithmus verwendet wird. \\
+Im Graphen wird zunächst auf diese Weise das größtmögliche Independent Set ermittelt. \\
+Das ausgewählte Set wird in einer neuen Farbe gefärbt und für den Rest der Färbung nicht betrachtet. \\
+Dann wird im restlichen Subgraphen wieder das größte Independent Set bestimmt und gefärbt, solange bis der gesamte Graph gefärbt wurde.
+So färbt man einen Graphen, der theoretisch $k$-färbbar ist in $O(\frac{n}{log_k(n)})$ Farben.
+
 \subsection{Berger Rompel Algorithmus} % TODO
 
 Der Algorithmus von Berger Rompel
