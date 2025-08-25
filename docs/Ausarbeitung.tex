@@ -39,6 +39,15 @@
 \newpage
 
 \section{Kurzfassung} % Was haben wir gemacht, ein Absatz
+
+In dieser Ausarbeitung werden die Ergebnisse unseres Semesterprojekts "Schnelle Algorithmen für schwere Probleme" mit dem Fokus auf
+Graphenfärbungsalgorithmen zusammengefasst. \\ 
+Das exakte Färben von Graphen mit möglichst wenig Farben ist mit relativ simplen Inputs bereits ein NP-schweres Problem, weswegen es bereits einige Ansätze gibt,
+möglichst gute Färbungen in vergleichbar kurzer Zeit zu erzeugen. Einige dieser Ansätze wurden von uns implementiert und auf die $2$ Faktoren 
+Laufzeit und die Anzahl der genutzten Farben untersucht.
+Desweiteren haben wir ein paar Ansätze überlegt, formuliert und die daraus entstandenen Algorithmen ebenfalls untersucht, zu denen wir keine Publikationen finden konnten. \\
+Unsere Implementierungen sind in der Sprache Python und nutzen die Bibliothek NetworkX.
+
 \section{Begriffsklärung} % TODO, laufend aktualisieren, wenn ein neuer Begriff verwendet wurde
 \begin{itemize}[noitemsep, left=0pt]
 \item Wir behandeln in dieser Ausarbeitung ausschließlich ungerichtete \\Graphen.
@@ -52,6 +61,12 @@ Es gilt $G[V']=(V',E')$ mit $E'=\{(u,v)\in E\mid u\in V'\land v\in V'\}$.
 Wenn wir einen Knoten $v$ \grqq färben\grqq\ so ändern wir eigentlich den Wert von $F(v)$.
 \item Der Grad $\deg_G(v)$ eines Knoten $v$ ist die Anzahl an von ihm ausgehenden Kanten $|\{(v_1,v_2)\in E(G) | v_1=v\lor v_2=v\}|$
 Wir definieren $\delta G=\min\{\deg_G(v)|v\in V(G)\}$
+\item Die Nachbarschaft $N(v)$ eines Knoten $v$ innerhalb eines Graphen sind all jene Knoten,
+die mit einer Kante mit $v$ verknüpft sind.
+\item Die Kantendichte eines Graphen $d(G)$ ist als Angabe zu verstehen, wie viele Kanten im Graphen möglich wären und wie viele davon tatsächlich vorhanden sind. \\
+Die Formel hierfür ist: $d(G) = \frac{2*|E|}{|V|(|V|-1)}$, wobei $|E|$ die Anzahl der vorhandenen Kanten ist und $|V|$ die Anzahl der Knoten. \\
+\item Ein Independent Set $V'$ (auf deutsch: Stabile Menge) ist eine Untergruppe aller Knoten, die jeweils paarweise nicht durch eine
+Kante miteinander verknüpft sind. 
 \end{itemize}
 \section{Etablierte Algorithmen}
 \subsection{Greedy Algorithmen}
@@ -119,7 +134,11 @@ dabei wurde der Farbtauschmechanismus auf greedy-max angewendet.
 
 \subsection{Wigdersons Algorithmen} % TODO
 
-Bei den zwei Algorithmen von Wigderson handelt es sich eigentlich um einen Algorithmus und einen Spezialfall dessen.
+Bei den zwei Algorithmen von Wigderson handelt es sich eigentlich um einen Algorithmus und einen Spezialfall dessen. \\
+Die Prämisse beider Algorithmen ist, einen schnelleren Algorithmus für Input-Graphen mit hoher Kantendichte zu sein.
+Darunter leidet aber im Vergleich zu Greedy-Algorithmen die Zahl der verwendeten Farben. Da weiterhin ein Greedy-Algorithmus verwendet wird,
+sobald der Graph nur noch niedrige Knotengrade besitzt, sieht man keine Verbesserung in der $O$-Notation der Komplexität, aber die reale Laufzeit sollte
+für jene Graphen mit hoher Kantendichte sinken.
 
 \subsubsection{Wigdersons erster Algorithmus}
 
@@ -160,6 +179,18 @@ Auch wie im anderen Algorithmus gibt es ein Abbruchkriterium, wann sich stattdes
 Dieser Algorithmus hat laut Wigderson eine Laufzeitkomplexitätsklasse von $O(k(n+m))$, wobei $k$ die Färbungszahl, $n$ die Anzahl der Knoten und $m$ die Anzahl der Kanten ist.
 
 \subsection{Johnsons Algorithmus} % TODO
+
+Dieser Algorithmus unterteilt den Graphen auf eine andere Art. Hier wird ein anderes Konzept der Graphentheorie verwendet, nämlich die Independent Sets. \\
+Independent Sets haben die Eigenschaft, dass ihre Knoten nicht miteinander verknüpft sind und somit im Kontext Graphenfärbung alle die gleiche Farbe haben können.
+Dies wird vom Algorithmus folgendermaßen verwendet: \\
+Da das Ermitteln des größten Independent Sets innerhalb eines Graphen auch ein NP-schweres Problem ist, wird im Folgenden immer ein möglichst großes Independent Set gesucht,und zwar wie folgt: \\
+Man startet mit dem Knoten $v$ mit kleinstem Grad. Dies kann mehrdeutig sein, dann wählt man z.B. per Zufall einen aus. Dieser ist nun der erste Knoten des Independent Sets. Das bedeutet, dass seine Nachbarschaft nicht Teil dessen wird und aus der Betrachtung entfernt wird, es entsteht ein Subgraph $G' = G - N[v]$
+Dann wird in diesem der Knoten mit kleinstem Grad ermittelt und ins Independent Set hinzugefügt und mitsamt Nachbarschaft aus dem Graphen entfernt. Dies macht man so lange, bis der komplette Graph abgedeckt wurde und bildet so ein möglichst großes Independent Set, was dann für den weiteren Algorithmus verwendet wird. \\
+Im Graphen wird zunächst auf diese Weise das größtmögliche Independent Set ermittelt. \\
+Das ausgewählte Set wird in einer neuen Farbe gefärbt und für den Rest der Färbung nicht betrachtet. \\
+Dann wird im restlichen Subgraphen wieder das größte Independent Set bestimmt und gefärbt, solange bis der gesamte Graph gefärbt wurde.
+So färbt man einen Graphen, der theoretisch $k$-färbbar ist in $O(\frac{n}{log_k(n)})$ Farben.
+
 \subsection{Berger Rompel Algorithmus} % TODO
 
 Der Algorithmus von Berger Rompel
@@ -284,13 +315,69 @@ Wir beenden diesen Ansatz mit dem Fazit, dass sich mit diesem Verfahren für uns
 da die Abweichung zu bisherigen Algorithmen hier eher einen Nachteil dargestellt hat.
 Stattdessen wollen wir mit einem Verfahren weitermachen, welches bisherige Algorithmen veruscht zu erweitern, anstatt sie zu ersetzen.
 
-\subsection{Make-Better Algorithmus}
+\subsection{Problematische Knoten}
+Definietion: Ein probelmatischer Knoten sei ein Knoten mit Nachbarschaft zu Knoten jeder Farbe außer seiner eigenen Farbe. \\
+
+Es ist offensichtlich dass, wenn ein Knoten kein problematischer Knoten ist, mindestens eine andere Farbe existiert in welche er umgefärbt werden kann, \\
+sodass eine neue zulässige Färbung entsteht ohne das Nachbarn des Knoten ebenfalls umgefärbt werden müssen.
+
+\subsection{Elim}
+Elim ist der einfachste Algorithmus zur Verbesserung einer gegebenen Färbung. \\
+
+Durch das Prüfen auf problematische Knoten können wir unnötige Farben leicht identifizieren und dann eliminieren.
+
+Für alle Farben wird ausgeführt: \\
+\begin{itemize}
+\item[1.] Prüfe Farbe x auf das Vorhandensein von problematischen Knoten.
+\item[2.] Wenn problematische Knoten vorhanden sind, breche ab und fahre mit der nächsten Farbe fort.
+\item[3.] Ansonsten; färbe alle vorhandenen Knoten in zulässige andere Farben um, sodass keiner mehr Farbe x hat.
+\item[4.] Fahre mit der nächsten Farbe fort.
+\end{itemize}
+
+Elim verbessert vor allem Färbungen stark, welche durch Algorithmen erzeugt werden die oft Farben verlassen, wie die Wigderson-Algorithmen. \\
+Auch auf Färbungen von Greedy konnten leichte Verbesserungen festgestellt werden. \\
+Zudem ist der Rechenaufwand im Vergleich zum Aufwand der hier untersuchten anderen Algorithmen minimal. Im Worst case bei $k$ Farben
+in der Vorfärbung braucht der Algorithmus zwar $O(k*n)$ Schritte, allerdings setzt das eine absolut inkompetente Vorfärbung voraus. \\
+Da meist nur einige bis gar keine Farben eingespart werden können, ist die Komplexität im Durchschnittsfall jedoch signifikant näher an $n$ als an $k*n$
+
+\subsection{Make-Better Algorithmus} %muss glaub ich weg
 
 Der Ansatz für diesen Algorithmus war es, eine schon fertige Färbung eines Graphen zu nehmen und versuche, diese zu verbessern. \\
 Um dies durchzuführen, werden die Knoten als Farbgruppen betrachtet. Dann schaut man in jeder Farbgruppe, ob man nicht die einzelnen Knoten in eine andere Farbe umfärben kann. \\
 Das kann man immer, wenn ein Knoten keine Verbindung zu mindestens einer anderen Farbe hat. Findet man so eine Farbgruppe, aus der man alle Knoten umfärben kann, 
 macht der Algorithmus dies und entfernt somit eine ganze Farbe aus der Färbung des Graphen. \\
-Dies kann man so lange wiederholen, bis sich keine Farbe mehr entfernen lässt.
+Dies kann man so lange wiederholen, bis sich keine Farbe mehr entfernen lässt. \\
+
+\subsection{Umfärben von Zusammenhangskomponenten}
+
+Der Elim-Algorithmus kommt allerdings schnell an seine Grenzen wenn es darum geht, was er umfärben kann. Es gibt unter Umständen die Möglichkeit,
+Knoten von problematisch zu unproblematisch zu konvertieren, wenn man andere Knoten umfärbt. Deswegen funktioniert dieser Algorithmus wie folgt: \\
+
+\begin{itemize}
+  \item Versuche, Elim auf Graphenfärbung anzuwenden
+  \item Wenn es für alle Farben fehlschlägt, identifiziere ein paar nicht-problematische Knoten und färbe diese um
+  \item Versuche erneut, Elim auf Graphenfärbung anzuwenden
+\end{itemize}
+
+Dieser Prozess kann auf verschiedenste Arten und Weisen durchgeführt werden, unsere Implementation hat eine zufällige Anzahl an unproblematischen Knoten umgefärbt ohne größeres System dahinter.
+Dies war vor allem, um die Laufzeit nicht zu sehr in die Höhe zu treiben. So liegt sie nämlich noch in $O(n)$, zuzüglich des Aufwands von Elim, also technisch gesehen $O(k*n)$.
+
+\subsection{Aus 3 Mach 2}
+
+Dieser Algorithmus hat ebenfalls als Ansatz, eine bestehende Färbung zu verbessern. Hierbei wird auch auf ein bekanntes Konzept
+zurückgegriffen, was bereits von Wigdersons Algorithmen verwendet wurde: Es lässt sich mit linearer Komplexität herausfinden,
+ob ein Graph 2-färbbar ist. Der Algorithmus funktioniert dann auf die folgende Weise: \\
+
+\begin{itemize}
+  \item Bilde des Subgraphen $G'$ mit nur Knoten mit den Farben $a$, $b$ und $c$ und entfärbe diese in $G'$
+  \item Versuche, diesen Graphen nur mit $2$ Farben ($a$ und $b$) zu färben
+  \item Falls möglich, übernehme die Färbung im Ausgangsgraphen und entferne Farbe $c$ aus der Farbliste
+  \item Falls nicht möglich, probiere mit anderen Farben $a'$, $b'$ und $c'$
+\end{itemize}
+
+Der Algorithmus geht dabei bei $k$ Ausgangsfarben maximal $k*(k-1)*(k-2)$ mal durch den Graphen und hat somit eine Komplexität von $O(k^3)$.
+Dies ist meist signifikanter als das, was der Algorithmus braucht, der die Färbung erzeugt, z. B. $O(n+m)$ bei Greedy. \\
+%weiß nicht, obs ne schöne Formel für Farbeinsparung gibt, wahrscheinlich nicht
 
 \section{Ergebnisse zu den eigenen Algorithmen} % TODO
 \section{Zusammenfassung und Fazit} % TODO
