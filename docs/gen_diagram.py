@@ -67,3 +67,6 @@ if __name__=="__main__":
     make_diagram("docs/data/generic_test_merger_focus.csv","docs/diagrams/merger_pic3.png",graphset_wildcard_whitelist=["_300n"],solver_blacklist=["merge_trivial","greedy_max","merge_recolor_bf"])
     make_diagram("docs/data/generic_test_merger_focus.csv","docs/diagrams/merger_pic4.png",graphset_wildcard_whitelist=["_300n"],solver_whitelist=["greedy_color_swaps","merge_recolor_color_swaps"],prop_to_plot="exec_time_avg")
     make_diagram("docs/data/generic_test_merger_focus.csv","docs/diagrams/merger_pic5.png",graphset_wildcard_whitelist=["_300n"],solver_whitelist=["greedy_max","merge_recolor"],prop_to_plot="exec_time_avg")
+
+    make_diagram("docs/data/generic_test_greedy.csv","docs/diagrams/greedy_pic1.png",graphset_wildcard_whitelist=["_300n"],solver_blacklist=["greedy_color_swaps"])
+    make_diagram("docs/data/generic_test_greedy.csv","docs/diagrams/greedy_pic2.png",graphset_wildcard_whitelist=["_300n"],solver_whitelist=["greedy_max","","greedy_color_swaps"])
