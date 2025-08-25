@@ -250,29 +250,62 @@ Es ist offensichtlich dass, wenn ein Knoten kein problematischer Knoten ist, min
 sodass eine neue zulässige Färbung entsteht ohne das Nachbarn des Knoten ebenfalls umgefärbt werden müssen.
 
 \subsection{Elim}
-Elim ist der einfachste Algorythmus zur verbesserung einer gegebenen Färbung. \\
+Elim ist der einfachste Algorithmus zur Verbesserung einer gegebenen Färbung. \\
 
-Durch das Prüfen auf problematische Knoten können wir unnötige Farben leicht Identiefiezieren und dann Eliminieren.
+Durch das Prüfen auf problematische Knoten können wir unnötige Farben leicht identifizieren und dann eliminieren.
 
 Für alle Farben wird ausgeführt: \\
 \begin{itemize}
-\item[1.] Prüfe Farbe x auf das vohandensein von problematischen Knoten.
-\item[2.] Wenn problematischen Knoten vohanden sind breche ab und fahre mit der nächsten Farbe fort.
-\item[3.] Ansonsten; färbe alle forhandenen Knoten in zulässige andere Farben um, sodass keiner mehr Farbe x hat.
+\item[1.] Prüfe Farbe x auf das Vorhandensein von problematischen Knoten.
+\item[2.] Wenn problematische Knoten vorhanden sind, breche ab und fahre mit der nächsten Farbe fort.
+\item[3.] Ansonsten; färbe alle vorhandenen Knoten in zulässige andere Farben um, sodass keiner mehr Farbe x hat.
 \item[4.] Fahre mit der nächsten Farbe fort.
 \end{itemize}
 
-Elim verbessert vorallem Färbungen stark welche durch Algorythmen erzeugt werden die oft Farben verlassen wie die Wigdersons. \\
-Auch auf Färbungen von Greedy konnten leichte vebesserungen festgestellt werden. \\
-Zudem ist der Rechenaufwand im vergleich zum Aufwand der hier untersuchten anderen Algorythmen minimal.
+Elim verbessert vor allem Färbungen stark, welche durch Algorithmen erzeugt werden die oft Farben verlassen, wie die Wigderson-Algorithmen. \\
+Auch auf Färbungen von Greedy konnten leichte Verbesserungen festgestellt werden. \\
+Zudem ist der Rechenaufwand im Vergleich zum Aufwand der hier untersuchten anderen Algorithmen minimal. Im Worst case bei $k$ Farben
+in der Vorfärbung braucht der Algorithmus zwar $O(k*n)$ Schritte, allerdings setzt das eine absolut inkompetente Vorfärbung voraus. \\
+Da meist nur einige bis gar keine Farben eingespart werden können, ist die Komplexität im Durchschnittsfall jedoch signifikant näher an $n$ als an $k*n$
 
-\subsection{Make-Better Algorithmus}
+\subsection{Make-Better Algorithmus} %muss glaub ich weg
 
 Der Ansatz für diesen Algorithmus war es, eine schon fertige Färbung eines Graphen zu nehmen und versuche, diese zu verbessern. \\
 Um dies durchzuführen, werden die Knoten als Farbgruppen betrachtet. Dann schaut man in jeder Farbgruppe, ob man nicht die einzelnen Knoten in eine andere Farbe umfärben kann. \\
 Das kann man immer, wenn ein Knoten keine Verbindung zu mindestens einer anderen Farbe hat. Findet man so eine Farbgruppe, aus der man alle Knoten umfärben kann, 
 macht der Algorithmus dies und entfernt somit eine ganze Farbe aus der Färbung des Graphen. \\
-Dies kann man so lange wiederholen, bis sich keine Farbe mehr entfernen lässt.
+Dies kann man so lange wiederholen, bis sich keine Farbe mehr entfernen lässt. \\
+
+\subsection{Umfärben von Zusammenhangskomponenten}
+
+Der Elim-Algorithmus kommt allerdings schnell an seine Grenzen wenn es darum geht, was er umfärben kann. Es gibt unter Umständen die Möglichkeit,
+Knoten von problematisch zu unproblematisch zu konvertieren, wenn man andere Knoten umfärbt. Deswegen funktioniert dieser Algorithmus wie folgt: \\
+
+\begin{itemize}
+  \item Versuche, Elim auf Graphenfärbung anzuwenden
+  \item Wenn es für alle Farben fehlschlägt, identifiziere ein paar nicht-problematische Knoten und färbe diese um
+  \item Versuche erneut, Elim auf Graphenfärbung anzuwenden
+\end{itemize}
+
+Dieser Prozess kann auf verschiedenste Arten und Weisen durchgeführt werden, unsere Implementation hat eine zufällige Anzahl an unproblematischen Knoten umgefärbt ohne größeres System dahinter.
+Dies war vor allem, um die Laufzeit nicht zu sehr in die Höhe zu treiben. So liegt sie nämlich noch in $O(n)$, zuzüglich des Aufwands von Elim, also technisch gesehen $O(k*n)$.
+
+\subsection{Aus 3 Mach 2}
+
+Dieser Algorithmus hat ebenfalls als Ansatz, eine bestehende Färbung zu verbessern. Hierbei wird auch auf ein bekanntes Konzept
+zurückgegriffen, was bereits von Wigdersons Algorithmen verwendet wurde: Es lässt sich mit linearer Komplexität herausfinden,
+ob ein Graph 2-färbbar ist. Der Algorithmus funktioniert dann auf die folgende Weise: \\
+
+\begin{itemize}
+  \item Bilde des Subgraphen $G'$ mit nur Knoten mit den Farben $a$, $b$ und $c$ und entfärbe diese in $G'$
+  \item Versuche, diesen Graphen nur mit $2$ Farben ($a$ und $b$) zu färben
+  \item Falls möglich, übernehme die Färbung im Ausgangsgraphen und entferne Farbe $c$ aus der Farbliste
+  \item Falls nicht möglich, probiere mit anderen Farben $a'$, $b'$ und $c'$
+\end{itemize}
+
+Der Algorithmus geht dabei bei $k$ Ausgangsfarben maximal $k*(k-1)*(k-2)$ mal durch den Graphen und hat somit eine Komplexität von $O(k^3)$.
+Dies ist meist signifikanter als das, was der Algorithmus braucht, der die Färbung erzeugt, z. B. $O(n+m)$ bei Greedy. \\
+%weiß nicht, obs ne schöne Formel für Farbeinsparung gibt, wahrscheinlich nicht
 
 \section{Ergebnisse zu den eigenen Algorithmen} % TODO
 \section{Zusammenfassung und Fazit} % TODO
