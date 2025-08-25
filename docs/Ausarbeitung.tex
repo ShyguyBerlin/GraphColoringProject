@@ -8,9 +8,14 @@
 
 \usepackage{graphicx}
 
+% Für mathbb
+\usepackage{amssymb}
+% Für in mathmode embedded text
+\usepackage{amsmath}
+
 % Deutsche Sprache
 \usepackage[utf8]{inputenc} % this is needed for umlauts
-\usepackage[ngerman]{babel} % this is needed for umlauts
+\usepackage[ngerman]{babel} % this is needed for umlauts und damit figuren Abbildung heißen
 \usepackage[T1]{fontenc}    % this is needed for correct output of umlauts in pdf
 
 
@@ -25,6 +30,7 @@
 \author{Menschen} % TODO
 
 \renewcommand*\contentsname{Inhaltsverzeichnis} % Hier kann der Name des Inhaltsverzeichnisses verändert werden
+\newcommand{\degeneracy}{\text{degeneracy}}
 
 \begin{document}
 \maketitle
@@ -51,6 +57,10 @@ Ein Graph $G$ ist ein Tupel $G=(V,E)$, wobei $V=\{v_1,v_2,...,v_n\}$ und $E\subs
 $G'=G[V']$,
 wobei $G=(V,E)$ ein Graph ist und $V'\subseteq V(G)$.
 Es gilt $G[V']=(V',E')$ mit $E'=\{(u,v)\in E\mid u\in V'\land v\in V'\}$.
+\item Eine Färbung eines Graphen $G=(V,E)$ sei eine Zuordnung $F: V\mapsto \mathbb{N}$. Eine Färbung kann sich zur Laufzeit eines Algorithmusses ändern.
+Wenn wir einen Knoten $v$ \grqq färben\grqq\ so ändern wir eigentlich den Wert von $F(v)$.
+\item Der Grad $\deg_G(v)$ eines Knoten $v$ ist die Anzahl an von ihm ausgehenden Kanten $|\{(v_1,v_2)\in E(G) | v_1=v\lor v_2=v\}|$
+Wir definieren $\delta G=\min\{\deg_G(v)|v\in V(G)\}$
 \item Die Nachbarschaft $N(v)$ eines Knoten $v$ innerhalb eines Graphen sind all jene Knoten,
 die mit einer Kante mit $v$ verknüpft sind.
 \item Die Kantendichte eines Graphen $d(G)$ ist als Angabe zu verstehen, wie viele Kanten im Graphen möglich wären und wie viele davon tatsächlich vorhanden sind. \\
@@ -59,7 +69,69 @@ Die Formel hierfür ist: $d(G) = \frac{2*|E|}{|V|(|V|-1)}$, wobei $|E|$ die Anza
 Kante miteinander verknüpft sind. 
 \end{itemize}
 \section{Etablierte Algorithmen}
-\subsection{Greedy Algorithmen} % TODO
+\subsection{Greedy Algorithmen}
+Sei $G=(V,E)$ ein zu färbender Graph.
+Wir bestimmen zunächst eine Reihenfolge der Knoten in $V$, wobei $v_i$ der $i$-te Knoten ist.
+Wir nehmen zunächst an, dass die Reihenfolge keine speziellen Eigenschaften hat.
+Der Greedy Algorithmus geht nun folgendermaßen vor:
+\begin{itemize}
+\item[1.] Sei $i=1$
+\item[2.] $F(v_i) \leftarrow \min\{n\in\mathbb{N}|\nexists j < i: F(v_j)=n\land \{v_i, v_j\}\in E\}$
+\item[3.] ist $i<|V|$, so $i\leftarrow i+1$ und gehe zurück zu Schritt 1 
+\end{itemize}
+
+Je nachdem wie wir die Reihenfolge bilden, erhalten wir unterschiedliche Varianten des Greedy-Algorithmusses.
+Wählen wir eine Reihenfolge ohne spezielle Eigenschaften (in der Praxis die Definitionsreihenfolge),
+so bezeichnen wir dies als den Standard-greedy, bzw. nur greedy.
+
+Erstellen wir eine Reihenfolge $v_1,v_2,\ldots,v_n$, wobei $v_i$ ein Knoten kleinsten Grades im Graphen $G[\{v_1,\ldots,v_i\}]$ ist, so bezeichnen wir den Algorithmus als greedy-smallest-degree-last oder kurz greedy-max.
+Sei $v_i$ analog ein Knoten größten Grades im Graphen $G[\{v_1,\ldots,v_i\}]$, so reden wir von greedy-largest-degree-last oder greedy-min.
+
+Offensichtlich ist eine allgemeine Obergrenze für die Farben die der Greedy Algorithmus verwendet $\Delta G$.
+Die Obergrenze kann jedoch auch je nach gewählter Reihenfolge geringer ausfallen. 
+So existiert immer eine Reihenfolge um die optimale Färbung mit greedy zu erzeugen.
+Sei die Degeneracy von $G$ definiert als\\
+$\degeneracy(G)=\max\{\delta G[V']|V'\subseteq V\}$.\\
+Mit greedy-max erreichen wir sogar eine Obergrenze von $\degeneracy(G)+1$ Farben.\\
+Wir behandeln außerdem den greedy-colors Algorithmus, 
+welcher eine Reihenfolge $v_1,v_2,\ldots,v_n$ nutzt,\\ 
+wobei $\forall i: i=n\lor
+\deg_{G[\{v_1,\ldots,v_i\}]}(v_i)\geq\\
+\ \ \max(\{\deg_{G[\{v_1,\ldots,v_{i-1}\}\cup\{j\}]}(v_j)|j\in\{i+1\ldots n\}\})$
+Ziel bei diesem Algorithmus ist es, immer Knoten zu färben, welche möglichst viele gefärbte Nachbarn haben.
+\begin{figure}
+  \includegraphics[width=0.8\textwidth]{diagrams/greedy_pic1.png}
+  \caption{Ergebnisse der Anwendung einfacher Greedy Varianten}
+  \label{fig:greedy1}
+\end{figure}
+Diese folgengesteuerten Greedyvarianten ermöglichen keine genaueren Abschätzungen.
+Es wurde für einzelne Varianten nachgewiesen, dass diese arbiträr schlechte Ergebnisse liefern können.\cite{geedy_mitchem}
+Deshalb wollen wir uns auf gemessene Daten beziehen. Diese Daten beschreiben die durchschnittlich gebrauchten Farben, wenn die Algorithmen an Zufallsgraphen, nach Erdős Rényi, angewendet werden.\cite{geedy_erdos_renyi}\\
+Man kann an Abbildung \ref{fig:greedy1} erkennen, 
+dass greedy-max, bzw. greedy-smallest-last die besten Ergebnisse liefert. Später werden wir diese Ergebnisse auch relativ zu anderen Algorithmen betrachten.
+
+Diese Greedy-Algorithmen können durch einen Farbtauschmechanismus verbessert werden.
+wir wenden diesen an, wenn zum Färben eines Knotens $v$ eine neue Farbe verwendet weren würde.
+Dabei suchen wir 2 Farben $k_1,k_2$ mit $k_1\neq k_2$, 
+sodass der Subgraph $U$ von $G$, 
+welcher alle Knoten aus $G$ enthält, 
+welche zu dieser Zeit mit $k_1$ oder $k_2$ gefärbt sind, die folgende Eigenschaft erfüllt:\\
+$\forall v_1\in U : (v_1\text{ ist benachbart zu }v) \Rightarrow\\
+ (\forall v_2 : (F(v_1)\neq F(v_2) \land v_2\text{ ist benachbart zu }v)\Rightarrow\\
+  (\text{es existiert auf U kein Pfad zwischen $v_1$ und $v_2$}))$\\
+Existieren $k_1,k_2$ welche solche Bedingungen erfüllen, 
+so können wir auf einzelnen Zusammenhangskomponenten auf $U$ die beiden Farben tauschen 
+bis nur noch eine der beiden Farben mit $v$ benachbart ist.\\
+In Abbildung \ref{fig:greedy2} ist eine deutliche Verbesserungder Ergebnisse zu erkennen,
+dabei wurde der Farbtauschmechanismus auf greedy-max angewendet.
+\begin{figure}
+  \includegraphics[width=0.8\textwidth]{diagrams/greedy_pic2.png}
+  \caption{Ergebnisse der Anwendung des greedy-color-swaps Algorithmusses}
+  \label{fig:greedy2}
+\end{figure}
+
+
+
 \subsection{Wigdersons Algorithmen} % TODO
 
 Bei den zwei Algorithmen von Wigderson handelt es sich eigentlich um einen Algorithmus und einen Spezialfall dessen. \\
@@ -177,7 +249,7 @@ Zusätzlich behandeln wir eine Alternative Version, merge-recolor-bf, welche im 
 Der Standardfall merge-recolor greift lediglich auf den greedy-max Algorithmus zu.
 
 \begin{figure}
-  \includegraphics[width=\linewidth]{diagrams/merger_pic1.png}
+  \includegraphics[width=0.8\linewidth]{diagrams/merger_pic1.png}
   \caption{Vergleich der beschriebenen Merger Algorithmen mit Greedy bei Graphen mit 50 Knoten}
   \label{fig:merge1}
 \end{figure}
@@ -186,7 +258,7 @@ Im Vergleich zu den besseren Varianten der Greedy Algorithmen schneiden die Merg
 Vielversprechender sind die merge-recolor und merge-recolor-bf Algorithmen, welche bessere Ergebnisse als merge-trivial erzielen können, jedoch immernoch schlechter sind als greedy-max. Untereinander unterscheiden sich die Ergebnisse der bisherigen merge-recolor Varianten kaum.
 
 \begin{figure}
-  \includegraphics[width=\linewidth]{diagrams/merger_pic2.png}
+  \includegraphics[width=0.8\linewidth]{diagrams/merger_pic2.png}
   \caption{Vergleich der beschriebenen Merger Algorithmen mit Greedy bei Graphen mit 300 Knoten}
   \label{fig:merge2}
 \end{figure}
@@ -215,20 +287,20 @@ Außerdem lasse sich die Zusammenhangskomponente aus Knoten $\{v\in G | F(v)=F(y
 Diesen Algorithmus bezeichnen wir nun als greedy-recolor-color-swaps.
 Er weißt deutlich bessere Ergebnisse auf (siehe Abb. \ref{fig:merge3}), jedoch werden von greedy-color-swaps dennoch bessere Ergebnisse erzielt.
 \begin{figure}
-  \includegraphics[width=\linewidth]{diagrams/merger_pic3.png}
+  \includegraphics[width=0.8\linewidth]{diagrams/merger_pic3.png}
   \caption{Vergleich der beschriebenen Merger Algorithmen mit dem merge-recolor-color-swaps Ansatz}
   \label{fig:merge3}
 \end{figure}
 Besonders fällt dies auf, wenn wir statt den verwendeten Farben die Laufzeit betrachten. Die verwendeten Farben liegen auf ähnlichem Level,
 aber die Laufzeit ist bei dem merge-recolor-color-swaps Verfahren deutlich schlechter (siehe Abb. \ref{fig:merge4}).\\
 \begin{figure}
-  \includegraphics[width=\linewidth]{diagrams/merger_pic4.png}
+  \includegraphics[width=0.8\linewidth]{diagrams/merger_pic4.png}
   \caption{Vergleich der Laufzeit zwischen greedy und merge mit color swaps}
   \label{fig:merge4}
 \end{figure}
 Merge-recolor, welches von Farben her eher mit greedy-max vergleichbar ist, hatte auf unseren Testdaten ebenfalls eine schlechtere Laufzeit (siehe Abb.\ref{fig:merge5}).
 \begin{figure}
-  \includegraphics[width=\linewidth]{diagrams/merger_pic5.png}
+  \includegraphics[width=0.8\linewidth]{diagrams/merger_pic5.png}
   \caption{Vergleich der Laufzeit zwischen greedy und merge ohne color swaps}
   \label{fig:merge5}
 \end{figure}

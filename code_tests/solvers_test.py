@@ -1,6 +1,7 @@
 from solvers import greedy
 from solvers import wigderson
 from solvers import solvers
+from tools.graph_gen_tools import convert_to_text_gsm
 import networkx as nx
 
 import pytest
@@ -51,6 +52,30 @@ def test_generic_solvers_correctness(solver : solvers.Solver):
         assert nx.is_isomorphic(graph,graph_copied) # solver should not change the graph
 
         assert not 0 in res.values() # Guarantee that colors begin at 1
+
+def test_make_better_correctness():
+    make_betters={
+        "greedy_no_sort_make_better": solvers.get_solvers()["greedy_no_sort_make_better"],
+        "greedy_asc_deg_make_better": solvers.get_solvers()["greedy_asc_deg_make_better"],
+        "greedy_desc_deg_make_better": solvers.get_solvers()["greedy_desc_deg_make_better"],
+        "greedy_color_swaps_make_better": solvers.get_solvers()["greedy_color_swaps_make_better"]
+    }
+    for s in make_betters.keys():
+        for i in range(150):
+            graph :nx.Graph = nx.erdos_renyi_graph(25,0.2)
+
+            graph_copied=graph.copy()
+
+            *_,res = make_betters[s].func(graph)
+
+            #print(s,graph,convert_to_text_gsm([graph]))
+
+            assert wigderson.check_complete(graph,res) # solver should create a valid solution
+
+            assert nx.is_isomorphic(graph,graph_copied) # solver should not change the graph
+
+            assert not 0 in res.values() # Guarantee that colors begin at 1
+
 
 @pytest.mark.parametrize("solver", solvers.get_generic_solvers().values(), ids=solvers.get_generic_solvers().keys())
 def test_generic_solvers_correctness_dense(solver : solvers.Solver):
