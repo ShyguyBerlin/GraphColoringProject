@@ -40,7 +40,8 @@
 
 \section{Kurzfassung} % Was haben wir gemacht, ein Absatz
 
-In dieser Ausarbeitung werden die Ergebnisse unseres Semesterprojekts "Schnelle Algorithmen für schwere Probleme" mit dem Fokus auf
+In dieser Ausarbeitung werden die Ergebnisse unseres Semesterprojekts\\
+\grqq Schnelle Algorithmen für schwere Probleme\grqq\ mit dem Fokus auf
 Graphenfärbungsalgorithmen zusammengefasst. \\ 
 Das exakte Färben von Graphen mit möglichst wenig Farben ist mit relativ simplen Inputs bereits ein NP-schweres Problem, weswegen es bereits einige Ansätze gibt,
 möglichst gute Färbungen in vergleichbar kurzer Zeit zu erzeugen. Einige dieser Ansätze wurden von uns implementiert und auf die $2$ Faktoren 
@@ -72,7 +73,6 @@ Kante miteinander verknüpft sind.
 \subsection{Greedy Algorithmen}
 Sei $G=(V,E)$ ein zu färbender Graph.
 Wir bestimmen zunächst eine Reihenfolge der Knoten in $V$, wobei $v_i$ der $i$-te Knoten ist.
-Wir nehmen zunächst an, dass die Reihenfolge keine speziellen Eigenschaften hat.
 Der Greedy Algorithmus geht nun folgendermaßen vor:
 \begin{itemize}
 \item[1.] Sei $i=1$
@@ -180,25 +180,35 @@ Dieser Algorithmus hat laut Wigderson eine Laufzeitkomplexitätsklasse von $O(k(
 
 \subsection{Johnsons Algorithmus} % TODO
 
-Dieser Algorithmus unterteilt den Graphen auf eine andere Art. Hier wird ein anderes Konzept der Graphentheorie verwendet, nämlich die Independent Sets. \\
-Independent Sets haben die Eigenschaft, dass ihre Knoten nicht miteinander verknüpft sind und somit im Kontext Graphenfärbung alle die gleiche Farbe haben können.
+Dieser Algorithmus unterteilt den Graphen auf eine andere Art.
+Hier wird ein anderes Konzept der Graphentheorie verwendet, nämlich die Independent Sets. \\
+Independent Sets haben die Eigenschaft,dass ihre Knoten nicht miteinander verknüpft sind 
+und somit im Kontext Graphenfärbung alle die gleiche Farbe haben können.
 Dies wird vom Algorithmus folgendermaßen verwendet: \\
-Da das Ermitteln des größten Independent Sets innerhalb eines Graphen auch ein NP-schweres Problem ist, wird im Folgenden immer ein möglichst großes Independent Set gesucht,und zwar wie folgt: \\
-Man startet mit dem Knoten $v$ mit kleinstem Grad. Dies kann mehrdeutig sein, dann wählt man z.B. per Zufall einen aus. Dieser ist nun der erste Knoten des Independent Sets. Das bedeutet, dass seine Nachbarschaft nicht Teil dessen wird und aus der Betrachtung entfernt wird, es entsteht ein Subgraph $G' = G - N[v]$
-Dann wird in diesem der Knoten mit kleinstem Grad ermittelt und ins Independent Set hinzugefügt und mitsamt Nachbarschaft aus dem Graphen entfernt. Dies macht man so lange, bis der komplette Graph abgedeckt wurde und bildet so ein möglichst großes Independent Set, was dann für den weiteren Algorithmus verwendet wird. \\
+Da das Ermitteln des größten Independent Sets innerhalb eines Graphen auch ein NP-schweres Problem ist,
+wird im Folgenden immer ein möglichst großes Independent Set gesucht,und zwar wie folgt: \\
+Man startet mit dem Knoten $v$ mit kleinstem Grad.
+Dies kann mehrdeutig sein, dann wählt man z.B. per Zufall einen aus.
+Dieser ist nun der erste Knoten des Independent Sets.
+Das bedeutet, dass seine Nachbarschaft nicht Teil dessen wird und aus der Betrachtung entfernt wird, 
+es entsteht ein Subgraph $G' = G - N[v]$
+Dann wird in diesem der Knoten mit kleinstem Grad ermittelt und ins Independent Set hinzugefügt 
+und mitsamt Nachbarschaft aus dem Graphen entfernt. 
+Dies macht man so lange, bis der komplette Graph abgedeckt wurde und bildet so ein möglichst großes Independent Set, 
+was dann für den weiteren Algorithmus verwendet wird. \\
 Im Graphen wird zunächst auf diese Weise das größtmögliche Independent Set ermittelt. \\
 Das ausgewählte Set wird in einer neuen Farbe gefärbt und für den Rest der Färbung nicht betrachtet. \\
 Dann wird im restlichen Subgraphen wieder das größte Independent Set bestimmt und gefärbt, solange bis der gesamte Graph gefärbt wurde.
 So färbt man einen Graphen, der theoretisch $k$-färbbar ist in $O(\frac{n}{log_k(n)})$ Farben.
 
 \subsection{Berger Rompel Algorithmus} % TODO
-
-Der Algorithmus von Berger Rompel
-baut auf der Idee von Johnsons und Wigderson auf
-und verbessert diese um einige Punkte.
-\cite{berger_rompel}
+In ihrem Paper schlagen Berger und Rompel einen Algorithmus $A_\alpha(k,G)$ vor, welcher einen Graphen in $2*n/\alpha (\log_k n)^2 + O(n/(\log_k n)^3)$ Farben färben kann, wobei $k$ die optimale Färbungszahl für einen Graphen ist und $n=|G|$.\cite{berger_rompel}.
+Dieser baut auf dem Algorithmus von Johnson auf und erweitert diesen, indem
+mehrere Knoten mit möglichst kleiner Nachbarschaft, statt einzelnen Knoten, zu den Independent Sets hinzugefügt werden.
+Theoretisch wird also eine reine Verbesserung erzielt, da im schlimmsten Fall, dieselben Knoten wie bei Johnson in das Set eingefügt werden.
 
 \section{Ergebnisse zu den etablierten Algorithmen} % TODO
+
 \section{Eigens produzierte Algorithmen} % TODO
 \subsection{Merging Algorithmus}
 Bei der Überlegung, welche Ansätze zur Entwicklung eines eigenen Solvers sinnvoll wären,
