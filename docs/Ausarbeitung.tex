@@ -414,18 +414,20 @@ Dann haben wir ausprobiert, was passiert, wenn man andere Vorfärbungen verwende
 ließ sich in seltenen Fällen noch eine Verbesserung feststellen. Dazu kommt, dass dieser Algorithmus vergleichsweise kaum Laufzeit hat, sodass man ihn problemlos auf alle möglichen Färbungs-Algorithmen anwenden konnte. \\
 Vor allem bei den Ergebnissen der Wigderson-Algorithmen konnte die Färbungszahl ein gutes Stück nach unten korrigiert werden, da, wie bereits angesprochen, dort Farben oft sehr schnell nicht mehr weiter verwendet werden. \\
 Insgesamt deutete sich aber an: je besser die Ausgangsfärbung, desto besser das Ergebnis von Elim.  
-Die Erweiterung von Elim auf das Umfärben von Zusammenhangskomponenten hat da einen gewissen Nachteil: Die Laufzeit ist um ein Vielfaches länger als bei Elim. \\ %oder? ich weiß nicht, was der letzte Stand da ist.
-Sie liefert vereinzelt noch Verbesserungen gegenüber Elim, allerdings war damit schon das meiste abgedeckt und die Erweiterung kann nicht mehr viel hinzufügen. \\
-Der andere Ansatz des Aus-3-Mach-2-Algorithmus hat etwas andere Ergebnisse geliefert als gedacht. Im Durchschnitt lieferte der Algorithmus etwas schlechtere Färbungszahlen als die guten Algorithmen wie greedy-color-swap oder Elim.
+Die Erweiterung von Elim auf das Umfärben von Zusammenhangskomponenten hat da einen gewissen Nachteil: Die Laufzeit ist um ein Vielfaches länger als bei Elim. \\ %oder? ich weiß nicht, was der letzte Stand da ist. - ja,
+Sie liefert vereinzelt noch Verbesserungen gegenüber Elim, jedoch sind diese stark von der speziefischen Graphstruktur abhänging, wie Ringe. Allerdings ist durch Elim schon eine fielzahl einfacher Fälle abgedeckt sodas die Erweiterung zuweilen keine Verbesserung vonehmen kann. \\
+Der andere Ansatz des Aus-3-Mach-2-Algorithmus hat etwas andere Ergebnisse geliefert als gedacht. Im Durchschnitt lieferte der Algorithmus etwas schlechtere Färbungszahlen als die guten Algorithmen wie greedy-color-swap mit Elim.
 Allerdings waren die niedrigsten und höchsten Werte sehr weit auseinander. Der Durchschnitt könnte also durch Ausreißer nach oben geschossen sein. 
-Das bedeutet jedoch auch, dass der Algorithmus nicht so verlässlich ist wie bspw. Elim. Vor allem kommt aber noch dazu, dass der Algorithmus viel mehr Laufzeit benötigt, was ihn leider endgültig disqualifiziert. \\
+Das bedeutet jedoch auch, dass der Algorithmus nicht so verlässlich ist wie beispielsweise Elim. Vor allem kommt aber noch dazu, dass der Algorithmus viel mehr Laufzeit benötigt, was ihn leider endgültig disqualifiziert. \\
 
 \section{Zusammenfassung und Fazit} % TODO
 
-Im Gesamten bleibt zu sagen, dass die etablierten Algorithmen vor allem Fortschritte in der Laufzeitoptimierung waren, so weit wir das herausfinden konnten. 
-Die greedy-Algorithmen haben teils deutlich kleinere Färbungszahlen geliefert. Vor allem die Färbungszahlen, die greedy-color-swaps geliefert hat, haben uns stark überrascht. \\
-Außerdem hat uns überrascht, wie gut Elim die gegebenen Färbungen noch verbessern konnte. Leider ist uns keine schöne Formel eingefallen, womit man dies beschreiben kann, aber in unseren Tests hat Elim starke Ergebnisse geliefert. \\
-So wäre unser Fazit: Wenn man schnell viele Graphen färben muss, nimm greedy mit Elim hinterher, wenn Rechenzeit weniger relevant ist, kann man auch greedy-color-swaps mit Elim hinterher nehmen. Das hat bei uns die besten Ergebnisse geliefert.
+Im Gesamten bleibt zu sagen, dass die etablierten Algorithmen vor allem Fortschritte in der Laufzeitoptimierung waren.
+Die greedy-Algorithmen haben teils deutlich kleinere Färbungszahlen geliefert. Vor allem die Färbungszahlen, die greedy-color-swaps geliefert hat, waren weit unter dem was wir erwarteten. \\
+Außerdem war überraschend, wie gut Elim die gegebenen Färbungen zuweilen noch verbessern konnte. Es war uns jedoch nicht möglich eine Formel zu finden welche die Verbesserung der Färbungszahl durch Elim beschreibt. In unseren Tests konnten wir jedoch beobachten das Elim gerade schlächtere Färbungen noch stark verbessern kann. \\
+
+Das Fazit unserer Ergebnisse ist das sollte man fiele Graphen schnell färben wollen ist ein einfacherer Greedy-Algorythmus und eine darauf folgende Anwendung von Elim am efektievsten. \\
+Sollte Laufzeit oder Rechenkraft von weniger interesse sein kann statt greedy, greedy-color-swapps angewendet werden um noch bessere Färbungen zu erhalten.
 
 \bibliographystyle{plain}
 \bibliography{Quellen}
