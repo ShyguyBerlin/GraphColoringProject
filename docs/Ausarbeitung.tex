@@ -67,10 +67,22 @@ die mit einer Kante mit $v$ verknüpft sind.
 \item Die Kantendichte eines Graphen $d(G)$ ist als Angabe zu verstehen, wie viele Kanten im Graphen möglich wären und wie viele davon tatsächlich vorhanden sind. \\
 Die Formel hierfür ist: $d(G) = \frac{2*|E|}{|V|(|V|-1)}$, wobei $|E|$ die Anzahl der vorhandenen Kanten ist und $|V|$ die Anzahl der Knoten. \\
 \item Ein Independent Set $V'$ (auf deutsch: Stabile Menge) ist eine Untergruppe aller Knoten, die jeweils paarweise nicht durch eine
-Kante miteinander verknüpft sind. 
+Kante miteinander verknüpft sind.
+\item Ein Co-Graph ist eine Art Graph, die sich mit $3$ Regeln rekursiv konstruieren lässt: \\
+\begin{itemize}
+  \item Ein Graph mit genau einem Knoten ist ein Co-Graph
+  \item Die Vereinigung zweier Co-Graphen ist ein Co-Graph (Knotenmenge ist die Vereinigung beider, Kantenmenge ist die Vereinigung beider)
+  \item Die Summe zweier Co-Graphen ist ein Co-Graph (Knotenmenge ist die Vereinigung beider, Kantenmenge ist die Vereinigung beider plus eine Kante von jeweils jedem Knoten der einen Menge und zu jedem Knoten der anderen Menge)
 \end{itemize}
+\item Ein problematischer Knoten ist ein Knoten mit Nachbarschaft zu Knoten jeder anderen Farbe. \\
+Es ist offensichtlich dass, wenn ein Knoten kein problematischer Knoten ist, mindestens eine andere Farbe existiert, in welche er umgefärbt werden kann, \\
+sodass eine neue zulässige Färbung entsteht ohne das Nachbarn des Knoten ebenfalls umgefärbt werden müssen.
+\end{itemize}
+
 \section{Etablierte Algorithmen}
+
 \subsection{Greedy Algorithmen}
+
 Sei $G=(V,E)$ ein zu färbender Graph.
 Wir bestimmen zunächst eine Reihenfolge der Knoten in $V$, wobei $v_i$ der $i$-te Knoten ist.
 Der Greedy Algorithmus geht nun folgendermaßen vor:
@@ -209,6 +221,15 @@ Theoretisch wird also eine reine Verbesserung erzielt, da im schlimmsten Fall, d
 
 \section{Ergebnisse zu den etablierten Algorithmen} % TODO
 
+Betrachtet man den normalen greedy-Algorithmus als eine gewisse Baseline, dann fällt auf, dass sich die Algorithmen in zwei Gruppen unterteilen lassen: \\
+Die, die laufzeittechnisch schneller sind und die, die bessere Färbungen erzeugen. Beispielsweise wird die Färbung durch die Erweiterung auf greedy-max, greedy-min und greedy-colors etwas besser und ist nicht viel aufwändiger als greedy selbst. \\
+Die größte Verbesserung wird durch greedy-color-swap erzeugt. Allerdings ist der Algorithmus auch viel aufwändiger, vor allem bei Graphen mit hoher Kantendichte \\ %right? bin nicht mehr sicher
+Die etablierten Algorithmen schlossen eher auf der anderen Seite der Baseline ab. Meist hatten die Algorithmen sehr viel höhere Färbungszahlen, aber dafür eine bessere Laufzeit.
+Gerade die Wigderson-Algorithmen benutzen viele Farben, weil sie Farben nicht wieder verwenden, obwohl es möglich wäre. \\
+Möglicherweise würde der Johnson-Algorithmus bessere Ergebnisse liefern, wenn man einen komplexeren Algorithmus zum Finden der Independent Sets verwenden würde,
+das würde dann aber auch wieder die Laufzeit und Komplexität verschlechtern. Diese These wird unterstützt davon, dass der Algorithmus auf Co-Graphen quasi die gleichen Färbungszahlen erhält wie die greedy-Algorithmen.
+%noch was zu Berger Rompel?
+
 \section{Eigens produzierte Algorithmen} % TODO
 \subsection{Merging Algorithmus}
 Bei der Überlegung, welche Ansätze zur Entwicklung eines eigenen Solvers sinnvoll wären,
@@ -325,13 +346,8 @@ Wir beenden diesen Ansatz mit dem Fazit, dass sich mit diesem Verfahren für uns
 da die Abweichung zu bisherigen Algorithmen hier eher einen Nachteil dargestellt hat.
 Stattdessen wollen wir mit einem Verfahren weitermachen, welches bisherige Algorithmen veruscht zu erweitern, anstatt sie zu ersetzen.
 
-\subsection{Problematische Knoten}
-Definietion: Ein probelmatischer Knoten sei ein Knoten mit Nachbarschaft zu Knoten jeder Farbe außer seiner eigenen Farbe. \\
-
-Es ist offensichtlich dass, wenn ein Knoten kein problematischer Knoten ist, mindestens eine andere Farbe existiert in welche er umgefärbt werden kann, \\
-sodass eine neue zulässige Färbung entsteht ohne das Nachbarn des Knoten ebenfalls umgefärbt werden müssen.
-
 \subsection{Elim}
+
 Elim ist der einfachste Algorithmus zur Verbesserung einer gegebenen Färbung. \\
 
 Durch das Prüfen auf problematische Knoten können wir unnötige Farben leicht identifizieren und dann eliminieren.
@@ -385,12 +401,30 @@ ob ein Graph 2-färbbar ist. Der Algorithmus funktioniert dann auf die folgende 
   \item Falls nicht möglich, probiere mit anderen Farben $a'$, $b'$ und $c'$
 \end{itemize}
 
-Der Algorithmus geht dabei bei $k$ Ausgangsfarben maximal $k*(k-1)*(k-2)$ mal durch den Graphen und hat somit eine Komplexität von $O(k^3)$.
+Der Algorithmus geht dabei bei $k$ Ausgangsfarben maximal $k*(k-1)*(k-2)$ mal durch den Graphen und hat somit eine Komplexität von $O(k^3)*n$.
 Dies ist meist signifikanter als das, was der Algorithmus braucht, der die Färbung erzeugt, z. B. $O(n+m)$ bei Greedy. \\
 %weiß nicht, obs ne schöne Formel für Farbeinsparung gibt, wahrscheinlich nicht
 
 \section{Ergebnisse zu den eigenen Algorithmen} % TODO
+
+%zu merging weiß ich nicht genug
+Der Ansatz von Elim, bereits vorhandene Lösungen zu verbessern, stellte sich als deutlich erfolgreicher heraus. Als erstes hatten wir diesen Algorithmus nur auf die Ergebnisse von greedy angewandt. \\
+Dann haben wir ausprobiert, was passiert, wenn man andere Vorfärbungen verwendet und haben auch dort Verbesserungen festgestellt. Selbst beim Algorithmus mit den bisher besten Ergebnissen, nämlich greedy-color-swaps
+ließ sich in seltenen Fällen noch eine Verbesserung feststellen. Dazu kommt, dass dieser Algorithmus vergleichsweise kaum Laufzeit hat, sodass man ihn problemlos auf alle möglichen Färbungs-Algorithmen anwenden konnte. \\
+Vor allem bei den Ergebnissen der Wigderson-Algorithmen konnte die Färbungszahl ein gutes Stück nach unten korrigiert werden, da, wie bereits angesprochen, dort Farben oft sehr schnell nicht mehr weiter verwendet werden. \\
+Insgesamt deutete sich aber an: je besser die Ausgangsfärbung, desto besser das Ergebnis von Elim.  
+Die Erweiterung von Elim auf das Umfärben von Zusammenhangskomponenten hat da einen gewissen Nachteil: Die Laufzeit ist um ein Vielfaches länger als bei Elim. \\ %oder? ich weiß nicht, was der letzte Stand da ist.
+Sie liefert vereinzelt noch Verbesserungen gegenüber Elim, allerdings war damit schon das meiste abgedeckt und die Erweiterung kann nicht mehr viel hinzufügen. \\
+Der andere Ansatz des Aus-3-Mach-2-Algorithmus hat etwas andere Ergebnisse geliefert als gedacht. Im Durchschnitt lieferte der Algorithmus etwas schlechtere Färbungszahlen als die guten Algorithmen wie greedy-color-swap oder Elim.
+Allerdings waren die niedrigsten und höchsten Werte sehr weit auseinander. Der Durchschnitt könnte also durch Ausreißer nach oben geschossen sein. 
+Das bedeutet jedoch auch, dass der Algorithmus nicht so verlässlich ist wie bspw. Elim. Vor allem kommt aber noch dazu, dass der Algorithmus viel mehr Laufzeit benötigt, was ihn leider endgültig disqualifiziert. \\
+
 \section{Zusammenfassung und Fazit} % TODO
+
+Im Gesamten bleibt zu sagen, dass die etablierten Algorithmen vor allem Fortschritte in der Laufzeitoptimierung waren, so weit wir das herausfinden konnten. 
+Die greedy-Algorithmen haben teils deutlich kleinere Färbungszahlen geliefert. Vor allem die Färbungszahlen, die greedy-color-swaps geliefert hat, haben uns stark überrascht. \\
+Außerdem hat uns überrascht, wie gut Elim die gegebenen Färbungen noch verbessern konnte. Leider ist uns keine schöne Formel eingefallen, womit man dies beschreiben kann, aber in unseren Tests hat Elim starke Ergebnisse geliefert. \\
+So wäre unser Fazit: Wenn man schnell viele Graphen färben muss, nimm greedy mit Elim hinterher, wenn Rechenzeit weniger relevant ist, kann man auch greedy-color-swaps mit Elim hinterher nehmen. Das hat bei uns die besten Ergebnisse geliefert.
 
 \bibliographystyle{plain}
 \bibliography{Quellen}
