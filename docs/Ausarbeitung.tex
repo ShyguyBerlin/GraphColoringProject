@@ -366,13 +366,14 @@ Zudem ist der Rechenaufwand im Vergleich zum Aufwand der hier untersuchten ander
 in der Vorfärbung braucht der Algorithmus zwar $O(k*n)$ Schritte, allerdings setzt das eine absolut inkompetente Vorfärbung voraus. \\
 Da meist nur einige bis gar keine Farben eingespart werden können, ist die Komplexität im Durchschnittsfall jedoch signifikant näher an $n$ als an $k*n$
 
-\subsection{Make-Better Algorithmus} %muss glaub ich weg
+\subsection{Make-Better Algorithmus} %muss glaub ich weg 
 
-Der Ansatz für diesen Algorithmus war es, eine schon fertige Färbung eines Graphen zu nehmen und versuche, diese zu verbessern. \\
-Um dies durchzuführen, werden die Knoten als Farbgruppen betrachtet. Dann schaut man in jeder Farbgruppe, ob man nicht die einzelnen Knoten in eine andere Farbe umfärben kann. \\
-Das kann man immer, wenn ein Knoten keine Verbindung zu mindestens einer anderen Farbe hat. Findet man so eine Farbgruppe, aus der man alle Knoten umfärben kann, 
-macht der Algorithmus dies und entfernt somit eine ganze Farbe aus der Färbung des Graphen. \\
-Dies kann man so lange wiederholen, bis sich keine Farbe mehr entfernen lässt. \\
+Der Make-Better Algorythmus ist einer Erweiterung der Elim Funktion. \\
+Zunächst nutzt Make-Better Elim um alle Farben ohne problematische Knoten zu elemienieren. \\
+Daraufhin betrachtet der Algorythmus jede Farbe erneut und versucht, durch das Umfärben von Zusammenhangs-Komponenten, problematische Knoten aus Farb-Mängen zu entfernen.
+Gelingt es alle problematischen Knoten aus einer Farbe zu entfernen so wird erneut Elim angewant um die Farbe vollständig zu elimienieren. \\
+
+
 
 \subsection{Umfärben von Zusammenhangskomponenten}
 
