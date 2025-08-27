@@ -236,11 +236,11 @@ Bei der Überlegung, welche Ansätze zur Entwicklung eines eigenen Solvers sinnv
 kam die Idee auf, das bekannte Konzept des Divide-and-Conquer zu nutzen.\\
 Idee dabei ist, die Färbung für einen Graphen $G$ zu finden, 
 indem zunächst ein Schnitt $S\subseteq V(G)$ gebildet wird 
-und der Algorithmus rekursiv auf die ind. Subgraphen 
-$G[S]$ und $G[V(G)\setminus] S$ angewendet wird. 
+und der Algorithmus rekursiv auf die induzierten Subgraphen 
+$G[S]$ und $G[V(G)\setminus S]$ angewendet wird.
 Kleine Graphen können dann sogar optimal gelöst werden. 
 Problem jedoch ist, dass an den Kanten, 
-welche in keiner der ind. Subgraphen enthalten sind,
+welche in keiner der induzierten Subgraphen enthalten sind,
 Konflikte entstehen können. Diese müssen durch eine besondere Operation entfernt werden, 
 welche wir nun als Vereinigung bezeichnen.\par
 
@@ -252,7 +252,7 @@ Dabei nutzen beide folgenden Algorithmus um einen Schnitt $S\subseteq V(G)$ zu b
 \item[2.] Wähle einen zufälligen Knoten $u\in V(G)$
 \item[3.] Berechne zu jedem Knoten in $n\in V(G)$ die Distanz $d_u(n)$ zu $u$ mithilfe einer Breitensuche
 \item[4.] Wähle einen Knoten mit maximaler Distanz zu $u$, bezeichne ihn als $v$
-\item[5.] Berechne zu jedem Knoten in $n\in V(G)$ auch die Distanz $d_v(n)$ zu $v$
+\item[5.] Berechne zu jedem Knoten $n\in V(G)$ auch die Distanz $d_v(n)$ zu $v$
 \item[6.] Für jeden Knoten $n\in V(G)$: Füge $n$ zu $S$ hinzu, falls $d_u(n)<d_v(n)$; Falls $d_u(n)=d_v(n)$ füge $n$ mit einer Wahrscheinlichkeit von 50\% zu $S$ hinzu
 \end{itemize}
 
@@ -270,7 +270,7 @@ Der merge-recolor Algorithmus nutzt stattdessen einen aufwendigeren Vereinigungs
 Wir bezeichnen hierbei den Subgraphen $G[S]$ als $A$ und den Subgraphen $G[V(G)\setminus S]$ als $B$
 \begin{itemize}
 \item[1.] Benenne Farben in $B$ um, bis keine Farbe sowohl in $A$ als auch in $B$ verwendet wird.
-\item[2.] Konstruiere einen Graphen $G'=(V',E')$, $V'$ sei die Menger verwendeter Farben
+\item[2.] Konstruiere einen Graphen $G'=(V',E')$, $V'$ sei die Menge verwendeter Farben
 \item[3.] $E'$ sei die Menge aller Paare aus Farben, welche nicht durch eine Kante in $G$ miteinander verbunden sind. \\Hierzu sollte nur die Menge der Kanten $E(G)\setminus (E(A)\cup E(B))$ betrachtet werden.
 \item[4.] Berechne ein maximales Matching $M$ auf $G'$
 \item[5.] Für jede Kante $(u,v)\in M$, färbe alle Knoten der Farbe $u$, stattdessen mit der Farbe $v$.
@@ -344,7 +344,7 @@ Dies gleicht jedoch weitesgehend dem Verhalten von greedy-min.
 
 Wir beenden diesen Ansatz mit dem Fazit, dass sich mit diesem Verfahren für uns keine großen Fortschritte ergeben,
 da die Abweichung zu bisherigen Algorithmen hier eher einen Nachteil dargestellt hat.
-Stattdessen wollen wir mit einem Verfahren weitermachen, welches bisherige Algorithmen veruscht zu erweitern, anstatt sie zu ersetzen.
+Stattdessen wollen wir mit einem Verfahren weitermachen, welches bisherige Algorithmen versucht zu erweitern, anstatt sie zu ersetzen.
 
 \subsection{Elim}
 
