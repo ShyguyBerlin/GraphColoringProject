@@ -49,8 +49,9 @@ Graphenfärbungsalgorithmen zusammengefasst. \\
 Das exakte Färben von Graphen mit möglichst wenig Farben ist mit relativ simplen Inputs bereits ein NP-schweres Problem, weswegen es bereits einige Ansätze gibt,
 möglichst gute Färbungen in vergleichbar kurzer Zeit zu erzeugen. Einige dieser Ansätze wurden von uns implementiert und auf die $2$ Faktoren 
 Laufzeit und die Anzahl der genutzten Farben untersucht.
-Desweiteren haben wir drei eigenen Algorythmen entwickelt und diese auf die selben Eigenschaften untersucht. \\
-Unsere Implementierungen sind in der Sprache Python und nutzen die Bibliothek NetworkX.
+Desweiteren haben wir drei eigenen Algorithmen entwickelt und diese auf die selben Eigenschaften untersucht. \\
+Unsere Implementierungen sind in der Sprache Python und nutzen die Bibliothek NetworkX. \\
+Zum Testen benutzten wir zufällig generierte Graphen mit nie mehr als $300$ Knoten. 
 
 \section{Begriffsklärung} % TODO, laufend aktualisieren, wenn ein neuer Begriff verwendet wurde
 \begin{itemize}[noitemsep, left=0pt]
@@ -251,11 +252,11 @@ Bei der Überlegung, welche Ansätze zur Entwicklung eines eigenen Solvers sinnv
 kam die Idee auf, das bekannte Konzept des Divide-and-Conquer zu nutzen.\\
 Idee dabei ist, die Färbung für einen Graphen $G$ zu finden, 
 indem zunächst ein Schnitt $S\subseteq V(G)$ gebildet wird 
-und der Algorithmus rekursiv auf die ind. Subgraphen 
-$G[S]$ und $G[V(G)\setminus] S$ angewendet wird. 
+und der Algorithmus rekursiv auf die induzierten Subgraphen 
+$G[S]$ und $G[V(G)\setminus S]$ angewendet wird.
 Kleine Graphen können dann sogar optimal gelöst werden. 
 Problem jedoch ist, dass an den Kanten, 
-welche in keiner der ind. Subgraphen enthalten sind,
+welche in keiner der induzierten Subgraphen enthalten sind,
 Konflikte entstehen können. Diese müssen durch eine besondere Operation entfernt werden, 
 welche wir nun als Vereinigung bezeichnen.\par
 
@@ -266,8 +267,8 @@ Dabei nutzen beide folgenden Algorithmus um einen Schnitt $S\subseteq V(G)$ zu b
 \item[1.] Führe den folgenden Algorithmus für alle Zusammenhangskomponenten von $G$ getrennt aus
 \item[2.] Wähle einen zufälligen Knoten $u\in V(G)$
 \item[3.] Berechne zu jedem Knoten in $n\in V(G)$ die Distanz $d_u(n)$ zu $u$ mithilfe einer Breitensuche
-F\item[4.] Wähle einen Knoten mit maximaler Distanz zu $u$, bezeichne ihn als $v$
-\item[5.] Berechne zu jedem Knoten in $n\in V(G)$ auch die Distanz $d_v(n)$ zu $v$
+\item[4.] Wähle einen Knoten mit maximaler Distanz zu $u$, bezeichne ihn als $v$
+\item[5.] Berechne zu jedem Knoten $n\in V(G)$ auch die Distanz $d_v(n)$ zu $v$
 \item[6.] Für jeden Knoten $n\in V(G)$: Füge $n$ zu $S$ hinzu, falls $d_u(n)<d_v(n)$; Falls $d_u(n)=d_v(n)$ füge $n$ mit einer Wahrscheinlichkeit von 50\% zu $S$ hinzu
 \end{itemize}
 
@@ -285,7 +286,7 @@ Der merge-recolor Algorithmus nutzt stattdessen einen aufwendigeren Vereinigungs
 Wir bezeichnen hierbei den Subgraphen $G[S]$ als $A$ und den Subgraphen $G[V(G)\setminus S]$ als $B$
 \begin{itemize}
 \item[1.] Benenne Farben in $B$ um, bis keine Farbe sowohl in $A$ als auch in $B$ verwendet wird.
-\item[2.] Konstruiere einen Graphen $G'=(V',E')$, $V'$ sei die Menger verwendeter Farben
+\item[2.] Konstruiere einen Graphen $G'=(V',E')$, $V'$ sei die Menge verwendeter Farben
 \item[3.] $E'$ sei die Menge aller Paare aus Farben, welche nicht durch eine Kante in $G$ miteinander verbunden sind. \\Hierzu sollte nur die Menge der Kanten $E(G)\setminus (E(A)\cup E(B))$ betrachtet werden.
 \item[4.] Berechne ein maximales Matching $M$ auf $G'$, also eine möglichst größe Menge von Kanten, wobei keine 2 Kanten denselben Knoten enthalten.
 \item[5.] Für jede Kante $(u,v)\in M$, färbe alle Knoten der Farbe $u$, stattdessen mit der Farbe $v$.
@@ -363,32 +364,40 @@ Stattdessen wollen wir mit einem Verfahren weitermachen, welches bisherige Algor
 
 \subsection{Elim}
 
-Elim ist der einfachste Algorithmus zur Verbesserung einer gegebenen Färbung. \\
+Der Ansatz für den Algorithmus, den wir Elim nennen, ist das Verbessern einer gegebenen Färbung.
+Dabei haben wir zunächst das Ergebnis einer greedy-Färbung eines Graphen genommen und geschaut, was man verbessern könnte. \\
 
-Durch das Prüfen auf problematische Knoten können wir unnötige Farben leicht identifizieren und dann eliminieren.
+Dabei überprüfen wir jede einzelne Farbe, ob sie tatsächlich nötig ist, indem wir herausfinden, ob sie Problematische Knoten enthält.
+Ein Problematischer Knoten ist ein Knoten, der Kanten zu allen anderen Farben, die zur Färbung des Graphen genutzt wurden, besitzt. \\
+Hat ein Knoten diese nicht, dann könnte er ohne Probleme eine andere Farbe haben, eine der Farben, zu denen er keine Kante hat. Wenn man ihn umfärbt, entstehen keine Probleme für die Gesamt-Färbung.
+Wenn nun eine Farbe nur aus nicht-Problematischen Knoten besteht, dann kann jeder davon umgefärbt werden und die Farbe komplett entfernt werden. Dadurch senkt sich die Färbungszahl um $1$ und die Färbung wurde erfolgreich verbessert. \\
+%Durch das Prüfen auf problematische Knoten können wir unnötige Farben leicht identifizieren und dann eliminieren.
 
 Für alle Farben wird ausgeführt: \\
 \begin{itemize}
-\item[1.] Prüfe Farbe x auf das Vorhandensein von problematischen Knoten.
+\item[1.] Prüfe Farbe $x$ auf das Vorhandensein von problematischen Knoten.
 \item[2.] Wenn problematische Knoten vorhanden sind, breche ab und fahre mit der nächsten Farbe fort.
-\item[3.] Ansonsten; färbe alle vorhandenen Knoten in zulässige andere Farben um, sodass keiner mehr Farbe x hat.
+\item[3.] Ansonsten; färbe alle vorhandenen Knoten in zulässige andere Farben um, sodass keiner mehr Farbe $x$ hat.
 \item[4.] Fahre mit der nächsten Farbe fort.
 \end{itemize}
 
+Diesen Algorithmus kann man auf jede Art von Färbung anwenden und diese möglicherweise verbessern. Dementsprechend haben wir Elim auch auf viele der Ergebnisse der anderen Färbealgorithmen angewendet. \\
+In den meisten Fällen hat er Verbesserungen vornehmen können. 
 Elim verbessert vor allem Färbungen stark, welche durch Algorithmen erzeugt werden die oft Farben verlassen, wie die Wigderson-Algorithmen. \\
 Auch auf Färbungen von Greedy konnten leichte Verbesserungen festgestellt werden. \\
 Zudem ist der Rechenaufwand im Vergleich zum Aufwand der hier untersuchten anderen Algorithmen minimal. Im Worst case bei $k$ Farben
 in der Vorfärbung braucht der Algorithmus zwar $O(k*n)$ Schritte, allerdings setzt das eine absolut inkompetente Vorfärbung voraus. \\
-Da meist nur einige bis gar keine Farben eingespart werden können, ist die Komplexität im Durchschnittsfall jedoch signifikant näher an $n$ als an $k*n$
+Da meist nur einige bis gar keine Farben eingespart werden können, ist die Komplexität im Durchschnittsfall jedoch signifikant näher an $n$ als an $k*n$. \\
+Zusätzlich ließ sich der Trend feststellen, dass je besser die Vorfärbung war, desto besser war das Ergebnis von Elim. Es hat sich beispielsweise immer noch nicht mehr gelohnt, auf einen der etablierten
+Algorithmen zurückzugreifen und diesen mit Elim aufzubessern, die greedy-Algorithmen lieferten immer noch bessere Färbungszahlen. \\
+Leider kann man die Effektivität von Elim schwer in Zahlen fassen. Das Ausnutzen der Schwäche einer anderen Färbestrategie ist vielleicht in Einzelfällen formalisierbar, aber nicht im allgemeinen.
 
 \subsection{Make-Better Algorithmus} %muss glaub ich weg 
 
-Der Make-Better Algorythmus ist einer Erweiterung der Elim Funktion. \\
-Zunächst nutzt Make-Better Elim um alle Farben ohne problematische Knoten zu elemienieren. \\
-Daraufhin betrachtet der Algorythmus jede Farbe erneut und versucht, durch das Umfärben von Zusammenhangs-Komponenten, problematische Knoten aus Farb-Mängen zu entfernen.
-Gelingt es alle problematischen Knoten aus einer Farbe zu entfernen so wird erneut Elim angewant um die Farbe vollständig zu elimienieren. \\
-
-
+Der Make-Better Algorithmus ist einer Erweiterung der Elim Funktion. \\
+Zunächst nutzt Make-Better Elim um alle Farben ohne problematische Knoten zu eliminieren. \\
+Daraufhin betrachtet der Algorithmus jede Farbe erneut und versucht, durch das Umfärben von Zusammenhangs-Komponenten, problematische Knoten aus Farb-Mengen zu entfernen.
+Gelingt es, alle problematischen Knoten aus einer Farbe zu entfernen, so wird erneut Elim angewandt um die Farbe vollständig zu elimienieren. \\
 
 \subsection{Umfärben von Zusammenhangskomponenten}
 
@@ -401,7 +410,7 @@ Knoten von problematisch zu unproblematisch zu konvertieren, wenn man andere Kno
   \item Versuche erneut, Elim auf Graphenfärbung anzuwenden
 \end{itemize}
 
-Dieser Prozess kann auf verschiedenste Arten und Weisen durchgeführt werden, unsere Implementation hat eine zufällige Anzahl an unproblematischen Knoten umgefärbt ohne größeres System dahinter.
+Dieser Prozess kann auf verschiedenste Arten und Weisen durchgeführt werden, unsere Implementation hat eine zufällige Anzahl an unproblematischen Knoten umgefärbt.
 Dies war vor allem, um die Laufzeit nicht zu sehr in die Höhe zu treiben. So liegt sie nämlich noch in $O(n)$, zuzüglich des Aufwands von Elim, also technisch gesehen $O(k*n)$.
 
 \subsection{Aus 3 Mach 2}
@@ -424,15 +433,15 @@ Dies ist meist signifikanter als das, was der Algorithmus braucht, der die Färb
 \section{Ergebnisse zu den eigenen Algorithmen} % TODO
 
 %zu merging weiß ich nicht genug
-Der Ansatz von Elim, bereits vorhandene Lösungen zu verbessern, stellte sich als deutlich erfolgreicher heraus. Als erstes hatten wir diesen Algorithmus nur auf die Ergebnisse von greedy angewandt. \\
-Dann haben wir ausprobiert, was passiert, wenn man andere Vorfärbungen verwendet und haben auch dort Verbesserungen festgestellt. Selbst beim Algorithmus mit den bisher besten Ergebnissen, nämlich greedy-color-swaps
-ließ sich in seltenen Fällen noch eine Verbesserung feststellen. Dazu kommt, dass dieser Algorithmus vergleichsweise kaum Laufzeit hat, sodass man ihn problemlos auf alle möglichen Färbungs-Algorithmen anwenden konnte. \\
-Vor allem bei den Ergebnissen der Wigderson-Algorithmen konnte die Färbungszahl ein gutes Stück nach unten korrigiert werden, da, wie bereits angesprochen, dort Farben oft sehr schnell nicht mehr weiter verwendet werden. \\
-Insgesamt deutete sich aber an: je besser die Ausgangsfärbung, desto besser das Ergebnis von Elim.  
-Die Erweiterung von Elim auf das Umfärben von Zusammenhangskomponenten hat da einen gewissen Nachteil: Die Laufzeit ist um ein Vielfaches länger als bei Elim. \\ %oder? ich weiß nicht, was der letzte Stand da ist. - ja,
+Der Ansatz von Elim, bereits vorhandene Lösungen zu verbessern, stellte sich als recht erfolgreicher heraus.  \\
+Da Elim eine geringe Laufzeit hat kann es leicht auf die Färbungen von Beliebiegen Algorythmen angewendet werden. \\
+Unsere versuche haben gezeigt das Elim Färbungen oft verbessern kann. Dies gilt auch für sehr gute Färbungen wie von greedy-color-swaps.\\
+Vor allem bei den Ergebnissen der Wigderson-Algorithmen konnte die Färbungszahl ein gutes Stück nach unten korrigiert werden, da dort Farben oft sehr schnell nicht mehr weiter verwendet werden. (Siehe Algorythmus.) \\
+Insgesamt deutete sich aber an: je besser die Ausgangsfärbung, desto besser auch das Ergebnis von Elim, da Elim Färbungen nicht verschlechtern kann. 
+Die Erweiterung von Elim auf das Umfärben von Zusammenhangskomponenten hat gewisse Nachteil. Die Laufzeit ist um ein Vielfaches länger als bei Elim und die Färbungszahl oft nur gerungfügig kleiner. \\ %oder? ich weiß nicht, was der letzte Stand da ist. - ja,
 Sie liefert vereinzelt noch Verbesserungen gegenüber Elim, jedoch sind diese stark von der speziefischen Graphstruktur abhänging, wie Ringe. Allerdings ist durch Elim schon eine fielzahl einfacher Fälle abgedeckt sodas die Erweiterung zuweilen keine Verbesserung vonehmen kann. \\
 Der andere Ansatz des Aus-3-Mach-2-Algorithmus hat etwas andere Ergebnisse geliefert als gedacht. Im Durchschnitt lieferte der Algorithmus etwas schlechtere Färbungszahlen als die guten Algorithmen wie greedy-color-swap mit Elim.
-Allerdings waren die niedrigsten und höchsten Werte sehr weit auseinander. Der Durchschnitt könnte also durch Ausreißer nach oben geschossen sein. 
+Allerdings waren die Maxima und Minima sehr weit auseinander. Der Durchschnitt könnte also durch Ausreißer nach oben geschossen sein. 
 Das bedeutet jedoch auch, dass der Algorithmus nicht so verlässlich ist wie beispielsweise Elim. Vor allem kommt aber noch dazu, dass der Algorithmus viel mehr Laufzeit benötigt, was ihn leider endgültig disqualifiziert. \\
 
 \section{Zusammenfassung und Fazit} % TODO
