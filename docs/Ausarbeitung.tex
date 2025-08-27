@@ -226,8 +226,7 @@ Die, die laufzeittechnisch schneller sind und die, die bessere Färbungen erzeug
 Die größte Verbesserung wird durch greedy-color-swap erzeugt. Allerdings ist der Algorithmus auch viel aufwändiger, vor allem bei Graphen mit hoher Kantendichte \\ %right? bin nicht mehr sicher
 Die etablierten Algorithmen schlossen eher auf der anderen Seite der Baseline ab. Meist hatten die Algorithmen sehr viel höhere Färbungszahlen, aber dafür eine bessere Laufzeit.
 Gerade die Wigderson-Algorithmen benutzen viele Farben, weil sie Farben nicht wieder verwenden, obwohl es möglich wäre. \\
-Möglicherweise würde der Johnson-Algorithmus bessere Ergebnisse liefern, wenn man einen komplexeren Algorithmus zum Finden der Independent Sets verwenden würde,
-das würde dann aber auch wieder die Laufzeit und Komplexität verschlechtern. Diese These wird unterstützt davon, dass der Algorithmus auf Co-Graphen quasi die gleichen Färbungszahlen erhält wie die greedy-Algorithmen.
+
 %noch was zu Berger Rompel?
 
 \section{Eigens produzierte Algorithmen} % TODO
@@ -409,12 +408,12 @@ Dies ist meist signifikanter als das, was der Algorithmus braucht, der die Färb
 \section{Ergebnisse zu den eigenen Algorithmen} % TODO
 
 %zu merging weiß ich nicht genug
-Der Ansatz von Elim, bereits vorhandene Lösungen zu verbessern, stellte sich als deutlich erfolgreicher heraus. Als erstes hatten wir diesen Algorithmus nur auf die Ergebnisse von greedy angewandt. \\
-Dann haben wir ausprobiert, was passiert, wenn man andere Vorfärbungen verwendet und haben auch dort Verbesserungen festgestellt. Selbst beim Algorithmus mit den bisher besten Ergebnissen, nämlich greedy-color-swaps
-ließ sich in seltenen Fällen noch eine Verbesserung feststellen. Dazu kommt, dass dieser Algorithmus vergleichsweise kaum Laufzeit hat, sodass man ihn problemlos auf alle möglichen Färbungs-Algorithmen anwenden konnte. \\
-Vor allem bei den Ergebnissen der Wigderson-Algorithmen konnte die Färbungszahl ein gutes Stück nach unten korrigiert werden, da, wie bereits angesprochen, dort Farben oft sehr schnell nicht mehr weiter verwendet werden. \\
-Insgesamt deutete sich aber an: je besser die Ausgangsfärbung, desto besser das Ergebnis von Elim.  
-Die Erweiterung von Elim auf das Umfärben von Zusammenhangskomponenten hat da einen gewissen Nachteil: Die Laufzeit ist um ein Vielfaches länger als bei Elim. \\ %oder? ich weiß nicht, was der letzte Stand da ist. - ja,
+Der Ansatz von Elim, bereits vorhandene Lösungen zu verbessern, stellte sich als recht erfolgreicher heraus.  \\
+Da Elim eine geringe Laufzeit hat kann es leicht auf die Färbungen von Beliebiegen Algorythmen angewendet werden. \\
+Unsere versuche haben gezeigt das Elim Färbungen oft verbessern kann. Dies gilt auch für sehr gute Färbungen wie von greedy-color-swaps.\\
+Vor allem bei den Ergebnissen der Wigderson-Algorithmen konnte die Färbungszahl ein gutes Stück nach unten korrigiert werden, da dort Farben oft sehr schnell nicht mehr weiter verwendet werden. (Siehe Algorythmus.) \\
+Insgesamt deutete sich aber an: je besser die Ausgangsfärbung, desto besser auch das Ergebnis von Elim, da Elim Färbungen nicht verschlechtern kann. 
+Die Erweiterung von Elim auf das Umfärben von Zusammenhangskomponenten hat gewisse Nachteil. Die Laufzeit ist um ein Vielfaches länger als bei Elim und die Färbungszahl oft nur gerungfügig kleiner. \\ %oder? ich weiß nicht, was der letzte Stand da ist. - ja,
 Sie liefert vereinzelt noch Verbesserungen gegenüber Elim, jedoch sind diese stark von der speziefischen Graphstruktur abhänging, wie Ringe. Allerdings ist durch Elim schon eine fielzahl einfacher Fälle abgedeckt sodas die Erweiterung zuweilen keine Verbesserung vonehmen kann. \\
 Der andere Ansatz des Aus-3-Mach-2-Algorithmus hat etwas andere Ergebnisse geliefert als gedacht. Im Durchschnitt lieferte der Algorithmus etwas schlechtere Färbungszahlen als die guten Algorithmen wie greedy-color-swap mit Elim.
 Allerdings waren die niedrigsten und höchsten Werte sehr weit auseinander. Der Durchschnitt könnte also durch Ausreißer nach oben geschossen sein. 
