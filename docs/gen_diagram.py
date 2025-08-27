@@ -34,6 +34,8 @@ def make_diagram(input:str,output:str,prop_to_plot="colors_avg",solver_whitelist
 
         df = df[~df["graph_set"].str.contains(pattern,case=False)]
 
+    df["graph_set"] = df["graph_set"].apply(lambda x: x.split("/")[-1].split(".gsm")[0].replace("_","-"))
+
     # Plot: X = solver (categorical), Y = value, Color = metadata
     fig = px.scatter(
         df,
@@ -52,7 +54,8 @@ def make_diagram(input:str,output:str,prop_to_plot="colors_avg",solver_whitelist
     fig.update_layout(margin=dict(t=5,l=20))
 
     # Write figure to disk
-    fig.write_image(output,scale=2,height=362,width=512)
+    fig.write_image(output,scale=2,height=362,width=412)
+    print("generated image "+output.split("/")[-1])
 
 import os
 
@@ -66,7 +69,10 @@ if __name__=="__main__":
     make_diagram("docs/data/generic_test_merger_focus.csv","docs/diagrams/merger_pic2.png",graphset_wildcard_whitelist=["_300n"],solver_blacklist=["merge_trivial","merge_recolor_color_swaps"])
     make_diagram("docs/data/generic_test_merger_focus.csv","docs/diagrams/merger_pic3.png",graphset_wildcard_whitelist=["_300n"],solver_blacklist=["merge_trivial","greedy_max","merge_recolor_bf"])
     make_diagram("docs/data/generic_test_merger_focus.csv","docs/diagrams/merger_pic4.png",graphset_wildcard_whitelist=["_300n"],solver_whitelist=["greedy_color_swaps","merge_recolor_color_swaps"],prop_to_plot="exec_time_avg")
-    make_diagram("docs/data/generic_test_merger_focus.csv","docs/diagrams/merger_pic5.png",graphset_wildcard_whitelist=["_300n"],solver_whitelist=["greedy_max","merge_recolor"],prop_to_plot="exec_time_avg")
+    make_diagram("docs/data/generic_test_merger_focus.csv","docs/diagrams/merger_pic5.png",graphset_wildcard_whitelist=["_300n"],solver_whitelist=["greedy","greedy_max","merge_recolor"],prop_to_plot="exec_time_avg")
 
     make_diagram("docs/data/generic_test_greedy.csv","docs/diagrams/greedy_pic1.png",graphset_wildcard_whitelist=["_300n"],solver_blacklist=["greedy_color_swaps"])
     make_diagram("docs/data/generic_test_greedy.csv","docs/diagrams/greedy_pic2.png",graphset_wildcard_whitelist=["_300n"],solver_whitelist=["greedy_max","","greedy_color_swaps"])
+
+    make_diagram("docs/data/generic_color_test.csv","docs/diagrams/generic_pic1.png",graphset_wildcard_blacklist=["3cn","100n"],solver_blacklist=["greedy","greedy_min","flow_trivial","flow_merge","greedy_color_swaps_and_elim_colors","greedy_max_and_elim_colors","aus_3_mach_2","aus_3_mach_2_elim","elim_colors_basic","wigdersons_first_and_elim_colors","wigdersons_second_and_elim_colors"],prop_to_plot="exec_time_avg")
+    make_diagram("docs/data/generic_color_test.csv","docs/diagrams/generic_pic2.png",graphset_wildcard_blacklist=["3cn","100n"],solver_blacklist=["greedy","greedy_min","flow_trivial","flow_merge","greedy_color_swaps_and_elim_colors","greedy_max_and_elim_colors","aus_3_mach_2","aus_3_mach_2_elim","elim_colors_basic","wigdersons_first_and_elim_colors","wigdersons_second_and_elim_colors"])

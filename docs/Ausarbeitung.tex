@@ -33,6 +33,9 @@
 \newcommand{\degeneracy}{\text{degeneracy}}
 
 \begin{document}
+% Größe von Bildern
+\newlength{\stdwidth}
+\setlength{\stdwidth}{0.6\linewidth}
 \maketitle
 
 \tableofcontents
@@ -112,7 +115,7 @@ wobei $\forall i: i=n\lor
 \ \ \max(\{\deg_{G[\{v_1,\ldots,v_{i-1}\}\cup\{j\}]}(v_j)|j\in\{i+1\ldots n\}\})$
 Ziel bei diesem Algorithmus ist es, immer Knoten zu färben, welche möglichst viele gefärbte Nachbarn haben.
 \begin{figure}
-  \includegraphics[width=0.8\textwidth]{diagrams/greedy_pic1.png}
+  \includegraphics[width=\stdwidth]{diagrams/greedy_pic1.png}
   \caption{Ergebnisse der Anwendung einfacher Greedy Varianten}
   \label{fig:greedy1}
 \end{figure}
@@ -134,15 +137,15 @@ $\forall v_1\in U : (v_1\text{ ist benachbart zu }v) \Rightarrow\\
 Existieren $k_1,k_2$ welche solche Bedingungen erfüllen, 
 so können wir auf einzelnen Zusammenhangskomponenten auf $U$ die beiden Farben tauschen 
 bis nur noch eine der beiden Farben mit $v$ benachbart ist.\\
-In Abbildung \ref{fig:greedy2} ist eine deutliche Verbesserungder Ergebnisse zu erkennen,
+In Abbildung \ref{fig:greedy2} ist eine deutliche Verbesserung der Ergebnisse durch greedy-color-swaps zu erkennen,
 dabei wurde der Farbtauschmechanismus auf greedy-max angewendet.
 \begin{figure}
-  \includegraphics[width=0.8\textwidth]{diagrams/greedy_pic2.png}
+  \includegraphics[width=\stdwidth]{diagrams/greedy_pic2.png}
   \caption{Ergebnisse der Anwendung des greedy-color-swaps Algorithmusses}
   \label{fig:greedy2}
 \end{figure}
-
-
+Im weiteren Verlauf der Arbeit haben wir die Greedyvarianten der Einfachheit halber auf greedy-max und greedy-color-swaps reduziert, 
+da diese am Vielversprechendsten sind.
 
 \subsection{Wigdersons Algorithmen} % TODO
 
@@ -213,23 +216,35 @@ Das ausgewählte Set wird in einer neuen Farbe gefärbt und für den Rest der F�
 Dann wird im restlichen Subgraphen wieder das größte Independent Set bestimmt und gefärbt, solange bis der gesamte Graph gefärbt wurde.
 So färbt man einen Graphen, der theoretisch $k$-färbbar ist in $O(\frac{n}{log_k(n)})$ Farben.
 
-\subsection{Berger Rompel Algorithmus} % TODO
+\subsection{Berger Rompel Algorithmus}
 In ihrem Paper schlagen Berger und Rompel einen Algorithmus $A_\alpha(k,G)$ vor, welcher einen Graphen in $2*n/\alpha (\log_k n)^2 + O(n/(\log_k n)^3)$ Farben färben kann, wobei $k$ die optimale Färbungszahl für einen Graphen ist und $n=|G|$.\cite{berger_rompel}.
 Dieser baut auf dem Algorithmus von Johnson auf und erweitert diesen, indem
 mehrere Knoten mit möglichst kleiner Nachbarschaft, statt einzelnen Knoten, zu den Independent Sets hinzugefügt werden.
 Theoretisch wird also eine reine Verbesserung erzielt, da im schlimmsten Fall, dieselben Knoten wie bei Johnson in das Set eingefügt werden.
 
-\section{Ergebnisse zu den etablierten Algorithmen} % TODO
+\section{Ergebnisse zu den etablierten Algorithmen}
 
-Betrachtet man den normalen greedy-Algorithmus als eine gewisse Baseline, dann fällt auf, dass sich die Algorithmen in zwei Gruppen unterteilen lassen: \\
-Die, die laufzeittechnisch schneller sind und die, die bessere Färbungen erzeugen. Beispielsweise wird die Färbung durch die Erweiterung auf greedy-max, greedy-min und greedy-colors etwas besser und ist nicht viel aufwändiger als greedy selbst. \\
-Die größte Verbesserung wird durch greedy-color-swap erzeugt. Allerdings ist der Algorithmus auch viel aufwändiger, vor allem bei Graphen mit hoher Kantendichte \\ %right? bin nicht mehr sicher
-Die etablierten Algorithmen schlossen eher auf der anderen Seite der Baseline ab. Meist hatten die Algorithmen sehr viel höhere Färbungszahlen, aber dafür eine bessere Laufzeit.
+Betrachtet man den normalen greedy-Algorithmus als eine Messleiste, dann fällt auf, dass sich die Algorithmen in zwei Gruppen unterteilen lassen: \\
+Die, die bessere theoretische Obergrenzen für verwendete Farben haben und die, die durchschnittlich bessere Färbungen erzeugen.\\
+In dem Experiment, welches in Abbildung \ref{fig:generic2} gezeigt wird, wurden die Algorithmen an Graphen, mit konstruierter Obergrenze der Färbungszahl, angewendet. 
+\begin{figure}
+  \includegraphics[width=\stdwidth]{diagrams/generic_pic2.png}
+  \caption{Vergleich der etablierten Algorithmen (Farben)}
+  \label{fig:generic2}
+\end{figure}
+Hier fällt auf, dass die verwendeten Farben nicht die theoretischen Obergrenzen widerspiegeln. Die greedy Algorithmen, erziehlten die besten Ergebnisse. Besonders greedy-color-swaps überzeugt.
+Allerdings ist der Algorithmus auch viel aufwändiger, vor allem bei Graphen mit hoher Kantendichte \\
 Gerade die Wigderson-Algorithmen benutzen viele Farben, weil sie Farben nicht wieder verwenden, obwohl es möglich wäre. \\
 Möglicherweise würde der Johnson-Algorithmus bessere Ergebnisse liefern, wenn man einen komplexeren Algorithmus zum Finden der Independent Sets verwenden würde,
-das würde dann aber auch wieder die Laufzeit und Komplexität verschlechtern. Diese These wird unterstützt davon, dass der Algorithmus auf Co-Graphen quasi die gleichen Färbungszahlen erhält wie die greedy-Algorithmen.
-%noch was zu Berger Rompel?
-
+das würde dann aber auch wieder die Laufzeit und Komplexität verschlechtern. Diese These wird unterstützt davon, dass der Algorithmus auf Co-Graphen quasi die gleichen Färbungszahlen erhält wie die greedy-Algorithmen.\\
+Entgegen unserer Erwartung benutzt der Berger Rompel Algorithmus mehr Farben als Johnson. Wir haben diese Beobachtung mehrfach als Implementierungsfehler abgetan, jedoch ist es uns nie gelungen diesen Fehler zu beheben.
+Erstaunlich ist dieses Ergebnis auch im Hinblick der Laufzeit, welche in Abbildung \ref{fig:generic1} abgebildet ist,
+da der greedy-max Algorithmen mit den 2. Besten Farbergebnissen, eher eine bessere Laufzeit aufweißt, als die anderen Algorithmen.
+\begin{figure}
+  \includegraphics[width=\stdwidth]{diagrams/generic_pic1.png}
+  \caption{Vergleich der etablierten Algorithmen (Laufzeit)}
+  \label{fig:generic1}
+\end{figure}
 \section{Eigens produzierte Algorithmen} % TODO
 \subsection{Merging Algorithmus}
 Bei der Überlegung, welche Ansätze zur Entwicklung eines eigenen Solvers sinnvoll wären,
@@ -251,7 +266,7 @@ Dabei nutzen beide folgenden Algorithmus um einen Schnitt $S\subseteq V(G)$ zu b
 \item[1.] Führe den folgenden Algorithmus für alle Zusammenhangskomponenten von $G$ getrennt aus
 \item[2.] Wähle einen zufälligen Knoten $u\in V(G)$
 \item[3.] Berechne zu jedem Knoten in $n\in V(G)$ die Distanz $d_u(n)$ zu $u$ mithilfe einer Breitensuche
-\item[4.] Wähle einen Knoten mit maximaler Distanz zu $u$, bezeichne ihn als $v$
+F\item[4.] Wähle einen Knoten mit maximaler Distanz zu $u$, bezeichne ihn als $v$
 \item[5.] Berechne zu jedem Knoten in $n\in V(G)$ auch die Distanz $d_v(n)$ zu $v$
 \item[6.] Für jeden Knoten $n\in V(G)$: Füge $n$ zu $S$ hinzu, falls $d_u(n)<d_v(n)$; Falls $d_u(n)=d_v(n)$ füge $n$ mit einer Wahrscheinlichkeit von 50\% zu $S$ hinzu
 \end{itemize}
@@ -272,7 +287,7 @@ Wir bezeichnen hierbei den Subgraphen $G[S]$ als $A$ und den Subgraphen $G[V(G)\
 \item[1.] Benenne Farben in $B$ um, bis keine Farbe sowohl in $A$ als auch in $B$ verwendet wird.
 \item[2.] Konstruiere einen Graphen $G'=(V',E')$, $V'$ sei die Menger verwendeter Farben
 \item[3.] $E'$ sei die Menge aller Paare aus Farben, welche nicht durch eine Kante in $G$ miteinander verbunden sind. \\Hierzu sollte nur die Menge der Kanten $E(G)\setminus (E(A)\cup E(B))$ betrachtet werden.
-\item[4.] Berechne ein maximales Matching $M$ auf $G'$
+\item[4.] Berechne ein maximales Matching $M$ auf $G'$, also eine möglichst größe Menge von Kanten, wobei keine 2 Kanten denselben Knoten enthalten.
 \item[5.] Für jede Kante $(u,v)\in M$, färbe alle Knoten der Farbe $u$, stattdessen mit der Farbe $v$.
 \end{itemize}
 
@@ -280,7 +295,7 @@ Zusätzlich behandeln wir eine Alternative Version, merge-recolor-bf, welche im 
 Der Standardfall merge-recolor greift lediglich auf den greedy-max Algorithmus zu.
 
 \begin{figure}
-  \includegraphics[width=0.8\linewidth]{diagrams/merger_pic1.png}
+  \includegraphics[width=\stdwidth]{diagrams/merger_pic1.png}
   \caption{Vergleich der beschriebenen Merger Algorithmen mit Greedy bei Graphen mit 50 Knoten}
   \label{fig:merge1}
 \end{figure}
@@ -289,7 +304,7 @@ Im Vergleich zu den besseren Varianten der Greedy Algorithmen schneiden die Merg
 Vielversprechender sind die merge-recolor und merge-recolor-bf Algorithmen, welche bessere Ergebnisse als merge-trivial erzielen können, jedoch immernoch schlechter sind als greedy-max. Untereinander unterscheiden sich die Ergebnisse der bisherigen merge-recolor Varianten kaum.
 
 \begin{figure}
-  \includegraphics[width=0.8\linewidth]{diagrams/merger_pic2.png}
+  \includegraphics[width=\stdwidth]{diagrams/merger_pic2.png}
   \caption{Vergleich der beschriebenen Merger Algorithmen mit Greedy bei Graphen mit 300 Knoten}
   \label{fig:merge2}
 \end{figure}
@@ -305,7 +320,7 @@ Dies tun wir wie folgt:
 \item[1.] Benenne Farben in $B$ um, bis keine Farbe sowohl in $A$ als auch in $B$ verwendet wird.
 \item[2.] Konstruiere einen Graphen $G'=(V',E')$, $V'$ sei die Menger verwendeter Farben
 \item[3.] $E'$ sei die Menge aller Paare aus Farben, welche nicht durch eine Kante in $G$ miteinander verbunden sind. \\Hierzu sollte nur die Menge der Kanten $E(G)\setminus (E(A)\cup E(B))$ betrachtet werden.
-\item[4.] Berechne ein maximales Matching $M$ auf $G'$
+\item[4.] Berechne ein maximales Matching $M$ auf $G'$, also eine möglichst größe Menge von Kanten, wobei keine 2 Kanten denselben Knoten enthalten.
 \item[5.] Für jede Kante $(u,v)\in M$, färbe alle Knoten der Farbe $u$, stattdessen mit der Farbe $v$.
 \item[6.] Für jeden Knoten $u\in M$, wobei $\neg \exists e\in M : u\in e$, entfärbe alle Knoten mit Farbe $u$.
 \item[7.] Wähle einen ungefärbten Knoten $x$. Existiert keiner, so springe zu 10.
@@ -318,20 +333,20 @@ Außerdem lasse sich die Zusammenhangskomponente aus Knoten $\{v\in G | F(v)=F(y
 Diesen Algorithmus bezeichnen wir nun als greedy-recolor-color-swaps.
 Er weißt deutlich bessere Ergebnisse auf (siehe Abb. \ref{fig:merge3}), jedoch werden von greedy-color-swaps dennoch bessere Ergebnisse erzielt.
 \begin{figure}
-  \includegraphics[width=0.8\linewidth]{diagrams/merger_pic3.png}
+  \includegraphics[width=\stdwidth]{diagrams/merger_pic3.png}
   \caption{Vergleich der beschriebenen Merger Algorithmen mit dem merge-recolor-color-swaps Ansatz}
   \label{fig:merge3}
 \end{figure}
 Besonders fällt dies auf, wenn wir statt den verwendeten Farben die Laufzeit betrachten. Die verwendeten Farben liegen auf ähnlichem Level,
 aber die Laufzeit ist bei dem merge-recolor-color-swaps Verfahren deutlich schlechter (siehe Abb. \ref{fig:merge4}).\\
 \begin{figure}
-  \includegraphics[width=0.8\linewidth]{diagrams/merger_pic4.png}
+  \includegraphics[width=\stdwidth]{diagrams/merger_pic4.png}
   \caption{Vergleich der Laufzeit zwischen greedy und merge mit color swaps}
   \label{fig:merge4}
 \end{figure}
 Merge-recolor, welches von Farben her eher mit greedy-max vergleichbar ist, hatte auf unseren Testdaten ebenfalls eine schlechtere Laufzeit (siehe Abb.\ref{fig:merge5}).
 \begin{figure}
-  \includegraphics[width=0.8\linewidth]{diagrams/merger_pic5.png}
+  \includegraphics[width=\stdwidth]{diagrams/merger_pic5.png}
   \caption{Vergleich der Laufzeit zwischen greedy und merge ohne color swaps}
   \label{fig:merge5}
 \end{figure}
@@ -344,7 +359,7 @@ Dies gleicht jedoch weitesgehend dem Verhalten von greedy-min.
 
 Wir beenden diesen Ansatz mit dem Fazit, dass sich mit diesem Verfahren für uns keine großen Fortschritte ergeben,
 da die Abweichung zu bisherigen Algorithmen hier eher einen Nachteil dargestellt hat.
-Stattdessen wollen wir mit einem Verfahren weitermachen, welches bisherige Algorithmen veruscht zu erweitern, anstatt sie zu ersetzen.
+Stattdessen wollen wir mit einem Verfahren weitermachen, welches bisherige Algorithmen versucht zu erweitern, anstatt sie zu ersetzen.
 
 \subsection{Elim}
 
@@ -424,7 +439,7 @@ Das bedeutet jedoch auch, dass der Algorithmus nicht so verlässlich ist wie bei
 
 Im Gesamten bleibt zu sagen, dass die etablierten Algorithmen vor allem Fortschritte in der Laufzeitoptimierung waren.
 Die greedy-Algorithmen haben teils deutlich kleinere Färbungszahlen geliefert. Vor allem die Färbungszahlen, die greedy-color-swaps geliefert hat, waren weit unter dem was wir erwarteten. \\
-Außerdem war überraschend, wie gut Elim die gegebenen Färbungen zuweilen noch verbessern konnte. Es war uns jedoch nicht möglich eine Formel zu finden welche die Verbesserung der Färbungszahl durch Elim beschreibt. In unseren Tests konnten wir jedoch beobachten das Elim gerade schlächtere Färbungen noch stark verbessern kann. \\
+Außerdem war überraschend, wie gut Elim die gegebenen Färbungen zuweilen noch verbessern konnte. Es war uns jedoch nicht möglich eine Formel zu finden welche die Verbesserung der Färbungszahl durch Elim beschreibt. In unseren Tests konnten wir jedoch beobachten das Elim gerade schlechtere Färbungen noch stark verbessern kann. \\
 
 Das Fazit unserer Ergebnisse ist das sollte man fiele Graphen schnell färben wollen ist ein einfacherer Greedy-Algorythmus und eine darauf folgende Anwendung von Elim am efektievsten. \\
 Sollte Laufzeit oder Rechenkraft von weniger interesse sein kann statt greedy, greedy-color-swapps angewendet werden um noch bessere Färbungen zu erhalten.
