@@ -18,9 +18,9 @@ def check(G : nx.graph):
     for color in range(1, colors+1):
         #print("checking color")
         #print(color)
-        problemfree.append(color)         
+               
        
-        
+        is_problem_free=True
         for node in G.nodes:
            
            if G.nodes[node]['color'] == color:
@@ -31,7 +31,7 @@ def check(G : nx.graph):
                 #print(G.nodes[node]['color'])
                 #print(color)
                 
-                clist = []
+                clist = [0]*colors
                 
                 for i in range(0,colors):              
                     clist.append(0)
@@ -42,13 +42,10 @@ def check(G : nx.graph):
                     #print("adj is")
                     #print(adj)
                     #print(G.nodes[adj]['color']-1)
-                    clist.pop((G.nodes[adj]['color']-1))
-                    clist.insert(G.nodes[adj]['color']-1, 1)
+                    clist[G.nodes[adj]['color']-1] = 1
                     #print(clist)
                 
-                a0 = 0
-                for i in clist:
-                    a0 = a0 + i
+                a0 = sum(clist)
                 
                 #print("a0 is")              
                 #print(a0)
@@ -56,11 +53,13 @@ def check(G : nx.graph):
                 if a0 == colors-1:
                     #print("is a problem node")
                     #print(node)
-                    problemC.append(color)                    
-                    problemfree.remove(color)
+                    problemC.append(color)   
+                    is_problem_free=False
                     break
                     
                 #print(problemC)
                 #print(problemfree)
-                
+        if is_problem_free:
+            problemfree.append(color)
+        
     return problemfree
