@@ -9,7 +9,7 @@ import networkx as nx
 from . import check_colors as cc
 from . import recolor as rc
 from . import Swaparound as sr
-
+from random import shuffle
 def makebetter(G : nx.graph):
     
     
@@ -27,7 +27,9 @@ def makebetter(G : nx.graph):
     
     
     for color in range(1,G.graph['colors']):
-        for node in G.nodes:
+        nodes=list(G.nodes)
+        shuffle(nodes)
+        for node in nodes:
             if G.nodes[node]['color'] == color:
                 G = sr.swaparound(G,node)
                 
