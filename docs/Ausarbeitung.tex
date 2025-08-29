@@ -240,7 +240,7 @@ Möglicherweise würde der Johnson-Algorithmus bessere Ergebnisse liefern, wenn 
 das würde dann aber auch wieder die Laufzeit und Komplexität verschlechtern. Diese These wird unterstützt davon, dass der Algorithmus auf Co-Graphen quasi die gleichen Färbungszahlen erhält wie die greedy-Algorithmen.\\
 Entgegen unserer Erwartung benutzt der Berger Rompel Algorithmus mehr Farben als Johnson. Wir haben diese Beobachtung mehrfach als Implementierungsfehler abgetan, jedoch ist es uns nie gelungen diesen Fehler zu beheben.
 Erstaunlich ist dieses Ergebnis auch im Hinblick der Laufzeit, welche in Abbildung \ref{fig:generic1} abgebildet ist,
-da der greedy-max Algorithmen mit den 2. Besten Farbergebnissen, eher eine bessere Laufzeit aufweißt, als die anderen Algorithmen.
+da der greedy-max Algorithmen mit den 2. besten Farbergebnissen, eher eine bessere Laufzeit aufweist, als die anderen Algorithmen.
 \begin{figure}
   \includegraphics[width=\stdwidth]{diagrams/generic_pic1.png}
   \caption{Vergleich der etablierten Algorithmen (Laufzeit)}
@@ -272,7 +272,7 @@ Dabei nutzen beide folgenden Algorithmus um einen Schnitt $S\subseteq V(G)$ zu b
 \item[6.] Für jeden Knoten $n\in V(G)$: Füge $n$ zu $S$ hinzu, falls $d_u(n)<d_v(n)$; Falls $d_u(n)=d_v(n)$ füge $n$ mit einer Wahrscheinlichkeit von 50\% zu $S$ hinzu
 \end{itemize}
 
-Der merge-trivial Algorithmus nutzt eine triviale Vereinigungsstrategie. 
+Der merge-trivial Algorithmus nutzt eine triviale Vereinigungsstrategie.
 Wenn zur Färbung von $G[S]$ die Farben $\{1,2,...,i\}$ benutzt wurden, 
 werden für die Färbung von $G[V(G)\setminus S]$ nur Farben $\{i+1,i+2,...,k\}$ verwendet.\\
 
@@ -365,10 +365,10 @@ Stattdessen wollen wir mit einem Verfahren weitermachen, welches bisherige Algor
 \subsection{Elim}
 
 Der Ansatz für den Algorithmus, den wir Elim nennen, ist das Verbessern einer gegebenen Färbung.
-Dabei haben wir zunächst das Ergebnis einer greedy-Färbung eines Graphen genommen und geschaut, was man verbessern könnte. \\
+Dabei haben wir zunächst das Ergebnis einer greedy-Färbung eines Graphen genommen und geprüft, was man verbessern könnte. \\
 
-Dabei überprüfen wir jede einzelne Farbe, ob sie tatsächlich nötig ist, indem wir herausfinden, ob sie Problematische Knoten enthält.
-Ein Problematischer Knoten ist ein Knoten, der Kanten zu allen anderen Farben, die zur Färbung des Graphen genutzt wurden, besitzt. \\
+Dabei überprüfen wir für jede einzelne Farbe, ob sie tatsächlich nötig ist, indem wir herausfinden, ob sie problematische Knoten enthält.
+Ein problematischer Knoten ist ein Knoten, der Kanten zu allen anderen Farben, die zur Färbung des Graphen genutzt wurden, besitzt. \\
 Hat ein Knoten diese nicht, dann könnte er ohne Probleme eine andere Farbe haben, eine der Farben, zu denen er keine Kante hat. Wenn man ihn umfärbt, entstehen keine Probleme für die Gesamt-Färbung.
 Wenn nun eine Farbe nur aus nicht-Problematischen Knoten besteht, dann kann jeder davon umgefärbt werden und die Farbe komplett entfernt werden. Dadurch senkt sich die Färbungszahl um $1$ und die Färbung wurde erfolgreich verbessert. \\
 %Durch das Prüfen auf problematische Knoten können wir unnötige Farben leicht identifizieren und dann eliminieren.
@@ -377,7 +377,7 @@ Für alle Farben wird ausgeführt: \\
 \begin{itemize}
 \item[1.] Prüfe Farbe $x$ auf das Vorhandensein von problematischen Knoten.
 \item[2.] Wenn problematische Knoten vorhanden sind, breche ab und fahre mit der nächsten Farbe fort.
-\item[3.] Ansonsten; färbe alle vorhandenen Knoten in zulässige andere Farben um, sodass keiner mehr Farbe $x$ hat.
+\item[3.] Ansonsten; färbe alle vorhandenen Knoten in eine zulässige andere Farben um, sodass keiner mehr Farbe $x$ hat.
 \item[4.] Fahre mit der nächsten Farbe fort.
 \end{itemize}
 
