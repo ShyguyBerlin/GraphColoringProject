@@ -445,13 +445,13 @@ Dies ist meist signifikanter als das, was der Algorithmus braucht, der die Färb
 \section{Ergebnisse zu den eigenen Algorithmen} % TODO
 
 %zu merging weiß ich nicht genug
-Der Ansatz von Elim, bereits vorhandene Lösungen zu verbessern, stellte sich als recht erfolgreicher heraus.  \\
-Da Elim eine geringe Laufzeit hat kann es leicht auf die Färbungen von Beliebiegen Algorythmen angewendet werden. \\
-Unsere versuche haben gezeigt das Elim Färbungen oft verbessern kann. Dies gilt auch für sehr gute Färbungen wie von greedy-color-swaps.\\
+Der Ansatz von Elim, bereits vorhandene Lösungen zu verbessern, stellte sich als sehr erfolgreich heraus.  \\
+Da Elim eine geringe Laufzeit hat kann es leicht auf die Färbungen von beliebiegen Algorithmen angewendet werden. \\
+Unsere Versuche haben gezeigt, dass Elim Färbungen oft verbessern kann. Dies gilt auch für sehr gute Färbungen wie von greedy-color-swaps.\\
 Vor allem bei den Ergebnissen der Wigderson-Algorithmen konnte die Färbungszahl ein gutes Stück nach unten korrigiert werden, da dort Farben oft sehr schnell nicht mehr weiter verwendet werden. (Siehe Algorithmus.) \\
 Insgesamt deutete sich aber an: je besser die Ausgangsfärbung, desto besser auch das Ergebnis von Elim, da Elim Färbungen nicht verschlechtern kann. 
-Die Erweiterung von Elim auf das Umfärben von Zusammenhangskomponenten hat gewisse Nachteil. Die Laufzeit ist um ein Vielfaches länger als bei Elim und die Färbungszahl oft nur gerungfügig kleiner. \\ %oder? ich weiß nicht, was der letzte Stand da ist. - ja,
-Sie liefert vereinzelt noch Verbesserungen gegenüber Elim, jedoch sind diese stark von der speziefischen Graphstruktur abhänging, wie Ringe. Allerdings ist durch Elim schon eine fielzahl einfacher Fälle abgedeckt sodas die Erweiterung zuweilen keine Verbesserung vonehmen kann. \\
+Die Erweiterung von Elim auf das Umfärben von Zusammenhangskomponenten hat gewisse Nachteile. Die Laufzeit ist um ein Vielfaches länger als bei Elim und die Färbungszahl oft nur geringfügig kleiner. \\ %oder? ich weiß nicht, was der letzte Stand da ist. - ja,
+Sie liefert vereinzelt noch Verbesserungen gegenüber Elim, jedoch sind diese stark von der speziefischen Graphstruktur abhänging, wie Ringe. Allerdings ist durch Elim schon eine Vielzahl einfacher Fälle abgedeckt, sodass die Erweiterung zuweilen keine Verbesserung vonehmen kann. \\
 Der andere Ansatz des Aus-3-Mach-2-Algorithmus hat etwas andere Ergebnisse geliefert als gedacht. Im Durchschnitt lieferte der Algorithmus etwas schlechtere Färbungszahlen als die guten Algorithmen wie greedy-color-swap mit Elim.
 Allerdings waren die Maxima und Minima sehr weit auseinander. Der Durchschnitt könnte also durch Ausreißer nach oben geschossen sein. 
 Das bedeutet jedoch auch, dass der Algorithmus nicht so verlässlich ist wie beispielsweise Elim. Vor allem kommt aber noch dazu, dass der Algorithmus viel mehr Laufzeit benötigt, was ihn leider endgültig disqualifiziert. \\
