@@ -182,8 +182,7 @@ Für die Komplexität des Algorithmus gilt: Jeder der oben beschriebenen Durchl�
 noch einmal, um die Nachbarschaft vom Knoten zu ermitteln $(auch \space O(n))$ %oder auch nicht, weil sich das in der NetworkX Dokumentation nicht herausfinden lässt aaaaaaaaaaaaaaaah
 und hat wie in der Rechnung zur Farbanzahl schon gezeigt $\sqrt{n}$ Durchläufe maximal $O(\sqrt{n})$.
 Dieser Teil des Algorithmus ist also in der Komplexitätsklasse $O(n*\sqrt{n})$. \\
-Der Greedy-Algorithmus hat die Komplexität von $O(n+m)$ oder $O(n^2)$, je nachdem wie NetworkX im Hintergrund die Adjacency abspeichert... %Bro ist das dumm ey. Da steht nicht genau, wie der Befehl G.neighbors funktioniert, den wir die ganze Zeit verwendet haben.
-wobei das $m$ für die Anzahl der Kanten steht. Laut Wigderson selbst sollte die Komplexität des Algorithmus $O(3*(n+m))$ sein. Vielleicht wenn der obere Teil des Algorithmus nicht $O(n*\sqrt{n})$ ist sondern $O(n)$. Aber da bin ich mir nicht ganz sicher gerade.
+Laut Wigderson selbst sollte die Komplexität des Algorithmus $O(3*(n+m))$ sein. Hierbei steht $m$ für die Anzahl an Kanten. Da diese wie in der Formel für Kantendichte beschrieben $m = \frac{n*(n-1)}{d(G)}$, also ist der Algorithmus in $O(n^2)$ \\
 
 \subsubsection{Wigdersons zweiter Algorithmus}
 
@@ -233,20 +232,22 @@ In dem Experiment, welches in Abbildung \ref{fig:generic2} gezeigt wird, wurden 
   \caption{Vergleich der etablierten Algorithmen (Farben)}
   \label{fig:generic2}
 \end{figure}
-Hier fällt auf, dass die verwendeten Farben nicht die theoretischen Obergrenzen widerspiegeln. Die greedy Algorithmen, erziehlten die besten Ergebnisse. Besonders greedy-color-swaps überzeugt.
-Allerdings ist der Algorithmus auch viel aufwändiger, vor allem bei Graphen mit hoher Kantendichte \\
-Gerade die Wigderson-Algorithmen benutzen viele Farben, weil sie Farben nicht wieder verwenden, obwohl es möglich wäre. \\
+Hier fällt auf, dass die verwendeten Farben nicht die theoretischen Obergrenzen widerspiegeln. Die greedy Algorithmen, erzielten die besten Ergebnisse. Besonders greedy-color-swaps überzeugt.
+Allerdings ist der Algorithmus auch viel aufwändiger, vor allem bei Graphen mit hoher Kantendichte. \\
+Gerade die Wigderson-Algorithmen benutzen viele Farben, weil sie Farben nicht wieder verwenden, obwohl es oftmals möglich wäre. \\
 Möglicherweise würde der Johnson-Algorithmus bessere Ergebnisse liefern, wenn man einen komplexeren Algorithmus zum Finden der Independent Sets verwenden würde,
 das würde dann aber auch wieder die Laufzeit und Komplexität verschlechtern. Diese These wird unterstützt davon, dass der Algorithmus auf Co-Graphen quasi die gleichen Färbungszahlen erhält wie die greedy-Algorithmen.\\
 Entgegen unserer Erwartung benutzt der Berger Rompel Algorithmus mehr Farben als Johnson. Wir haben diese Beobachtung mehrfach als Implementierungsfehler abgetan, jedoch ist es uns nie gelungen diesen Fehler zu beheben.
-Erstaunlich ist dieses Ergebnis auch im Hinblick der Laufzeit, welche in Abbildung \ref{fig:generic1} abgebildet ist,
-da der greedy-max Algorithmen mit den 2. Besten Farbergebnissen, eher eine bessere Laufzeit aufweißt, als die anderen Algorithmen.
+Erstaunlich ist dieses Ergebnis auch im Hinblick der Laufzeit, welche in Abbildung \ref{fig:generic1} abgebildet ist.
+Der greedy-max Algorithmus erzeugt die zweitbesten Färbeergebnisse und weist eine bessere Laufzeit auf als die anderen Algorithmen.
 \begin{figure}
   \includegraphics[width=\stdwidth]{diagrams/generic_pic1.png}
   \caption{Vergleich der etablierten Algorithmen (Laufzeit)}
   \label{fig:generic1}
 \end{figure}
+
 \section{Eigens produzierte Algorithmen} % TODO
+
 \subsection{Merging Algorithmus}
 Bei der Überlegung, welche Ansätze zur Entwicklung eines eigenen Solvers sinnvoll wären,
 kam die Idee auf, das bekannte Konzept des Divide-and-Conquer zu nutzen.\\
@@ -415,19 +416,25 @@ Dies war vor allem, um die Laufzeit nicht zu sehr in die Höhe zu treiben. So li
 
 \subsection{Aus 3 Mach 2}
 
-Dieser Algorithmus hat ebenfalls als Ansatz, eine bestehende Färbung zu verbessern. Hierbei wird auch auf ein bekanntes Konzept
-zurückgegriffen, was bereits von Wigdersons Algorithmen verwendet wurde: Es lässt sich mit linearer Komplexität herausfinden,
-ob ein Graph 2-färbbar ist. Der Algorithmus funktioniert dann auf die folgende Weise: \\
+Für diesen Ansatz haben wir eine Art gesucht, den Graphen aufzuteilen und geeignete Subgraphen auf $2$-Färbbarkeit zu untersuchen. \\
+Dafür gibt es sicher noch andere Ansätze, den Graphen in Subgraphen zu unterteilen, unsere Wahl fiel auf Subgraphen des bereits gefärbten Graphen, die $3$-gefärbt sind.
+Teile des Graphen, die bereits mit mehr als $3$ Farben gefärbt wurden wären auch möglich, allerdings ist es viel wahrscheinlicher für diese, nicht $2$-färbbar zu sein.
+Die Chance, auf $3$er oder gar $4$er Cliquen zu treffen steigt zu sehr. \\
+Man könnte die Graphen auch auf ganz andere Arten und Weisen aufteilen, allerdings hat man dann nicht mehr zwingend die Eigenschaft, all diese Teile zu einer gültigen Färbung zusammen zu setzen.
+Dieser Algorithmus hat dadurch ebenfalls als Ansatz, eine bestehende Färbung zu verbessern. Der Algorithmus funktioniert dann auf die folgende Weise: \\
 
 \begin{itemize}
   \item Bilde des Subgraphen $G'$ mit nur Knoten mit den Farben $a$, $b$ und $c$ und entfärbe diese in $G'$
-  \item Versuche, diesen Graphen nur mit $2$ Farben ($a$ und $b$) zu färben
+  \item Versuche, diesen Graphen $G'$ nur mit $2$ Farben ($a$ und $b$) zu färben
   \item Falls möglich, übernehme die Färbung im Ausgangsgraphen und entferne Farbe $c$ aus der Farbliste
   \item Falls nicht möglich, probiere mit anderen Farben $a'$, $b'$ und $c'$
 \end{itemize}
 
+Der Algorithmus unterscheidet sich von Elim und Make-better darin, welche Fehler er in den Vorfärbungen beheben kann. Allerdings haben alle Schwierigkeiten mit Problematischen Knoten.
+Aus-3-Mach-2 hat manchmal die Möglichkeit, einen der Knoten umzufärben, der einen anderen problematisch macht, aber er ist nicht spezialisiert darauf. \\
 Der Algorithmus geht dabei bei $k$ Ausgangsfarben maximal $k*(k-1)*(k-2)$ mal durch den Graphen und hat somit eine Komplexität von $O(k^3)*n$.
 Dies ist meist signifikanter als das, was der Algorithmus braucht, der die Färbung erzeugt, z. B. $O(n+m)$ bei Greedy. \\
+
 %weiß nicht, obs ne schöne Formel für Farbeinsparung gibt, wahrscheinlich nicht
 
 \section{Ergebnisse zu den eigenen Algorithmen} % TODO
@@ -436,7 +443,7 @@ Dies ist meist signifikanter als das, was der Algorithmus braucht, der die Färb
 Der Ansatz von Elim, bereits vorhandene Lösungen zu verbessern, stellte sich als recht erfolgreicher heraus.  \\
 Da Elim eine geringe Laufzeit hat kann es leicht auf die Färbungen von Beliebiegen Algorythmen angewendet werden. \\
 Unsere versuche haben gezeigt das Elim Färbungen oft verbessern kann. Dies gilt auch für sehr gute Färbungen wie von greedy-color-swaps.\\
-Vor allem bei den Ergebnissen der Wigderson-Algorithmen konnte die Färbungszahl ein gutes Stück nach unten korrigiert werden, da dort Farben oft sehr schnell nicht mehr weiter verwendet werden. (Siehe Algorythmus.) \\
+Vor allem bei den Ergebnissen der Wigderson-Algorithmen konnte die Färbungszahl ein gutes Stück nach unten korrigiert werden, da dort Farben oft sehr schnell nicht mehr weiter verwendet werden. (Siehe Algorithmus.) \\
 Insgesamt deutete sich aber an: je besser die Ausgangsfärbung, desto besser auch das Ergebnis von Elim, da Elim Färbungen nicht verschlechtern kann. 
 Die Erweiterung von Elim auf das Umfärben von Zusammenhangskomponenten hat gewisse Nachteil. Die Laufzeit ist um ein Vielfaches länger als bei Elim und die Färbungszahl oft nur gerungfügig kleiner. \\ %oder? ich weiß nicht, was der letzte Stand da ist. - ja,
 Sie liefert vereinzelt noch Verbesserungen gegenüber Elim, jedoch sind diese stark von der speziefischen Graphstruktur abhänging, wie Ringe. Allerdings ist durch Elim schon eine fielzahl einfacher Fälle abgedeckt sodas die Erweiterung zuweilen keine Verbesserung vonehmen kann. \\
