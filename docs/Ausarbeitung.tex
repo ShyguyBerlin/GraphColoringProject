@@ -392,14 +392,16 @@ In den meisten Fällen hat er Verbesserungen vornehmen können.
 Elim verbessert vor allem Färbungen stark, welche durch Algorithmen erzeugt werden die oft Farben verlassen, wie die Wigderson-Algorithmen. \\
 Auch auf Färbungen von Greedy konnten leichte Verbesserungen festgestellt werden. \\
 Zudem ist der Rechenaufwand im Vergleich zum Aufwand der hier untersuchten anderen Algorithmen minimal. Im Worst case bei $k$ Farben
-in der Vorfärbung braucht der Algorithmus zwar $O(k*n)$ Schritte, allerdings setzt das eine absolut inkompetente Vorfärbung voraus. \\
+in der Vorfärbung braucht der Algorithmus zwar $O(k*n)$ Schritte, wobei der Algorithmus auch Schritte überspringt, wenn keine Verbesserung möglich ist.\\
 Da meist nur einige bis gar keine Farben eingespart werden können, ist die Komplexität im Durchschnittsfall jedoch signifikant näher an $n$ als an $k*n$. \\
 Zusätzlich ließ sich der Trend feststellen, dass je besser die Vorfärbung war, desto besser war das Ergebnis von Elim. Es hat sich beispielsweise immer noch nicht mehr gelohnt, auf einen der etablierten
 Algorithmen zurückzugreifen und diesen mit Elim aufzubessern, die greedy-Algorithmen lieferten immer noch bessere Färbungszahlen. \\
 Leider kann man die Effektivität von Elim schwer in Zahlen fassen. Das Ausnutzen der Schwäche einer anderen Färbestrategie ist vielleicht in Einzelfällen formalisierbar, aber nicht im allgemeinen.
 
-\subsection{Make-Better Algorithmus} %muss glaub ich weg
+\subsection{Make-Better Algorithmus}
 
+Der Make-Better Algorithmus ist einer Erweiterung der Elim Funktion. \\
+Zunächst nutzt Make-Better Elim um alle Farben ohne problematische Knoten zu eliminieren. \\
 Der Elim-Algorithmus kommt allerdings schnell an seine Grenzen wenn es darum geht, was er umfärben kann. Es gibt unter Umständen die Möglichkeit,
 Knoten von problematisch zu unproblematisch zu konvertieren, wenn man andere Knoten umfärbt. Deswegen funktioniert dieser Algorithmus wie folgt: \\
 

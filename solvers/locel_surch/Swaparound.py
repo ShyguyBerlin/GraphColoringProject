@@ -19,9 +19,7 @@ def swaparound(G : nx.graph, node : int()):
         #print("node is")
         #print(node)    
     
-        clist=[]
-        for i in range(0,colors):              
-            clist.append(0)
+        clist=[0]*colors
         
         #print(clist)
         
@@ -31,14 +29,11 @@ def swaparound(G : nx.graph, node : int()):
             #print(adj)
             #print(G.nodes[adj]['color'])
             #print(G.nodes[adj]['color']-1)
-            clist.pop((G.nodes[adj]['color']-1))
             #print(clist)
-            clist.insert(G.nodes[adj]['color']-1, 1)
+            clist[G.nodes[adj]['color']-1] = 1
             #print(clist)
                 
-        a0 = 0
-        for i in clist:
-            a0 = a0 + i
+        a0 = sum(clist)
                 
         #print("a0 is")              
         #print(a0)
