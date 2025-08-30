@@ -465,7 +465,7 @@ Wobei besonders der Elim Algorithmus und der make-better Algorithmus ihre Wirkun
 Der Ansatz von Elim, bereits vorhandene Lösungen zu verbessern, stellte sich als sehr erfolgreich heraus,
 da, wie unsere Versuche gezeigt haben, Elim Färbungen oft verbessern kann. Dies gilt in kleinem Maße auch für sehr gute Färbungen wie von greedy-color-swaps.\\
 Also ist eine Kombination aus dem Elim-Algorithmus praktisch immer besser, als das Original.
-Make-better hingegen hat gewisse Nachteile. Die Laufzeit ist um ein Vielfaches länger als bei Elim und die Färbungszahl oft nur geringfügig kleiner. \\ %oder? ich weiß nicht, was der letzte Stand da ist. - ja,
+Die Erweiterung von Elim, Make-better hingegen hat gewisse Nachteile. Die Laufzeit ist um ein Vielfaches länger als bei Elim und die Färbungszahl oft nur geringfügig kleiner. \\ %oder? ich weiß nicht, was der letzte Stand da ist. - ja,
 Sie liefert vereinzelt Verbesserungen gegenüber Elim oder greedy-color-swaps. Allerdings ist durch Elim schon eine Vielzahl einfacher Fälle abgedeckt, sodass die Erweiterung zuweilen keine Verbesserung vonehmen kann. \\
 Der andere Ansatz des Aus-3-Mach-2-Algorithmus hat etwas andere Ergebnisse geliefert als gedacht. 
 Im Durchschnitt lieferte der Algorithmus etwas schlechtere Färbungszahlen als die anderen Algorithmen.
@@ -478,7 +478,7 @@ Er bietet keine direkten Vorteile gegenüber den anderen Solvern und hat eine le
 Es zeigt sich, dass Wigderson, Johnson und Berger Rompel zwar theoretisch bessere Worst-case-Färbungen hervorbringen als die Greedy-Algorithmen, diese jedoch beim Färben von Zufallsgraphen nur selten zum tragen kommen. \\
 Überraschend war, wie gut Elim die gegebenen Färbungen, im Hinblick der Laufzeit, verbessern konnte, auch wenn es uns nicht möglich war eine Formel zu finden, welche die Verbesserung der Färbungszahl durch Elim beschreibt.
 
-Es zeigt sich: sollte man viele Graphen, ohne Kenntnisse über besondere Eigenschaften dieser, schnell färben wollen, ist ein einfacherer Greedy-Algorithmus und eine darauf folgende Anwendung von Elim am effektivsten. \\
+Abschließend ist also zu sagen dass, sollte man viele Graphen, ohne Kenntnisse über besondere Eigenschaften dieser, schnell färben wollen, ist ein einfacherer Greedy-Algorithmus und eine darauf folgende Anwendung von Elim am effektivsten. \\
 Sind Laufzeit und Rechenkraft unwichtig, so kann statt greedy, greedy-color-swaps angewendet werden. Außerdem kann es die berechnete Färbungszahl oft noch etwas senken, mehr Zeit in aufwendigere Verbesserungsalgorithmen zu investieren.
 
 \bibliographystyle{plain}
