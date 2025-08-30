@@ -179,10 +179,10 @@ Deswegen kann es nur weniger als maximal $\sqrt{n}$ Durchläufe geben, bis alle 
 Also verwendet dieser Teil des Algorithmus höchstens $2*\sqrt{n}$ Farben. Da nur noch Knoten mit höchstens Grad $\sqrt{n}-1$ übrig sind, kann der Greedy-Algorithmus
 den Rest des Graphen immer in $\sqrt{n}$ Farben färben. So erhält man ein Ergebnis von maximal $3*\sqrt{n}$ Farben. \\
 Für die Komplexität des Algorithmus gilt: Jeder der oben beschriebenen Durchläufe iteriert über alle Knoten, um den mit dem größten Grad zu finden $(O(n))$,
-noch einmal, um die Nachbarschaft vom Knoten zu ermitteln $(auch \space O(n))$ %oder auch nicht, weil sich das in der NetworkX Dokumentation nicht herausfinden lässt aaaaaaaaaaaaaaaah
+noch einmal, um die Nachbarschaft vom Knoten zu ermitteln (auch  $O(n)$) %oder auch nicht, weil sich das in der NetworkX Dokumentation nicht herausfinden lässt aaaaaaaaaaaaaaaah
 und hat wie in der Rechnung zur Farbanzahl schon gezeigt $\sqrt{n}$ Durchläufe maximal $O(\sqrt{n})$.
 Dieser Teil des Algorithmus ist also in der Komplexitätsklasse $O(n*\sqrt{n})$. \\
-Laut Wigderson selbst sollte die Komplexität des Algorithmus $O(3*(n+m))$ sein. Hierbei steht $m$ für die Anzahl an Kanten. Da diese wie in der Formel für Kantendichte beschrieben $m = \frac{n*(n-1)}{d(G)}$, also ist der Algorithmus in $O(n^2)$ \\
+Laut Wigderson selbst sollte die Komplexität des Algorithmus $O(n+m)$ sein. Hierbei steht $m$ für die Anzahl an Kanten. Da diese wie in der Formel für Kantendichte beschrieben $m = \frac{n*(n-1)}{d(G)}$, also ist der Algorithmus in $O(n^2)$ \\
 
 \subsubsection{Wigdersons zweiter Algorithmus}
 
@@ -402,8 +402,13 @@ Leider kann man die Effektivität von Elim schwer in Zahlen fassen. Das Ausnutze
 
 Der Make-Better Algorithmus ist einer Erweiterung der Elim Funktion. \\
 Zunächst nutzt Make-Better Elim um alle Farben ohne problematische Knoten zu eliminieren. \\
-Der Elim-Algorithmus kommt allerdings schnell an seine Grenzen wenn es darum geht, was er umfärben kann. Es gibt unter Umständen die Möglichkeit,
-Knoten von problematisch zu unproblematisch zu konvertieren, wenn man andere Knoten umfärbt. Deswegen funktioniert dieser Algorithmus wie folgt: \\
+
+Der Elim-Algorithmus kommt allerdings schnell an seine Grenzen, 
+wenn es darum geht, was er umfärben kann. 
+Es gibt unter Umständen die Möglichkeit,
+Knoten von problematisch zu unproblematisch zu konvertieren, 
+wenn man andere Knoten umfärbt. 
+Deswegen funktioniert dieser Algorithmus wie folgt: \\
 
 \begin{itemize}
   \item Versuche, Elim auf Graphenfärbung anzuwenden
@@ -420,11 +425,9 @@ Auch hier ist es wieder schwierig, eine genaue Formel zu finden, die ausdrückt,
 
 \subsection{Aus 3 Mach 2}
 
-Für diesen Ansatz haben wir eine Art gesucht, den Graphen aufzuteilen und geeignete Subgraphen auf $2$-Färbbarkeit zu untersuchen. \\
-Dafür gibt es sicher noch andere Ansätze, den Graphen in Subgraphen zu unterteilen, unsere Wahl fiel auf Subgraphen des bereits gefärbten Graphen, die $3$-gefärbt sind.
+Der Ansatz für diesen Algorithmus war es, einen bereits gefärbten Graphen zu betrachten, zufällig oder systematisch 3 Farben auszuwählen und die Knoten dieser Farben mit 2 Farben neu zu färben.
 Teile des Graphen, die bereits mit mehr als $3$ Farben gefärbt wurden wären auch möglich, allerdings ist es viel wahrscheinlicher für diese, nicht $2$-färbbar zu sein.
 Die Chance, auf $3$er oder gar $4$er Cliquen zu treffen steigt zu sehr. \\
-Man könnte die Graphen auch auf ganz andere Arten und Weisen aufteilen, allerdings hat man dann nicht mehr zwingend die Eigenschaft, all diese Teile zu einer gültigen Färbung zusammen zu setzen.
 Dieser Algorithmus hat dadurch ebenfalls als Ansatz, eine bestehende Färbung zu verbessern. Der Algorithmus funktioniert dann auf die folgende Weise: \\
 
 \begin{itemize}
@@ -436,33 +439,48 @@ Dieser Algorithmus hat dadurch ebenfalls als Ansatz, eine bestehende Färbung zu
 
 Der Algorithmus unterscheidet sich von Elim und Make-better darin, welche Fehler er in den Vorfärbungen beheben kann. Allerdings haben alle Schwierigkeiten mit Problematischen Knoten.
 Aus-3-Mach-2 hat manchmal die Möglichkeit, einen der Knoten umzufärben, der einen anderen problematisch macht, aber er ist nicht spezialisiert darauf. \\
-Der Algorithmus geht dabei bei $k$ Ausgangsfarben maximal $k*(k-1)*(k-2)$ mal durch den Graphen und hat somit eine Komplexität von $O(k^3)*n$.
-Dies ist meist signifikanter als das, was der Algorithmus braucht, der die Färbung erzeugt, z. B. $O(n+m)$ bei Greedy. \\
 
+Der Algorithmus geht dabei bei $k$ Ausgangsfarben maximal $k*(k-1)*(k-2)$ mal durch den Graphen und hat somit eine Komplexität von $O(k^3*n)$.
+Dies ist meist signifikanter als das, was der Algorithmus braucht, der die Färbung erzeugt, z. B. $O(n+m)$ bei Greedy. \\
+Es bietet sich auch die Möglichkeit eines \grqq Aus 4 mach 3\grqq\ Algorithmusses,
+welcher mehr Probleme beheben könnte, jedoch hatten wir bereits Probleme Aus 3 mach 2 auf größeren Graphen zu testen.
+Eine effizientere Implementierung könnte hier neue Möglichkeiten bieten.
 %weiß nicht, obs ne schöne Formel für Farbeinsparung gibt, wahrscheinlich nicht
 
 \section{Ergebnisse zu den eigenen Algorithmen} % TODO
 
-%zu merging weiß ich nicht genug
-Der Ansatz von Elim, bereits vorhandene Lösungen zu verbessern, stellte sich als sehr erfolgreich heraus.  \\
-Da Elim eine geringe Laufzeit hat kann es leicht auf die Färbungen von beliebiegen Algorithmen angewendet werden. \\
-Unsere Versuche haben gezeigt, dass Elim Färbungen oft verbessern kann. Dies gilt auch für sehr gute Färbungen wie von greedy-color-swaps.\\
-Vor allem bei den Ergebnissen der Wigderson-Algorithmen konnte die Färbungszahl ein gutes Stück nach unten korrigiert werden, da dort Farben oft sehr schnell nicht mehr weiter verwendet werden. (Siehe Algorithmus.) \\
-Insgesamt deutete sich aber an: je besser die Ausgangsfärbung, desto besser auch das Ergebnis von Elim, da Elim Färbungen nicht verschlechtern kann. 
-Die Erweiterung von Elim auf das Umfärben von Zusammenhangskomponenten hat gewisse Nachteile. Die Laufzeit ist um ein Vielfaches länger als bei Elim und die Färbungszahl oft nur geringfügig kleiner. \\ %oder? ich weiß nicht, was der letzte Stand da ist. - ja,
-Sie liefert vereinzelt noch Verbesserungen gegenüber Elim, jedoch sind diese stark von der speziefischen Graphstruktur abhänging, wie Ringe. Allerdings ist durch Elim schon eine Vielzahl einfacher Fälle abgedeckt, sodass die Erweiterung zuweilen keine Verbesserung vonehmen kann. \\
-Der andere Ansatz des Aus-3-Mach-2-Algorithmus hat etwas andere Ergebnisse geliefert als gedacht. Im Durchschnitt lieferte der Algorithmus etwas schlechtere Färbungszahlen als die guten Algorithmen wie greedy-color-swap mit Elim.
-Allerdings waren die Maxima und Minima sehr weit auseinander. Der Durchschnitt könnte also durch Ausreißer nach oben geschossen sein. 
-Das bedeutet jedoch auch, dass der Algorithmus nicht so verlässlich ist wie beispielsweise Elim. Vor allem kommt aber noch dazu, dass der Algorithmus viel mehr Laufzeit benötigt, was ihn leider endgültig disqualifiziert. \\
+\begin{figure}
+  \includegraphics[width=\stdwidth]{diagrams/new_pic1.png}
+  \caption{Vergleich der neuen Ansätze}
+  \label{fig:oursolvers1}
+\end{figure}
+\begin{figure}
+  \includegraphics[width=\stdwidth]{diagrams/new_pic2.png}
+  \caption{Vergleich der neuen Ansätze (Laufzeit)}
+  \label{fig:oursolvers2}
+\end{figure}
+Die Ergebnisse in Abbildung \ref{fig:oursolvers1} zeigen, 
+dass die Ergebnisse unsere Ansätze konkurrenzfähig
+zu den besten der etablierten Algorithmen sind.
+Wobei besonders der Elim Algorithmus und der make-better Algorithmus ihre Wirkung zeigen.
+Der Ansatz von Elim, bereits vorhandene Lösungen zu verbessern, stellte sich als sehr erfolgreich heraus,
+da, wie unsere Versuche gezeigt haben, Elim Färbungen oft verbessern kann. Dies gilt in kleinem Maße auch für sehr gute Färbungen wie von greedy-color-swaps.\\
+Also ist eine Kombination aus dem Elim-Algorithmus praktisch immer besser, als das Original.
+Make-better hingegen hat gewisse Nachteile. Die Laufzeit ist um ein Vielfaches länger als bei Elim und die Färbungszahl oft nur geringfügig kleiner. \\ %oder? ich weiß nicht, was der letzte Stand da ist. - ja,
+Sie liefert vereinzelt Verbesserungen gegenüber Elim oder greedy-color-swaps. Allerdings ist durch Elim schon eine Vielzahl einfacher Fälle abgedeckt, sodass die Erweiterung zuweilen keine Verbesserung vonehmen kann. \\
+Der andere Ansatz des Aus-3-Mach-2-Algorithmus hat etwas andere Ergebnisse geliefert als gedacht. 
+Im Durchschnitt lieferte der Algorithmus etwas schlechtere Färbungszahlen als die anderen Algorithmen.
+Zusätzlich war die Laufzeit so hoch, dass wir, um Relationen zu bewahren, den Algorithmus nicht auf Abbildung \ref{fig:oursolvers2} aufführen konnten. \\
+Ein ähnliches Fazit bietet der Merging Algorithmus, wessen Ergebnisse zwar endgültig mit den anderen mithalten konnten.
+Er bietet keine direkten Vorteile gegenüber den anderen Solvern und hat eine leicht bis viel höhere Laufzeit als greedy-color-swaps.
 
 \section{Zusammenfassung und Fazit} % TODO
 
-Es zeigt sich, dass Wigderson und Berger Rompel zwar theoretisch bessere Worst-case-Färbungen hervorbringen als die Greedy-Algorithmen, diese jedoch beim Färben von Zufallsgraphen nur selten zum tragen kommen. \\
-Die greedy-Algorithmen haben im Durchschnitt deutlich kleinere Färbungszahlen geliefert. Vor allem die Färbungszahlen, die greedy-color-swaps produzierte, waren weit besser als erwartet. \\
-Außerdem war überraschend, wie gut Elim die gegebenen Färbungen zuweilen noch verbessern konnte. Es war uns jedoch nicht möglich eine Formel zu finden, welche die Verbesserung der Färbungszahl durch Elim beschreibt. In unseren Tests konnten wir jedoch beobachten, dass Elim gerade schlechtere Färbungen noch stark verbessern kann. \\
+Es zeigt sich, dass Wigderson, Johnson und Berger Rompel zwar theoretisch bessere Worst-case-Färbungen hervorbringen als die Greedy-Algorithmen, diese jedoch beim Färben von Zufallsgraphen nur selten zum tragen kommen. \\
+Überraschend war, wie gut Elim die gegebenen Färbungen, im Hinblick der Laufzeit, verbessern konnte, auch wenn es uns nicht möglich war eine Formel zu finden, welche die Verbesserung der Färbungszahl durch Elim beschreibt.
 
-Das Fazit unserer Ergebnisse ist das sollte man viele Graphen, ohne Kentnisse über besondere Eigenschaften dieser, schnell färben wollen, ist ein einfacherer Greedy-Algorythmus und eine darauf folgende Anwendung von Elim am effektivsten. \\
-Sollte Laufzeit oder Rechenkraft von weniger Interesse sein kann statt greedy, greedy-color-swaps angewendet werden um noch bessere Färbungen zu erhalten.
+Es zeigt sich: sollte man viele Graphen, ohne Kenntnisse über besondere Eigenschaften dieser, schnell färben wollen, ist ein einfacherer Greedy-Algorithmus und eine darauf folgende Anwendung von Elim am effektivsten. \\
+Sind Laufzeit und Rechenkraft unwichtig, so kann statt greedy, greedy-color-swaps angewendet werden. Außerdem kann es die berechnete Färbungszahl oft noch etwas senken, mehr Zeit in aufwendigere Verbesserungsalgorithmen zu investieren.
 
 \bibliographystyle{plain}
 \bibliography{Quellen}

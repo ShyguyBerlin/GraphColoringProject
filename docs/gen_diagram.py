@@ -4,7 +4,7 @@ warnings.simplefilter(action='ignore', category=UserWarning)
 import pandas as pd
 import plotly.express as px
 
-def make_diagram(input:str,output:str,prop_to_plot="colors_avg",solver_whitelist=[],solver_blacklist=[],graphset_whitelist=[],graphset_blacklist=[],graphset_wildcard_whitelist=[],graphset_wildcard_blacklist=[],zoom_to=0):
+def make_diagram(input:str,output:str,prop_to_plot="colors_avg",solver_whitelist=[],solver_blacklist=[],graphset_whitelist=[],graphset_blacklist=[],graphset_wildcard_whitelist=[],graphset_wildcard_blacklist=[],zoom_to=0,export_zoom=1):
     
     # Load CSV
     df = pd.read_csv(input)
@@ -54,7 +54,7 @@ def make_diagram(input:str,output:str,prop_to_plot="colors_avg",solver_whitelist
     fig.update_layout(margin=dict(t=5,l=20))
 
     # Write figure to disk
-    fig.write_image(output,scale=2,height=362,width=412)
+    fig.write_image(output,scale=2,height=362/export_zoom,width=412/export_zoom)
     print("generated image "+output.split("/")[-1])
 
 import os
@@ -78,4 +78,7 @@ if __name__=="__main__":
     make_diagram("docs/data/generic_color_test.csv","docs/diagrams/generic_pic2.png",graphset_wildcard_blacklist=["3cn","100n"],solver_blacklist=["greedy","greedy_min","flow_trivial","flow_merge","greedy_color_swaps_and_elim_colors","greedy_max_and_elim_colors","aus_3_mach_2","aus_3_mach_2_elim","elim_colors_basic","wigdersons_first_and_elim_colors","wigdersons_second_and_elim_colors"])
 
     make_diagram("docs/data/generic_test_some_solvers.csv","docs/diagrams/elim_pic1.png",graphset_wildcard_blacklist=["_50n","_100n","_150n","_200n","_250n"],solver_whitelist=["greedy_max","greedy_color_swaps","greedy_color_swaps_and_elim_colors","greedy_max_and_elim_colors","aus_3_mach_2_elim","elim_colors_basic","wigdersons_first_and_elim_colors","wigdersons_second_and_elim_colors"])
-#    make_diagram("docs/data/generic_test_some_solvers.csv","docs/diagrams/elim_pic1.png",graphset_wildcard_blacklist=["_50n","_100n","_150n","10d","30d","50d","70d"],solver_whitelist=["greedy_color_swaps","greedy_color_swaps_and_elim_colors"])
+
+    make_diagram("docs/data/small_scale_local_search.csv","docs/diagrams/new_pic1.png",graphset_wildcard_blacklist=["_50n","_100n"],solver_blacklist=["johnson","greedy","greedy_asc_deg_make_better","greedy_no_sort_make_better"],export_zoom=0.9)
+    make_diagram("docs/data/small_scale_local_search.csv","docs/diagrams/new_pic2.png",graphset_wildcard_blacklist=["_50n","_100n"],solver_blacklist=["johnson","greedy","greedy_asc_deg_make_better","greedy_no_sort_make_better","aus_3_mach_2","aus_3_mach_2_elim"],export_zoom=0.9,prop_to_plot="exec_time_avg")
+
