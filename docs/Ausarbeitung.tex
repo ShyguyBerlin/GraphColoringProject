@@ -49,7 +49,7 @@ Graphenfärbungsalgorithmen zusammengefasst. \\
 Das exakte Färben von Graphen mit möglichst wenig Farben ist mit relativ simplen Inputs bereits ein NP-schweres Problem, weswegen es bereits einige Ansätze gibt,
 möglichst gute Färbungen in vergleichbar kurzer Zeit zu erzeugen. Einige dieser Ansätze wurden von uns implementiert und auf die $2$ Faktoren 
 Laufzeit und die Anzahl der genutzten Farben untersucht.
-Desweiteren haben wir drei eigenen Algorithmen entwickelt und diese auf die selben Eigenschaften untersucht. \\
+Desweiteren haben wir vier eigene Algorithmen entwickelt und diese auf die selben Eigenschaften untersucht. \\
 Unsere Implementierungen sind in der Sprache Python und nutzen die Bibliothek NetworkX. \\
 Zum Testen benutzten wir zufällig generierte Graphen mit nie mehr als $300$ Knoten. 
 
@@ -57,7 +57,8 @@ Zum Testen benutzten wir zufällig generierte Graphen mit nie mehr als $300$ Kno
 \begin{itemize}[noitemsep, left=0pt]
 \item Wir behandeln in dieser Ausarbeitung ausschließlich ungerichtete \\Graphen.
 Diese seien folgendermaßen definiert:\\
-Ein Graph $G$ ist ein Tupel $G=(V,E)$, wobei $V=\{v_1,v_2,...,v_n\}$ und $E\subseteq \{(u,v)\in V\times V \mid u\neq v\}$
+Ein Graph $G$ ist ein Tupel $G=(V,E)$, wobei $V=\{v_1,v_2,...,v_n\}$ und $E\subseteq \{(u,v)\in V\times V \mid u\neq v\}$.
+Die Elemente $v\in V$ sind Knoten und die Elemente $e\in E$ sind Kanten.
 \item Wir notieren einen Subgraphen $G'$ als 
 $G'=G[V']$,
 wobei $G=(V,E)$ ein Graph ist und $V'\subseteq V(G)$.
@@ -72,12 +73,7 @@ die mit einer Kante mit $v$ verknüpft sind.
 Die Formel hierfür ist: $d(G) = \frac{2*|E|}{|V|(|V|-1)}$, wobei $|E|$ die Anzahl der vorhandenen Kanten ist und $|V|$ die Anzahl der Knoten. \\
 \item Ein Independent Set $V'$ (auf deutsch: Stabile Menge) ist eine Untergruppe aller Knoten, die jeweils paarweise nicht durch eine
 Kante miteinander verknüpft sind.
-\item Ein Co-Graph ist eine Art Graph, die sich mit $3$ Regeln rekursiv konstruieren lässt: \\
-\begin{itemize}
-  \item Ein Graph mit genau einem Knoten ist ein Co-Graph
-  \item Die Vereinigung zweier Co-Graphen ist ein Co-Graph (Knotenmenge ist die Vereinigung beider, Kantenmenge ist die Vereinigung beider)
-  \item Die Summe zweier Co-Graphen ist ein Co-Graph (Knotenmenge ist die Vereinigung beider, Kantenmenge ist die Vereinigung beider plus eine Kante von jeweils jedem Knoten der einen Menge und zu jedem Knoten der anderen Menge)
-\end{itemize}
+\item Ein Co-Graph ist ein Graph $G$, welcher keine Knoten $P=\{v_1,v_2,v_3,v_4\}$ enthält mit $P\times P \cap E(G) = \{(v_1,v_2),(v_2,v_3),(v_3,v_4)\}$
 \item Ein problematischer Knoten ist ein Knoten mit Nachbarschaft zu Knoten jeder anderen Farbe. \\
 Es ist offensichtlich dass, wenn ein Knoten kein problematischer Knoten ist, mindestens eine andere Farbe existiert, in welche er umgefärbt werden kann, \\
 sodass eine neue zulässige Färbung entsteht ohne das Nachbarn des Knoten ebenfalls umgefärbt werden müssen.
