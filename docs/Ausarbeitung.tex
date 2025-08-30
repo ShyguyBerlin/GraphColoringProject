@@ -27,7 +27,7 @@
 % \cite{berger_rompel}
 
 \title{Analyse und Verbesserung bestehender Algorithmen zur Lösung des Graphfärbeproblems}
-\author{Menschen} % TODO
+\author{Caspar Klein,} 
 
 \renewcommand*\contentsname{Inhaltsverzeichnis} % Hier kann der Name des Inhaltsverzeichnisses verändert werden
 \newcommand{\degeneracy}{\text{degeneracy}}
@@ -49,11 +49,11 @@ Graphenfärbungsalgorithmen zusammengefasst. \\
 Das exakte Färben von Graphen mit möglichst wenig Farben ist mit relativ simplen Inputs bereits ein NP-schweres Problem, weswegen es bereits einige Ansätze gibt,
 möglichst gute Färbungen in vergleichbar kurzer Zeit zu erzeugen. Einige dieser Ansätze wurden von uns implementiert und auf die $2$ Faktoren 
 Laufzeit und die Anzahl der genutzten Farben untersucht.
-Desweiteren haben wir vier eigene Algorithmen entwickelt und diese auf die selben Eigenschaften untersucht. \\
+Des Weiteren haben wir vier eigene Algorithmen entwickelt und diese auf die selben Eigenschaften untersucht. \\
 Unsere Implementierungen sind in der Sprache Python und nutzen die Bibliothek NetworkX. \\
 Zum Testen benutzten wir zufällig generierte Graphen mit nie mehr als $300$ Knoten. 
 
-\section{Begriffsklärung} % TODO, laufend aktualisieren, wenn ein neuer Begriff verwendet wurde
+\section{Begriffsklärung}
 \begin{itemize}[noitemsep, left=0pt]
 \item Wir behandeln in dieser Ausarbeitung ausschließlich ungerichtete \\Graphen.
 Diese seien folgendermaßen definiert:\\
@@ -63,9 +63,9 @@ Die Elemente $v\in V$ sind Knoten und die Elemente $e\in E$ sind Kanten.
 $G'=G[V']$,
 wobei $G=(V,E)$ ein Graph ist und $V'\subseteq V(G)$.
 Es gilt $G[V']=(V',E')$ mit $E'=\{(u,v)\in E\mid u\in V'\land v\in V'\}$.
-\item Eine Färbung eines Graphen $G=(V,E)$ sei eine Zuordnung $F: V\mapsto \mathbb{N}$. Eine Färbung kann sich zur Laufzeit eines Algorithmusses ändern.
+\item Eine Färbung eines Graphen $G=(V,E)$ sei eine Zuordnung $F: V\mapsto \mathbb{N}$. Eine Färbung kann sich zur Laufzeit eines Algorithmus ändern.
 Wenn wir einen Knoten $v$ \grqq färben\grqq\ so ändern wir eigentlich den Wert von $F(v)$.
-\item Der Grad $\deg_G(v)$ eines Knoten $v$ ist die Anzahl an von ihm ausgehenden Kanten $|\{(v_1,v_2)\in E(G) | v_1=v\lor v_2=v\}|$
+\item Der Grad $\deg_G(v)$ eines Knotens $v$ ist die Anzahl an von ihm ausgehenden Kanten $|\{(v_1,v_2)\in E(G) | v_1=v\lor v_2=v\}|$
 Wir definieren $\delta G=\min\{\deg_G(v)|v\in V(G)\}$
 \item Die Nachbarschaft $N(v)$ eines Knoten $v$ innerhalb eines Graphen sind all jene Knoten,
 die mit einer Kante mit $v$ verknüpft sind.
@@ -92,7 +92,7 @@ Der Greedy Algorithmus geht nun folgendermaßen vor:
 \item[3.] ist $i<|V|$, so $i\leftarrow i+1$ und gehe zurück zu Schritt 1 
 \end{itemize}
 
-Je nachdem wie wir die Reihenfolge bilden, erhalten wir unterschiedliche Varianten des Greedy-Algorithmusses.
+Je nachdem wie wir die Reihenfolge bilden, erhalten wir unterschiedliche Varianten des Greedy-Algorithmus.
 Wählen wir eine Reihenfolge ohne spezielle Eigenschaften (in der Praxis die Definitionsreihenfolge),
 so bezeichnen wir dies als den Standard-greedy, bzw. nur greedy.
 
@@ -117,13 +117,13 @@ Ziel bei diesem Algorithmus ist es, immer Knoten zu färben, welche möglichst v
   \label{fig:greedy1}
 \end{figure}
 Diese folgengesteuerten Greedyvarianten ermöglichen keine genaueren Abschätzungen.
-Es wurde für einzelne Varianten nachgewiesen, dass diese arbiträr schlechte Ergebnisse liefern können.\cite{geedy_mitchem}
-Deshalb wollen wir uns auf gemessene Daten beziehen. Diese Daten beschreiben die durchschnittlich gebrauchten Farben, wenn die Algorithmen an Zufallsgraphen, nach Erdős Rényi, angewendet werden.\cite{geedy_erdos_renyi}\\
+Es wurde für einzelne Varianten nachgewiesen, dass diese arbiträr schlechte Ergebnisse liefern können.\cite{greedy_mitchem}
+Deshalb wollen wir uns auf gemessene Daten beziehen. Diese Daten beschreiben die durchschnittlich gebrauchten Farben, wenn die Algorithmen an Zufallsgraphen, nach Erdős Rényi, angewendet werden.\cite{greedy_erdos_renyi}\\
 Man kann an Abbildung \ref{fig:greedy1} erkennen, 
 dass greedy-max, bzw. greedy-smallest-last die besten Ergebnisse liefert. Später werden wir diese Ergebnisse auch relativ zu anderen Algorithmen betrachten.
 
 Diese Greedy-Algorithmen können durch einen Farbtauschmechanismus verbessert werden.
-wir wenden diesen an, wenn zum Färben eines Knotens $v$ eine neue Farbe verwendet weren würde.
+wir wenden diesen an, wenn zum Färben eines Knotens $v$ eine neue Farbe verwendet werden würde.
 Dabei suchen wir 2 Farben $k_1,k_2$ mit $k_1\neq k_2$, 
 sodass der Subgraph $U$ von $G$, 
 welcher alle Knoten aus $G$ enthält, 
@@ -138,13 +138,13 @@ In Abbildung \ref{fig:greedy2} ist eine deutliche Verbesserung der Ergebnisse du
 dabei wurde der Farbtauschmechanismus auf greedy-max angewendet.
 \begin{figure}
   \includegraphics[width=\stdwidth]{diagrams/greedy_pic2.png}
-  \caption{Ergebnisse der Anwendung des greedy-color-swaps Algorithmusses}
+  \caption{Ergebnisse der Anwendung des greedy-color-swaps Algorithmus}
   \label{fig:greedy2}
 \end{figure}
 Im weiteren Verlauf der Arbeit haben wir die Greedyvarianten der Einfachheit halber auf greedy-max und greedy-color-swaps reduziert, 
 da diese am Vielversprechendsten sind.
 
-\subsection{Wigdersons Algorithmen} % TODO
+\subsection{Wigdersons Algorithmen} 
 
 Bei den zwei Algorithmen von Wigderson handelt es sich eigentlich um einen Algorithmus und einen Spezialfall dessen. \\
 Die Prämisse beider Algorithmen ist, einen schnelleren Algorithmus für Input-Graphen mit hoher Kantendichte zu sein.
@@ -185,11 +185,14 @@ Laut Wigderson selbst sollte die Komplexität des Algorithmus $O(n+m)$ sein. Hie
 Der zweite Algorithmus ist eine verallgemeinerte Variante, die funktioniert, wenn die Färbungszahl des gegebenen Graphen bekannt ist.
 Er benutzt dabei $k*n^{1-\frac{1}{k-1}}$ Farben maximal, wobei $k$ die Färbungszahl und $n$ die Anzahl der Knoten ist. \\
 Der Algorithmus verwendet die gleiche Eigenschaft, dass ein $2-$färbbarer Graph simpel zu färben ist.
-Dazu wird wie im obigen Algorithmus beschrieben, der Knoten mit höchstem Grad ausgewählt und auf dessen Nachbarschaft geschaut. Da die Färbungszahl hier wahrscheinlich noch nicht $3$ beträgt, lässt sich diese Nachbarschaft nicht mit $2$ Farben färben, aber dafür mit $k-1$ Farben. Sollte dies immer noch nicht gleich $3$ sein, so wird in dieser Nachbarschaft erneut der Knoten mit höchstem Grad ausgesucht und dann in diesem Subgraphen dessen Nachbarschaft angeschaut. Sie kann nun sicher mit $k-2$ Farben gefärbt werden. Sollte dies nun gleich $3$ ergeben, wird noch einmal so vorgegangen wie im ersten Algorithmus und so dieser Subgraph gefärbt. \\
-Auch wie im anderen Algorithmus gibt es ein Abbruchkriterium, wann sich stattdessen der Greedy-Ansatz mehr lohnt. Dieses ist erreicht, wenn der amximale Grad im betrachteten (Sub-)Graphen kleiner ist als $k*n^{\frac{1}{k-1}}$, die gleiche Gleichung wie die Maximalzahl an Farben im Graphen.
+Dazu wird wie im obigen Algorithmus beschrieben, der Knoten mit höchstem Grad ausgewählt und auf dessen Nachbarschaft geschaut. 
+Da die Färbungszahl hier wahrscheinlich noch nicht $3$ beträgt, lässt sich diese Nachbarschaft nicht mit $2$ Farben färben, aber dafür mit $k-1$ Farben. 
+Sollte dies immer noch nicht gleich $3$ sein, so wird in dieser Nachbarschaft erneut der Knoten mit höchstem Grad ausgesucht und dann in diesem Subgraphen dessen Nachbarschaft angeschaut. 
+Sie kann nun sicher mit $k-2$ Farben gefärbt werden. Sollte dies nun gleich $3$ ergeben, wird noch einmal so vorgegangen wie im ersten Algorithmus und so dieser Subgraph gefärbt. \\
+Auch wie im anderen Algorithmus gibt es ein Abbruchkriterium, wann sich stattdessen der Greedy-Ansatz mehr lohnt. Dieses ist erreicht, wenn der maximale Grad im betrachteten (Sub-)Graphen kleiner ist als $k*n^{\frac{1}{k-1}}$, die gleiche Gleichung wie die Maximalzahl an Farben im Graphen.
 Dieser Algorithmus hat laut Wigderson eine Laufzeitkomplexitätsklasse von $O(k(n+m))$, wobei $k$ die Färbungszahl, $n$ die Anzahl der Knoten und $m$ die Anzahl der Kanten ist.
 
-\subsection{Johnsons Algorithmus} % TODO
+\subsection{Johnsons Algorithmus} 
 
 Dieser Algorithmus unterteilt den Graphen auf eine andere Art.
 Hier wird ein anderes Konzept der Graphentheorie verwendet, nämlich die Independent Sets. \\
@@ -242,7 +245,7 @@ Der greedy-max Algorithmus erzeugt die zweitbesten Färbeergebnisse und weist ei
   \label{fig:generic1}
 \end{figure}
 
-\section{Eigens produzierte Algorithmen} % TODO
+\section{Eigens produzierte Algorithmen} 
 
 \subsection{Merging Algorithmus}
 Bei der Überlegung, welche Ansätze zur Entwicklung eines eigenen Solvers sinnvoll wären,
@@ -316,7 +319,7 @@ Dies tun wir wie folgt:
 
 \begin{itemize}
 \item[1.] Benenne Farben in $B$ um, bis keine Farbe sowohl in $A$ als auch in $B$ verwendet wird.
-\item[2.] Konstruiere einen Graphen $G'=(V',E')$, $V'$ sei die Menger verwendeter Farben
+\item[2.] Konstruiere einen Graphen $G'=(V',E')$, $V'$ sei die Menge verwendeter Farben
 \item[3.] $E'$ sei die Menge aller Paare aus Farben, welche nicht durch eine Kante in $G$ miteinander verbunden sind. \\Hierzu sollte nur die Menge der Kanten $E(G)\setminus (E(A)\cup E(B))$ betrachtet werden.
 \item[4.] Berechne ein maximales Matching $M$ auf $G'$, also eine möglichst größe Menge von Kanten, wobei keine 2 Kanten denselben Knoten enthalten.
 \item[5.] Für jede Kante $(u,v)\in M$, färbe alle Knoten der Farbe $u$, stattdessen mit der Farbe $v$.
@@ -443,7 +446,7 @@ welcher mehr Probleme beheben könnte, jedoch hatten wir bereits Probleme Aus 3 
 Eine effizientere Implementierung könnte hier neue Möglichkeiten bieten.
 %weiß nicht, obs ne schöne Formel für Farbeinsparung gibt, wahrscheinlich nicht
 
-\section{Ergebnisse zu den eigenen Algorithmen} % TODO
+\section{Ergebnisse zu den eigenen Algorithmen}
 
 \begin{figure}
   \includegraphics[width=\stdwidth]{diagrams/new_pic1.png}
@@ -470,7 +473,7 @@ Zusätzlich war die Laufzeit so hoch, dass wir, um Relationen zu bewahren, den A
 Ein ähnliches Fazit bietet der Merging Algorithmus, wessen Ergebnisse zwar endgültig mit den anderen mithalten konnten.
 Er bietet keine direkten Vorteile gegenüber den anderen Solvern und hat eine leicht bis viel höhere Laufzeit als greedy-color-swaps.
 
-\section{Zusammenfassung und Fazit} % TODO
+\section{Zusammenfassung und Fazit} 
 
 Es zeigt sich, dass Wigderson, Johnson und Berger Rompel zwar theoretisch bessere Worst-case-Färbungen hervorbringen als die Greedy-Algorithmen, diese jedoch beim Färben von Zufallsgraphen nur selten zum tragen kommen. \\
 Überraschend war, wie gut Elim die gegebenen Färbungen, im Hinblick der Laufzeit, verbessern konnte, auch wenn es uns nicht möglich war eine Formel zu finden, welche die Verbesserung der Färbungszahl durch Elim beschreibt.
